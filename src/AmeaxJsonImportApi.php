@@ -93,9 +93,9 @@ class AmeaxJsonImportApi
      */
     public function sendOrganization(array $organization): array
     {
-        if (!isset($organization['document_type']) || $organization['document_type'] !== Organization::DOCUMENT_TYPE) {
-            throw new \InvalidArgumentException('Invalid organization data: document_type must be ' . Organization::DOCUMENT_TYPE);
-        }
+        // Ensure document_type and schema_version are set correctly
+        $organization['document_type'] = Organization::DOCUMENT_TYPE;
+        $organization['schema_version'] = Organization::SCHEMA_VERSION;
         
         // For schemas path validation
         $schemaFile = $this->getSchemaFilePath(Organization::DOCUMENT_TYPE);

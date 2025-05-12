@@ -49,7 +49,7 @@ class Organization extends BaseModel
      */
     protected function populate(array $data): self
     {
-        // Set document type and schema version
+        // Always set document type and schema version internally
         $this->data['document_type'] = self::DOCUMENT_TYPE;
         $this->data['schema_version'] = self::SCHEMA_VERSION;
         
@@ -88,7 +88,7 @@ class Organization extends BaseModel
             }
         }
         
-        // Handle any other custom fields
+        // Handle any other custom fields, excluding document_type and schema_version
         foreach ($data as $key => $value) {
             if (!in_array($key, ['document_type', 'schema_version', 'name', 'address', 'contacts', 'email', 'phone', 'website', 'vat_id', 'tax_id'])) {
                 $this->setCustomField($key, $value);
@@ -108,15 +108,12 @@ class Organization extends BaseModel
     {
         $errors = [];
         
-        // Check required fields
-        if (!isset($this->data['document_type']) || $this->data['document_type'] !== self::DOCUMENT_TYPE) {
-            $errors[] = "document_type must be " . self::DOCUMENT_TYPE;
-        }
+        // Ensure document_type and schema_version are set correctly
+        // These are managed by the package and should always be correct
+        $this->data['document_type'] = self::DOCUMENT_TYPE;
+        $this->data['schema_version'] = self::SCHEMA_VERSION;
         
-        if (!isset($this->data['schema_version']) || $this->data['schema_version'] !== self::SCHEMA_VERSION) {
-            $errors[] = "schema_version must be " . self::SCHEMA_VERSION;
-        }
-        
+        // Check other required fields
         if (!isset($this->data['name'])) {
             $errors[] = "name is required";
         }

@@ -65,8 +65,6 @@ try {
     
     // Method 2: Create from an existing array
     $data = [
-        'document_type' => 'ameax_organization_account',
-        'schema_version' => '1.0',
         'name' => 'XYZ Ltd',
         'address' => [
             'postal_code' => '54321',
