@@ -24,7 +24,7 @@ class AmeaxJsonImportApiServiceProvider extends PackageServiceProvider
         $this->app->singleton('ameax-json-import-api', function () {
             return new AmeaxJsonImportApi(
                 config('ameax-json-import-api.api_key'),
-                config('ameax-json-import-api.database_name')
+                config('ameax-json-import-api.host')
             );
         });
     }

@@ -67,7 +67,12 @@ Make sure to add your Ameax API key and database name to your .env file:
 
 ```
 AMEAX_API_KEY=your-api-key
-AMEAX_DATABASE_NAME=your-database-name
+AMEAX_API_HOST=https://your-database.ameax.de
+```
+
+For local development, you can use:
+```
+AMEAX_API_HOST=http://your-database.ameax.localhost
 ```
 
 ### Non-Laravel PHP Projects

@@ -14,10 +14,10 @@ class AmeaxJsonImportApi
     protected string $apiKey;
     protected string $baseUrl;
     
-    public function __construct(string $apiKey, string $databaseName)
+    public function __construct(string $apiKey, string $host)
     {
         $this->apiKey = $apiKey;
-        $this->baseUrl = "https://{$databaseName}.ameax.de/rest-api";
+        $this->baseUrl = rtrim($host, '/') . '/rest-api';
         
         $this->client = new HttpClient([
             'headers' => [

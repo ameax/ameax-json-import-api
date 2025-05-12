@@ -28,7 +28,13 @@ php artisan vendor:publish --tag="ameax-json-import-api-config"
 
 ```
 AMEAX_API_KEY=your-api-key
-AMEAX_DATABASE_NAME=your-database-name
+AMEAX_API_HOST=https://your-database.ameax.de
+```
+
+For local development, you can use a local host:
+
+```
+AMEAX_API_HOST=http://your-database.ameax.localhost
 ```
 
 3. The package will automatically register the service provider and facade.
@@ -66,5 +72,5 @@ $config = [
     'schemas_path' => '/path/to/your/schemas',
 ];
 
-$client = new AmeaxJsonImportApi('your-api-key', 'your-database-name', $config);
+$client = new AmeaxJsonImportApi('your-api-key', 'https://your-database.ameax.de', $config);
 ```

@@ -14,14 +14,15 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Ameax Database Name
+    | Ameax API Host
     |--------------------------------------------------------------------------
     |
-    | This is your Ameax database name used in the API URL:
-    | https://{database_name}.ameax.de/rest-api
+    | This is the base URL of your Ameax API instance.
+    | For production: https://your-database.ameax.de
+    | For local development: http://your-database.ameax.localhost
     |
     */
-    'database_name' => env('AMEAX_DATABASE_NAME'),
+    'host' => env('AMEAX_API_HOST', 'https://your-database.ameax.de'),
 
     /*
     |--------------------------------------------------------------------------

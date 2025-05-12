@@ -5,10 +5,10 @@ require_once __DIR__ . '/../vendor/autoload.php';
 use Ameax\AmeaxJsonImportApi\AmeaxJsonImportApi;
 use Ameax\AmeaxJsonImportApi\Exceptions\ValidationException;
 
-// Initialize API client with API key and database name
+// Initialize API client with API key and host URL
 $apiKey = 'your-api-key';
-$databaseName = 'your-database-name';
-$client = new AmeaxJsonImportApi($apiKey, $databaseName);
+$host = 'https://your-database.ameax.de'; // Or http://your-database.ameax.localhost for local development
+$client = new AmeaxJsonImportApi($apiKey, $host);
 
 try {
     // Create a new organization with required fields

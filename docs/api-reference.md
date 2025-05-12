@@ -11,11 +11,11 @@ The main client class for interacting with the Ameax API.
 #### Constructor
 
 ```php
-public function __construct(string $apiKey, string $databaseName)
+public function __construct(string $apiKey, string $host)
 ```
 
 - `$apiKey`: Your Ameax API key for authentication
-- `$databaseName`: Your Ameax database name (used in the API URL)
+- `$host`: Your Ameax API host URL (e.g., 'https://your-database.ameax.de' or 'http://your-database.ameax.localhost')
 
 #### Methods
 

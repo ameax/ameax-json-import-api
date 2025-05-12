@@ -18,7 +18,7 @@ use Ameax\AmeaxJsonImportApi\AmeaxJsonImportApi;
 use Ameax\AmeaxJsonImportApi\Exceptions\ValidationException;
 
 // Initialize the client
-$client = new AmeaxJsonImportApi('your-api-key', 'your-database-name');
+$client = new AmeaxJsonImportApi('your-api-key', 'https://your-database.ameax.de');
 
 try {
     // Create organization with required fields
