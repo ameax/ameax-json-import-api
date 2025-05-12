@@ -10,6 +10,9 @@ $apiKey = 'your-api-key';
 $host = 'https://your-database.ameax.de';
 $client = new AmeaxJsonImportApi($apiKey, $host);
 
+// Optionally set a custom path for JSON schema files
+// $client->setSchemasPath('/path/to/custom/schemas');
+
 try {
     // Method 1: Create an organization with fluent setters
     $organization = $client->createOrganization();

@@ -22,13 +22,12 @@ class AmeaxJsonImportApi
      *
      * @param string $apiKey Your Ameax API key
      * @param string $host The API host URL (e.g., https://your-database.ameax.de)
-     * @param string|null $schemasPath Optional path to custom schema files
      */
-    public function __construct(string $apiKey, string $host, ?string $schemasPath = null)
+    public function __construct(string $apiKey, string $host)
     {
         $this->apiKey = $apiKey;
         $this->baseUrl = rtrim($host, '/') . '/rest-api';
-        $this->schemasPath = $schemasPath;
+        $this->schemasPath = null;
         
         $this->client = new HttpClient([
             'headers' => [
@@ -37,6 +36,18 @@ class AmeaxJsonImportApi
                 'Content-Type' => 'application/json',
             ],
         ]);
+    }
+    
+    /**
+     * Set the path to custom JSON schema files
+     *
+     * @param string $schemasPath Path to the directory containing schema files
+     * @return $this
+     */
+    public function setSchemasPath(string $schemasPath): self
+    {
+        $this->schemasPath = rtrim($schemasPath, '/');
+        return $this;
     }
     
     /**
