@@ -12,14 +12,19 @@ abstract class BaseModel implements JsonSerializable
     /**
      * Create a new model instance from an array of data
      *
-     * @param array $data
+     * @param array $data The data to populate the model with
+     * @param bool $skipValidation Whether to skip the validation
      * @return static
-     * @throws ValidationException If the data fails validation
+     * @throws ValidationException If the data fails validation and $skipValidation is false
      */
-    public static function fromArray(array $data): static
+    public static function fromArray(array $data, bool $skipValidation = false): static
     {
         $instance = new static();
         $instance->populate($data);
+        
+        if (!$skipValidation) {
+            $instance->validate();
+        }
         
         return $instance;
     }

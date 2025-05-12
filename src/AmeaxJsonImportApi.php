@@ -4,11 +4,19 @@ namespace Ameax\AmeaxJsonImportApi;
 
 use GuzzleHttp\Client as HttpClient;
 use GuzzleHttp\Exception\GuzzleException;
-use JsonSchema\Validator;
 use Ameax\AmeaxJsonImportApi\Exceptions\ValidationException;
 use Ameax\AmeaxJsonImportApi\Models\Organization;
+use Ameax\AmeaxJsonImportApi\Models\PrivatePerson;
 use Ameax\AmeaxJsonImportApi\Models\Address;
 use Ameax\AmeaxJsonImportApi\Models\Contact;
+use Ameax\AmeaxJsonImportApi\Models\Meta;
+use Ameax\AmeaxJsonImportApi\Models\Identifiers;
+use Ameax\AmeaxJsonImportApi\Models\SocialMedia;
+use Ameax\AmeaxJsonImportApi\Models\Communications;
+use Ameax\AmeaxJsonImportApi\Models\BusinessInformation;
+use Ameax\AmeaxJsonImportApi\Models\Agent;
+use Ameax\AmeaxJsonImportApi\Models\Employment;
+use Ameax\AmeaxJsonImportApi\Validation\SchemaValidator;
 
 class AmeaxJsonImportApi
 {
@@ -65,13 +73,20 @@ class AmeaxJsonImportApi
      * Create an organization from an existing array of data
      *
      * @param array $data The organization data
+     * @param bool $validate Whether to validate the data immediately
      * @return Organization
-     * @throws ValidationException If validation fails
+     * @throws ValidationException If validation fails and $validate is true
      */
-    public function organizationFromArray(array $data): Organization
+    public function organizationFromArray(array $data, bool $validate = true): Organization
     {
-        $organization = Organization::fromArray($data);
-        return $organization->setApiClient($this);
+        $organization = Organization::fromArray($data, !$validate);
+        $organization->setApiClient($this);
+        
+        if ($validate) {
+            $organization->validate();
+        }
+        
+        return $organization;
     }
     
     /**
@@ -95,6 +110,37 @@ class AmeaxJsonImportApi
     }
     
     /**
+     * Create a new empty private person
+     *
+     * @return PrivatePerson A new private person instance
+     */
+    public function createPrivatePerson(): PrivatePerson
+    {
+        $privatePerson = new PrivatePerson();
+        return $privatePerson->setApiClient($this);
+    }
+    
+    /**
+     * Create a private person from an existing array of data
+     *
+     * @param array $data The private person data
+     * @param bool $validate Whether to validate the data immediately
+     * @return PrivatePerson
+     * @throws ValidationException If validation fails and $validate is true
+     */
+    public function privatePersonFromArray(array $data, bool $validate = true): PrivatePerson
+    {
+        $privatePerson = PrivatePerson::fromArray($data, !$validate);
+        $privatePerson->setApiClient($this);
+        
+        if ($validate) {
+            $privatePerson->validate();
+        }
+        
+        return $privatePerson;
+    }
+    
+    /**
      * Send organization data to Ameax API
      *
      * @param array $organization The organization data
@@ -104,14 +150,23 @@ class AmeaxJsonImportApi
      */
     public function sendOrganization(array $organization): array
     {
-        // Ensure document_type and schema_version are set correctly
-        $organization['document_type'] = Organization::DOCUMENT_TYPE;
-        $organization['schema_version'] = Organization::SCHEMA_VERSION;
+        // Ensure meta.document_type and meta.schema_version are set correctly
+        if (!isset($organization['meta'])) {
+            $organization['meta'] = [
+                'document_type' => Meta::DOCUMENT_TYPE_ORGANIZATION,
+                'schema_version' => Meta::SCHEMA_VERSION,
+            ];
+        } else {
+            $organization['meta']['document_type'] = Meta::DOCUMENT_TYPE_ORGANIZATION;
+            if (!isset($organization['meta']['schema_version'])) {
+                $organization['meta']['schema_version'] = Meta::SCHEMA_VERSION;
+            }
+        }
         
         // For schemas path validation
-        $schemaFile = $this->getSchemaFilePath(Organization::DOCUMENT_TYPE);
+        $schemaFile = $this->getSchemaFilePath(Meta::DOCUMENT_TYPE_ORGANIZATION);
         if (file_exists($schemaFile)) {
-            $this->validateAgainstSchema($organization, Organization::DOCUMENT_TYPE);
+            $this->validateAgainstSchema($organization, Meta::DOCUMENT_TYPE_ORGANIZATION);
         }
         
         try {
@@ -122,6 +177,46 @@ class AmeaxJsonImportApi
             return json_decode($response->getBody()->getContents(), true);
         } catch (GuzzleException $e) {
             throw new \Exception("Error sending organization data to Ameax: " . $e->getMessage(), $e->getCode(), $e);
+        }
+    }
+    
+    /**
+     * Send private person data to Ameax API
+     *
+     * @param array $privatePerson The private person data
+     * @return array The API response
+     * @throws \Exception If validation or request fails
+     * @internal This is used by the PrivatePerson class and generally should not be called directly
+     */
+    public function sendPrivatePerson(array $privatePerson): array
+    {
+        // Ensure meta.document_type and meta.schema_version are set correctly
+        if (!isset($privatePerson['meta'])) {
+            $privatePerson['meta'] = [
+                'document_type' => Meta::DOCUMENT_TYPE_PRIVATE_PERSON,
+                'schema_version' => Meta::SCHEMA_VERSION,
+            ];
+        } else {
+            $privatePerson['meta']['document_type'] = Meta::DOCUMENT_TYPE_PRIVATE_PERSON;
+            if (!isset($privatePerson['meta']['schema_version'])) {
+                $privatePerson['meta']['schema_version'] = Meta::SCHEMA_VERSION;
+            }
+        }
+        
+        // For schemas path validation
+        $schemaFile = $this->getSchemaFilePath(Meta::DOCUMENT_TYPE_PRIVATE_PERSON);
+        if (file_exists($schemaFile)) {
+            $this->validateAgainstSchema($privatePerson, Meta::DOCUMENT_TYPE_PRIVATE_PERSON);
+        }
+        
+        try {
+            $response = $this->client->post("{$this->baseUrl}/imports", [
+                'json' => $privatePerson,
+            ]);
+            
+            return json_decode($response->getBody()->getContents(), true);
+        } catch (GuzzleException $e) {
+            throw new \Exception("Error sending private person data to Ameax: " . $e->getMessage(), $e->getCode(), $e);
         }
     }
     
@@ -141,19 +236,7 @@ class AmeaxJsonImportApi
             throw new \InvalidArgumentException("Schema file not found for document type: {$documentType}");
         }
         
-        $schema = json_decode(file_get_contents($schemaFile));
-        $validator = new Validator();
-        $validator->validate(json_decode(json_encode($data)), $schema);
-        
-        if (!$validator->isValid()) {
-            $errors = [];
-            foreach ($validator->getErrors() as $error) {
-                $errors[] = sprintf("[%s] %s", $error['property'], $error['message']);
-            }
-            throw new ValidationException($errors);
-        }
-        
-        return true;
+        return SchemaValidator::validate($data, $schemaFile);
     }
     
     /**

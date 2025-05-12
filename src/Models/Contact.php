@@ -8,11 +8,32 @@ use Ameax\AmeaxJsonImportApi\Validation\Validator;
 class Contact extends BaseModel
 {
     /**
+     * @var Identifiers|null The contact identifiers
+     */
+    protected ?Identifiers $identifiers = null;
+    
+    /**
+     * @var Employment|null The contact employment info
+     */
+    protected ?Employment $employment = null;
+    
+    /**
+     * @var Communications|null The contact communications
+     */
+    protected ?Communications $communications = null;
+    
+    /**
+     * @var array Custom data fields
+     */
+    protected array $customData = [];
+    
+    /**
      * Constructor initializes an empty contact
      */
     public function __construct()
     {
         $this->data = [];
+        $this->customData = [];
     }
     
     /**
@@ -24,35 +45,77 @@ class Contact extends BaseModel
      */
     protected function populate(array $data): self
     {
-        if (isset($data['first_name'])) {
-            $this->setFirstName($data['first_name']);
+        // Handle standard fields
+        if (isset($data['salutation'])) {
+            $this->setSalutation($data['salutation']);
         }
         
-        if (isset($data['last_name'])) {
-            $this->setLastName($data['last_name']);
+        if (isset($data['honorifics'])) {
+            $this->setHonorifics($data['honorifics']);
         }
         
-        if (isset($data['email'])) {
-            $this->setEmail($data['email']);
+        if (isset($data['firstname']) || isset($data['first_name'])) {
+            $firstname = $data['firstname'] ?? $data['first_name'];
+            $this->setFirstName($firstname);
         }
         
-        if (isset($data['phone'])) {
-            $this->setPhone($data['phone']);
+        if (isset($data['lastname']) || isset($data['last_name'])) {
+            $lastname = $data['lastname'] ?? $data['last_name'];
+            $this->setLastName($lastname);
         }
         
-        if (isset($data['job_title'])) {
-            $this->setJobTitle($data['job_title']);
+        if (isset($data['date_of_birth'])) {
+            $this->setDateOfBirth($data['date_of_birth']);
         }
         
-        if (isset($data['department'])) {
-            $this->setDepartment($data['department']);
+        // Handle nested objects
+        if (isset($data['identifiers']) && is_array($data['identifiers'])) {
+            $this->identifiers = Identifiers::fromArray($data['identifiers']);
+            $this->data['identifiers'] = $this->identifiers->toArray();
         }
         
-        // Handle any other fields
-        foreach ($data as $key => $value) {
-            if (!in_array($key, ['first_name', 'last_name', 'email', 'phone', 'job_title', 'department'])) {
-                $this->set($key, $value);
+        if (isset($data['employment']) && is_array($data['employment'])) {
+            $this->employment = Employment::fromArray($data['employment']);
+            $this->data['employment'] = $this->employment->toArray();
+        } elseif (isset($data['job_title']) || isset($data['department'])) {
+            // For backward compatibility
+            $employmentData = [];
+            if (isset($data['job_title'])) {
+                $employmentData['job_title'] = $data['job_title'];
             }
+            if (isset($data['department'])) {
+                $employmentData['department'] = $data['department'];
+            }
+            $this->employment = Employment::fromArray($employmentData);
+            $this->data['employment'] = $this->employment->toArray();
+        }
+        
+        if (isset($data['communications']) && is_array($data['communications'])) {
+            $this->communications = Communications::fromArray($data['communications']);
+            $this->data['communications'] = $this->communications->toArray();
+        } elseif (isset($data['email']) || isset($data['phone']) || isset($data['mobile']) || isset($data['fax'])) {
+            // For backward compatibility
+            $communicationsData = [];
+            if (isset($data['email'])) {
+                $communicationsData['email'] = $data['email'];
+            }
+            if (isset($data['phone'])) {
+                $communicationsData['phone_number'] = $data['phone'];
+            }
+            if (isset($data['mobile'])) {
+                $communicationsData['mobile_phone'] = $data['mobile'];
+            }
+            if (isset($data['fax'])) {
+                $communicationsData['fax'] = $data['fax'];
+            }
+            $this->communications = Communications::fromArray($communicationsData);
+            $this->data['communications'] = $this->communications->toArray();
+        }
+        
+        // Handle custom data
+        if (isset($data['custom_data']) && is_array($data['custom_data'])) {
+            $this->customData = $data['custom_data'];
+            $this->data['custom_data'] = $this->customData;
         }
         
         return $this;
@@ -69,28 +132,57 @@ class Contact extends BaseModel
         $errors = [];
         
         // Required fields
-        if (!$this->has('first_name')) {
-            $errors[] = "Contact first_name is required";
+        if (!$this->has('firstname')) {
+            $errors[] = "Contact firstname is required";
         }
         
-        if (!$this->has('last_name')) {
-            $errors[] = "Contact last_name is required";
+        if (!$this->has('lastname')) {
+            $errors[] = "Contact lastname is required";
         }
         
-        // Optional fields validation
-        if ($this->has('email')) {
-            try {
-                Validator::email($this->get('email'), 'Contact email');
-            } catch (ValidationException $e) {
-                $errors = array_merge($errors, $e->getErrors());
+        // Validate salutation if present
+        if ($this->has('salutation') && $this->get('salutation') !== null) {
+            $validSalutations = ['Mr.', 'Ms.', 'Mx.'];
+            if (!in_array($this->get('salutation'), $validSalutations)) {
+                $errors[] = "Salutation must be one of: " . implode(', ', $validSalutations);
             }
         }
         
-        if ($this->has('phone')) {
+        // Validate date of birth if present
+        if ($this->has('date_of_birth') && $this->get('date_of_birth') !== null) {
+            if (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $this->get('date_of_birth'))) {
+                $errors[] = "Date of birth must be in format YYYY-MM-DD";
+            }
+        }
+        
+        // Validate nested objects if present
+        if ($this->identifiers !== null) {
             try {
-                Validator::phoneNumber($this->get('phone'), 'Contact phone');
+                $this->identifiers->validate();
             } catch (ValidationException $e) {
-                $errors = array_merge($errors, $e->getErrors());
+                foreach ($e->getErrors() as $error) {
+                    $errors[] = "identifiers: {$error}";
+                }
+            }
+        }
+        
+        if ($this->employment !== null) {
+            try {
+                $this->employment->validate();
+            } catch (ValidationException $e) {
+                foreach ($e->getErrors() as $error) {
+                    $errors[] = "employment: {$error}";
+                }
+            }
+        }
+        
+        if ($this->communications !== null) {
+            try {
+                $this->communications->validate();
+            } catch (ValidationException $e) {
+                foreach ($e->getErrors() as $error) {
+                    $errors[] = "communications: {$error}";
+                }
             }
         }
         
@@ -99,6 +191,46 @@ class Contact extends BaseModel
         }
         
         return true;
+    }
+    
+    /**
+     * Set the salutation
+     *
+     * @param string|null $salutation The salutation or null to remove
+     * @return $this
+     * @throws ValidationException If validation fails
+     */
+    public function setSalutation(?string $salutation): self
+    {
+        if ($salutation === null) {
+            return $this->set('salutation', null);
+        }
+        
+        $validSalutations = ['Mr.', 'Ms.', 'Mx.'];
+        if (!in_array($salutation, $validSalutations)) {
+            throw new ValidationException(["Salutation must be one of: " . implode(', ', $validSalutations)]);
+        }
+        
+        return $this->set('salutation', $salutation);
+    }
+    
+    /**
+     * Set the honorifics
+     *
+     * @param string|null $honorifics The honorifics or null to remove
+     * @return $this
+     * @throws ValidationException If validation fails
+     */
+    public function setHonorifics(?string $honorifics): self
+    {
+        if ($honorifics === null) {
+            return $this->set('honorifics', null);
+        }
+        
+        Validator::string($honorifics, 'Honorifics');
+        Validator::maxLength($honorifics, 50, 'Honorifics');
+        
+        return $this->set('honorifics', $honorifics);
     }
     
     /**
@@ -114,7 +246,7 @@ class Contact extends BaseModel
         Validator::notEmpty($firstName, 'First name');
         Validator::maxLength($firstName, 100, 'First name');
         
-        return $this->set('first_name', $firstName);
+        return $this->set('firstname', $firstName);
     }
     
     /**
@@ -130,49 +262,119 @@ class Contact extends BaseModel
         Validator::notEmpty($lastName, 'Last name');
         Validator::maxLength($lastName, 100, 'Last name');
         
-        return $this->set('last_name', $lastName);
+        return $this->set('lastname', $lastName);
     }
     
     /**
-     * Set the email
+     * Set the date of birth
      *
-     * @param string|null $email The email address or null to remove
+     * @param string|null $dateOfBirth The date of birth (format: YYYY-MM-DD) or null to remove
      * @return $this
      * @throws ValidationException If validation fails
      */
-    public function setEmail(?string $email): self
+    public function setDateOfBirth(?string $dateOfBirth): self
     {
-        if ($email === null) {
-            return $this->remove('email');
+        if ($dateOfBirth === null) {
+            return $this->set('date_of_birth', null);
         }
         
-        Validator::string($email, 'Email');
-        Validator::email($email, 'Email');
+        Validator::string($dateOfBirth, 'Date of birth');
         
-        return $this->set('email', $email);
+        // Validate date format (YYYY-MM-DD)
+        if (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $dateOfBirth)) {
+            throw new ValidationException(["Date of birth must be in format YYYY-MM-DD"]);
+        }
+        
+        return $this->set('date_of_birth', $dateOfBirth);
     }
     
     /**
-     * Set the phone number
+     * Create and set identifiers
      *
-     * @param string|null $phone The phone number or null to remove
+     * @param string|int|null $externalId The external ID
      * @return $this
      * @throws ValidationException If validation fails
      */
-    public function setPhone(?string $phone): self
+    public function createIdentifiers($externalId = null): self
     {
-        if ($phone === null) {
-            return $this->remove('phone');
+        $identifiers = new Identifiers();
+        
+        if ($externalId !== null) {
+            $identifiers->setExternalId($externalId);
         }
         
-        Validator::string($phone, 'Phone');
-        Validator::phoneNumber($phone, 'Phone');
-        
-        return $this->set('phone', $phone);
+        $this->identifiers = $identifiers;
+        return $this->set('identifiers', $identifiers->toArray());
     }
     
     /**
-     * Set the job title
+     * Set the identifiers
+     *
+     * @param Identifiers $identifiers The identifiers
+     * @return $this
+     */
+    public function setIdentifiers(Identifiers $identifiers): self
+    {
+        $this->identifiers = $identifiers;
+        return $this->set('identifiers', $identifiers->toArray());
+    }
+    
+    /**
+     * Set the external ID
+     *
+     * @param string|int|null $externalId The external ID or null to remove
+     * @return $this
+     * @throws ValidationException If validation fails
+     */
+    public function setExternalId($externalId): self
+    {
+        if ($this->identifiers === null) {
+            $this->createIdentifiers($externalId);
+            return $this;
+        }
+        
+        $this->identifiers->setExternalId($externalId);
+        return $this->set('identifiers', $this->identifiers->toArray());
+    }
+    
+    /**
+     * Create and set employment information
+     *
+     * @param string|null $jobTitle The job title
+     * @param string|null $department The department
+     * @return $this
+     * @throws ValidationException If validation fails
+     */
+    public function createEmployment(?string $jobTitle = null, ?string $department = null): self
+    {
+        $employment = new Employment();
+        
+        if ($jobTitle !== null) {
+            $employment->setJobTitle($jobTitle);
+        }
+        
+        if ($department !== null) {
+            $employment->setDepartment($department);
+        }
+        
+        $this->employment = $employment;
+        return $this->set('employment', $employment->toArray());
+    }
+    
+    /**
+     * Set the employment
+     *
+     * @param Employment $employment The employment
+     * @return $this
+     */
+    public function setEmployment(Employment $employment): self
+    {
+        $this->employment = $employment;
+        return $this->set('employment', $employment->toArray());
+    }
+    
+    /**
+     * Set the job title (creates employment if needed)
      *
      * @param string|null $jobTitle The job title or null to remove
      * @return $this
@@ -180,18 +382,16 @@ class Contact extends BaseModel
      */
     public function setJobTitle(?string $jobTitle): self
     {
-        if ($jobTitle === null) {
-            return $this->remove('job_title');
+        if ($this->employment === null) {
+            return $this->createEmployment($jobTitle);
         }
         
-        Validator::string($jobTitle, 'Job title');
-        Validator::maxLength($jobTitle, 100, 'Job title');
-        
-        return $this->set('job_title', $jobTitle);
+        $this->employment->setJobTitle($jobTitle);
+        return $this->set('employment', $this->employment->toArray());
     }
     
     /**
-     * Set the department
+     * Set the department (creates employment if needed)
      *
      * @param string|null $department The department or null to remove
      * @return $this
@@ -199,18 +399,134 @@ class Contact extends BaseModel
      */
     public function setDepartment(?string $department): self
     {
-        if ($department === null) {
-            return $this->remove('department');
+        if ($this->employment === null) {
+            return $this->createEmployment(null, $department);
         }
         
-        Validator::string($department, 'Department');
-        Validator::maxLength($department, 100, 'Department');
-        
-        return $this->set('department', $department);
+        $this->employment->setDepartment($department);
+        return $this->set('employment', $this->employment->toArray());
     }
     
     /**
-     * Set a custom field
+     * Create and set communications
+     *
+     * @param string|null $email The email address
+     * @param string|null $phoneNumber The phone number
+     * @param string|null $mobilePhone The mobile phone number
+     * @param string|null $fax The fax number
+     * @return $this
+     * @throws ValidationException If validation fails
+     */
+    public function createCommunications(
+        ?string $email = null,
+        ?string $phoneNumber = null,
+        ?string $mobilePhone = null,
+        ?string $fax = null
+    ): self {
+        $communications = new Communications();
+        
+        if ($email !== null) {
+            $communications->setEmail($email);
+        }
+        
+        if ($phoneNumber !== null) {
+            $communications->setPhoneNumber($phoneNumber);
+        }
+        
+        if ($mobilePhone !== null) {
+            $communications->setMobilePhone($mobilePhone);
+        }
+        
+        if ($fax !== null) {
+            $communications->setFax($fax);
+        }
+        
+        $this->communications = $communications;
+        return $this->set('communications', $communications->toArray());
+    }
+    
+    /**
+     * Set the communications
+     *
+     * @param Communications $communications The communications
+     * @return $this
+     */
+    public function setCommunications(Communications $communications): self
+    {
+        $this->communications = $communications;
+        return $this->set('communications', $communications->toArray());
+    }
+    
+    /**
+     * Set the email (creates communications if needed)
+     *
+     * @param string|null $email The email address or null to remove
+     * @return $this
+     * @throws ValidationException If validation fails
+     */
+    public function setEmail(?string $email): self
+    {
+        if ($this->communications === null) {
+            return $this->createCommunications($email);
+        }
+        
+        $this->communications->setEmail($email);
+        return $this->set('communications', $this->communications->toArray());
+    }
+    
+    /**
+     * Set the phone number (creates communications if needed)
+     *
+     * @param string|null $phoneNumber The phone number or null to remove
+     * @return $this
+     * @throws ValidationException If validation fails
+     */
+    public function setPhone(?string $phoneNumber): self
+    {
+        if ($this->communications === null) {
+            return $this->createCommunications(null, $phoneNumber);
+        }
+        
+        $this->communications->setPhoneNumber($phoneNumber);
+        return $this->set('communications', $this->communications->toArray());
+    }
+    
+    /**
+     * Set the mobile phone number (creates communications if needed)
+     *
+     * @param string|null $mobilePhone The mobile phone number or null to remove
+     * @return $this
+     * @throws ValidationException If validation fails
+     */
+    public function setMobile(?string $mobilePhone): self
+    {
+        if ($this->communications === null) {
+            return $this->createCommunications(null, null, $mobilePhone);
+        }
+        
+        $this->communications->setMobilePhone($mobilePhone);
+        return $this->set('communications', $this->communications->toArray());
+    }
+    
+    /**
+     * Set the fax number (creates communications if needed)
+     *
+     * @param string|null $fax The fax number or null to remove
+     * @return $this
+     * @throws ValidationException If validation fails
+     */
+    public function setFax(?string $fax): self
+    {
+        if ($this->communications === null) {
+            return $this->createCommunications(null, null, null, $fax);
+        }
+        
+        $this->communications->setFax($fax);
+        return $this->set('communications', $this->communications->toArray());
+    }
+    
+    /**
+     * Set a custom data field
      *
      * @param string $key The field key
      * @param mixed $value The field value
@@ -218,6 +534,117 @@ class Contact extends BaseModel
      */
     public function setCustomField(string $key, $value): self
     {
-        return $this->set($key, $value);
+        if (!isset($this->data['custom_data'])) {
+            $this->data['custom_data'] = [];
+        }
+        
+        $this->customData[$key] = $value;
+        $this->data['custom_data'][$key] = $value;
+        
+        return $this;
+    }
+    
+    /**
+     * Set custom data fields in bulk
+     *
+     * @param array $data The custom data fields
+     * @return $this
+     */
+    public function setCustomData(array $data): self
+    {
+        $this->customData = $data;
+        $this->data['custom_data'] = $data;
+        
+        return $this;
+    }
+    
+    /**
+     * Get the custom data
+     *
+     * @return array
+     */
+    public function getCustomData(): array
+    {
+        return $this->customData;
+    }
+    
+    /**
+     * Get the salutation
+     *
+     * @return string|null
+     */
+    public function getSalutation(): ?string
+    {
+        return $this->get('salutation');
+    }
+    
+    /**
+     * Get the honorifics
+     *
+     * @return string|null
+     */
+    public function getHonorifics(): ?string
+    {
+        return $this->get('honorifics');
+    }
+    
+    /**
+     * Get the first name
+     *
+     * @return string|null
+     */
+    public function getFirstName(): ?string
+    {
+        return $this->get('firstname');
+    }
+    
+    /**
+     * Get the last name
+     *
+     * @return string|null
+     */
+    public function getLastName(): ?string
+    {
+        return $this->get('lastname');
+    }
+    
+    /**
+     * Get the date of birth
+     *
+     * @return string|null
+     */
+    public function getDateOfBirth(): ?string
+    {
+        return $this->get('date_of_birth');
+    }
+    
+    /**
+     * Get the identifiers
+     *
+     * @return Identifiers|null
+     */
+    public function getIdentifiers(): ?Identifiers
+    {
+        return $this->identifiers;
+    }
+    
+    /**
+     * Get the employment
+     *
+     * @return Employment|null
+     */
+    public function getEmployment(): ?Employment
+    {
+        return $this->employment;
+    }
+    
+    /**
+     * Get the communications
+     *
+     * @return Communications|null
+     */
+    public function getCommunications(): ?Communications
+    {
+        return $this->communications;
     }
 }

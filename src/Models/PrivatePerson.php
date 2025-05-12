@@ -7,8 +7,11 @@ use Ameax\AmeaxJsonImportApi\Exceptions\ValidationException;
 use Ameax\AmeaxJsonImportApi\Validation\Validator;
 use InvalidArgumentException;
 
-class Organization extends BaseModel
+class PrivatePerson extends BaseModel
 {
+    public const DOCUMENT_TYPE = 'ameax_private_person_account';
+    public const SCHEMA_VERSION = '1.0';
+    
     /**
      * @var AmeaxJsonImportApi|null The API client to use for sending
      */
@@ -20,32 +23,22 @@ class Organization extends BaseModel
     protected Meta $meta;
     
     /**
-     * @var Identifiers|null The organization identifiers
+     * @var Identifiers|null The identifiers
      */
     protected ?Identifiers $identifiers = null;
     
     /**
-     * @var Address|null The organization address
+     * @var Address|null The address
      */
     protected ?Address $address = null;
     
     /**
-     * @var SocialMedia|null The organization social media
-     */
-    protected ?SocialMedia $socialMedia = null;
-    
-    /**
-     * @var Communications|null The organization communications
+     * @var Communications|null The communications
      */
     protected ?Communications $communications = null;
     
     /**
-     * @var BusinessInformation|null The organization business information
-     */
-    protected ?BusinessInformation $businessInformation = null;
-    
-    /**
-     * @var Agent|null The organization agent
+     * @var Agent|null The agent
      */
     protected ?Agent $agent = null;
     
@@ -55,23 +48,19 @@ class Organization extends BaseModel
     protected array $customData = [];
     
     /**
-     * @var array Contact objects
-     */
-    protected array $contactObjects = [];
-    
-    /**
-     * Constructor initializes a new organization with meta information
+     * Constructor initializes a new private person with meta information
      */
     public function __construct()
     {
-        $this->meta = new Meta(Meta::DOCUMENT_TYPE_ORGANIZATION);
+        $this->meta = new Meta();
+        $this->meta->setDocumentType(self::DOCUMENT_TYPE);
+        $this->meta->setSchemaVersion(self::SCHEMA_VERSION);
         
         $this->data = [
             'meta' => $this->meta->toArray(),
         ];
         
         $this->customData = [];
-        $this->contactObjects = [];
     }
     
     /**
@@ -85,72 +74,72 @@ class Organization extends BaseModel
     {
         // Handle meta data
         if (isset($data['meta']) && is_array($data['meta'])) {
-            $this->meta = Meta::fromArray($data['meta']);
+            $metaData = $data['meta'];
+            // Ensure correct document_type
+            $metaData['document_type'] = self::DOCUMENT_TYPE;
+            
+            $this->meta = Meta::fromArray($metaData, true);
             $this->data['meta'] = $this->meta->toArray();
         } else {
             // For backward compatibility
             $metaData = [
-                'document_type' => Meta::DOCUMENT_TYPE,
-                'schema_version' => Meta::SCHEMA_VERSION,
+                'document_type' => self::DOCUMENT_TYPE,
+                'schema_version' => self::SCHEMA_VERSION,
             ];
             
             if (isset($data['document_type'])) {
-                $metaData['document_type'] = $data['document_type'];
+                $metaData['document_type'] = self::DOCUMENT_TYPE; // Always use the correct document type
             }
             
             if (isset($data['schema_version'])) {
                 $metaData['schema_version'] = $data['schema_version'];
             }
             
-            $this->meta = Meta::fromArray($metaData);
+            $this->meta = Meta::fromArray($metaData, true);
             $this->data['meta'] = $this->meta->toArray();
         }
         
-        // Handle standard fields
-        if (isset($data['name'])) {
-            $this->setName($data['name']);
+        // Handle basic personal information
+        if (isset($data['salutation'])) {
+            $this->setSalutation($data['salutation']);
         }
         
-        if (isset($data['additional_name'])) {
-            $this->setAdditionalName($data['additional_name']);
+        if (isset($data['honorifics'])) {
+            $this->setHonorifics($data['honorifics']);
+        }
+        
+        if (isset($data['firstname'])) {
+            $this->setFirstName($data['firstname']);
+        }
+        
+        if (isset($data['lastname'])) {
+            $this->setLastName($data['lastname']);
+        }
+        
+        if (isset($data['date_of_birth'])) {
+            $this->setDateOfBirth($data['date_of_birth']);
         }
         
         // Handle nested objects
         if (isset($data['identifiers']) && is_array($data['identifiers'])) {
-            $this->identifiers = Identifiers::fromArray($data['identifiers']);
+            $this->identifiers = Identifiers::fromArray($data['identifiers'], true);
             $this->data['identifiers'] = $this->identifiers->toArray();
-        } elseif (isset($data['customer_number']) || isset($data['external_id'])) {
+        } elseif (isset($data['customer_number'])) {
             // For backward compatibility
-            $identifiersData = [];
-            if (isset($data['customer_number'])) {
-                $identifiersData['customer_number'] = $data['customer_number'];
-            }
-            if (isset($data['external_id'])) {
-                $identifiersData['external_id'] = $data['external_id'];
-            }
-            $this->identifiers = Identifiers::fromArray($identifiersData);
+            $identifiersData = [
+                'customer_number' => $data['customer_number']
+            ];
+            $this->identifiers = Identifiers::fromArray($identifiersData, true);
             $this->data['identifiers'] = $this->identifiers->toArray();
         }
         
         if (isset($data['address']) && is_array($data['address'])) {
-            $this->address = Address::fromArray($data['address']);
+            $this->address = Address::fromArray($data['address'], true);
             $this->data['address'] = $this->address->toArray();
         }
         
-        if (isset($data['social_media']) && is_array($data['social_media'])) {
-            $this->socialMedia = SocialMedia::fromArray($data['social_media']);
-            $this->data['social_media'] = $this->socialMedia->toArray();
-        } elseif (isset($data['website'])) {
-            // For backward compatibility
-            $socialMediaData = [
-                'web' => $data['website'],
-            ];
-            $this->socialMedia = SocialMedia::fromArray($socialMediaData);
-            $this->data['social_media'] = $this->socialMedia->toArray();
-        }
-        
         if (isset($data['communications']) && is_array($data['communications'])) {
-            $this->communications = Communications::fromArray($data['communications']);
+            $this->communications = Communications::fromArray($data['communications'], true);
             $this->data['communications'] = $this->communications->toArray();
         } elseif (isset($data['email']) || isset($data['phone']) || isset($data['mobile']) || isset($data['fax'])) {
             // For backward compatibility
@@ -167,43 +156,13 @@ class Organization extends BaseModel
             if (isset($data['fax'])) {
                 $communicationsData['fax'] = $data['fax'];
             }
-            $this->communications = Communications::fromArray($communicationsData);
+            $this->communications = Communications::fromArray($communicationsData, true);
             $this->data['communications'] = $this->communications->toArray();
         }
         
-        if (isset($data['business_information']) && is_array($data['business_information'])) {
-            $this->businessInformation = BusinessInformation::fromArray($data['business_information']);
-            $this->data['business_information'] = $this->businessInformation->toArray();
-        } elseif (isset($data['vat_id']) || isset($data['iban'])) {
-            // For backward compatibility
-            $businessInfoData = [];
-            if (isset($data['vat_id'])) {
-                $businessInfoData['vat_id'] = $data['vat_id'];
-            }
-            if (isset($data['iban'])) {
-                $businessInfoData['iban'] = $data['iban'];
-            }
-            $this->businessInformation = BusinessInformation::fromArray($businessInfoData);
-            $this->data['business_information'] = $this->businessInformation->toArray();
-        }
-        
         if (isset($data['agent']) && is_array($data['agent'])) {
-            $this->agent = Agent::fromArray($data['agent']);
+            $this->agent = Agent::fromArray($data['agent'], true);
             $this->data['agent'] = $this->agent->toArray();
-        }
-        
-        // Handle contacts
-        if (isset($data['contacts']) && is_array($data['contacts'])) {
-            $this->data['contacts'] = [];
-            $this->contactObjects = [];
-            
-            foreach ($data['contacts'] as $contactData) {
-                // Skip validation during creation to avoid premature validation errors
-                // The entire object will be validated at the end
-                $contact = Contact::fromArray($contactData, true);
-                $this->contactObjects[] = $contact;
-                $this->data['contacts'][] = $contact->toArray();
-            }
         }
         
         // Handle custom data
@@ -235,20 +194,12 @@ class Organization extends BaseModel
         }
         
         // Required fields
-        if (!$this->has('name')) {
-            $errors[] = "name is required";
+        if (!$this->has('firstname')) {
+            $errors[] = "firstname is required";
         }
         
-        if (!$this->has('identifiers')) {
-            $errors[] = "identifiers is required";
-        } elseif (is_array($this->get('identifiers'))) {
-            try {
-                $this->identifiers->validate();
-            } catch (ValidationException $e) {
-                foreach ($e->getErrors() as $error) {
-                    $errors[] = "identifiers: {$error}";
-                }
-            }
+        if (!$this->has('lastname')) {
+            $errors[] = "lastname is required";
         }
         
         if (!$this->has('address')) {
@@ -263,13 +214,28 @@ class Organization extends BaseModel
             }
         }
         
+        // Validate salutation if present
+        if ($this->has('salutation') && $this->get('salutation') !== null) {
+            $validSalutations = ['Mr.', 'Ms.', 'Mx.'];
+            if (!in_array($this->get('salutation'), $validSalutations)) {
+                $errors[] = "Salutation must be one of: " . implode(', ', $validSalutations);
+            }
+        }
+        
+        // Validate date of birth if present
+        if ($this->has('date_of_birth') && $this->get('date_of_birth') !== null) {
+            if (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $this->get('date_of_birth'))) {
+                $errors[] = "Date of birth must be in format YYYY-MM-DD";
+            }
+        }
+        
         // Validate optional nested objects if present
-        if ($this->socialMedia !== null) {
+        if ($this->identifiers !== null) {
             try {
-                $this->socialMedia->validate();
+                $this->identifiers->validate();
             } catch (ValidationException $e) {
                 foreach ($e->getErrors() as $error) {
-                    $errors[] = "social_media: {$error}";
+                    $errors[] = "identifiers: {$error}";
                 }
             }
         }
@@ -284,47 +250,12 @@ class Organization extends BaseModel
             }
         }
         
-        if ($this->businessInformation !== null) {
-            try {
-                $this->businessInformation->validate();
-            } catch (ValidationException $e) {
-                foreach ($e->getErrors() as $error) {
-                    $errors[] = "business_information: {$error}";
-                }
-            }
-        }
-        
         if ($this->agent !== null) {
             try {
                 $this->agent->validate();
             } catch (ValidationException $e) {
                 foreach ($e->getErrors() as $error) {
                     $errors[] = "agent: {$error}";
-                }
-            }
-        }
-        
-        // Validate contacts if present
-        if (!empty($this->contactObjects)) {
-            foreach ($this->contactObjects as $index => $contact) {
-                try {
-                    $contact->validate();
-                } catch (ValidationException $e) {
-                    foreach ($e->getErrors() as $error) {
-                        $errors[] = "contacts[{$index}]: {$error}";
-                    }
-                }
-            }
-        } elseif (isset($this->data['contacts']) && is_array($this->data['contacts']) && !empty($this->data['contacts'])) {
-            // If contactObjects is empty but we have contacts data, validate that data
-            foreach ($this->data['contacts'] as $index => $contactData) {
-                try {
-                    $contact = Contact::fromArray($contactData);
-                    $contact->validate();
-                } catch (ValidationException $e) {
-                    foreach ($e->getErrors() as $error) {
-                        $errors[] = "contacts[{$index}]: {$error}";
-                    }
                 }
             }
         }
@@ -337,7 +268,7 @@ class Organization extends BaseModel
     }
     
     /**
-     * Set the API client for this organization (required for sending)
+     * Set the API client for this private person (required for sending)
      *
      * @param AmeaxJsonImportApi $apiClient
      * @return $this
@@ -356,6 +287,9 @@ class Organization extends BaseModel
      */
     public function setMeta(Meta $meta): self
     {
+        // Ensure correct document_type
+        $meta->setDocumentType(self::DOCUMENT_TYPE);
+        
         $this->meta = $meta;
         return $this->set('meta', $meta->toArray());
     }
@@ -374,55 +308,113 @@ class Organization extends BaseModel
     }
     
     /**
-     * Set the organization name
+     * Set the salutation
      *
-     * @param string $name The organization name
+     * @param string|null $salutation The salutation (Mr., Ms., Mx.) or null to remove
      * @return $this
      * @throws ValidationException If validation fails
      */
-    public function setName(string $name): self
+    public function setSalutation(?string $salutation): self
     {
-        Validator::string($name, 'Name');
-        Validator::notEmpty($name, 'Name');
-        Validator::maxLength($name, 255, 'Name');
+        if ($salutation === null) {
+            return $this->set('salutation', null);
+        }
         
-        return $this->set('name', $name);
+        $validSalutations = ['Mr.', 'Ms.', 'Mx.'];
+        if (!in_array($salutation, $validSalutations)) {
+            throw new ValidationException(["Salutation must be one of: " . implode(', ', $validSalutations)]);
+        }
+        
+        return $this->set('salutation', $salutation);
     }
     
     /**
-     * Set the additional name
+     * Set the honorifics
      *
-     * @param string|null $additionalName The additional name or null to remove
+     * @param string|null $honorifics The honorifics (e.g., Dr., Prof.) or null to remove
      * @return $this
      * @throws ValidationException If validation fails
      */
-    public function setAdditionalName(?string $additionalName): self
+    public function setHonorifics(?string $honorifics): self
     {
-        if ($additionalName === null) {
-            return $this->set('additional_name', null);
+        if ($honorifics === null) {
+            return $this->set('honorifics', null);
         }
         
-        Validator::string($additionalName, 'Additional name');
-        Validator::maxLength($additionalName, 255, 'Additional name');
+        Validator::string($honorifics, 'Honorifics');
+        Validator::maxLength($honorifics, 50, 'Honorifics');
         
-        return $this->set('additional_name', $additionalName);
+        return $this->set('honorifics', $honorifics);
+    }
+    
+    /**
+     * Set the first name
+     *
+     * @param string $firstName The first name
+     * @return $this
+     * @throws ValidationException If validation fails
+     */
+    public function setFirstName(string $firstName): self
+    {
+        Validator::string($firstName, 'First name');
+        Validator::notEmpty($firstName, 'First name');
+        Validator::maxLength($firstName, 255, 'First name');
+        
+        return $this->set('firstname', $firstName);
+    }
+    
+    /**
+     * Set the last name
+     *
+     * @param string $lastName The last name
+     * @return $this
+     * @throws ValidationException If validation fails
+     */
+    public function setLastName(string $lastName): self
+    {
+        Validator::string($lastName, 'Last name');
+        Validator::notEmpty($lastName, 'Last name');
+        Validator::maxLength($lastName, 255, 'Last name');
+        
+        return $this->set('lastname', $lastName);
+    }
+    
+    /**
+     * Set the date of birth
+     *
+     * @param string|null $dateOfBirth The date of birth (format: YYYY-MM-DD) or null to remove
+     * @return $this
+     * @throws ValidationException If validation fails
+     */
+    public function setDateOfBirth(?string $dateOfBirth): self
+    {
+        if ($dateOfBirth === null) {
+            return $this->set('date_of_birth', null);
+        }
+        
+        Validator::string($dateOfBirth, 'Date of birth');
+        
+        // Validate date format (YYYY-MM-DD)
+        if (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $dateOfBirth)) {
+            throw new ValidationException(["Date of birth must be in format YYYY-MM-DD"]);
+        }
+        
+        return $this->set('date_of_birth', $dateOfBirth);
     }
     
     /**
      * Create and set identifiers
      *
-     * @param string|int $customerNumber The customer number
-     * @param string|int|null $externalId The external ID
+     * @param string|null $customerNumber The customer number
      * @return $this
      * @throws ValidationException If validation fails
      */
-    public function createIdentifiers($customerNumber, $externalId = null): self
+    public function createIdentifiers(?string $customerNumber = null): self
     {
         $identifiers = new Identifiers();
-        $identifiers->setCustomerNumber($customerNumber);
         
-        if ($externalId !== null) {
-            $identifiers->setExternalId($externalId);
+        if ($customerNumber !== null) {
+            $identifiers->setCustomerNumber($customerNumber);
         }
         
         $this->identifiers = $identifiers;
@@ -444,38 +436,21 @@ class Organization extends BaseModel
     /**
      * Set the customer number
      *
-     * @param string|int $customerNumber The customer number
+     * @param string|int|null $customerNumber The customer number or null to remove
      * @return $this
      * @throws ValidationException If validation fails
      */
     public function setCustomerNumber($customerNumber): self
     {
         if ($this->identifiers === null) {
+            if ($customerNumber === null) {
+                return $this;
+            }
+            
             return $this->createIdentifiers($customerNumber);
         }
         
         $this->identifiers->setCustomerNumber($customerNumber);
-        return $this->set('identifiers', $this->identifiers->toArray());
-    }
-    
-    /**
-     * Set the external ID
-     *
-     * @param string|int|null $externalId The external ID or null to remove
-     * @return $this
-     * @throws ValidationException If validation fails
-     */
-    public function setExternalId($externalId): self
-    {
-        if ($this->identifiers === null) {
-            if ($externalId === null) {
-                throw new InvalidArgumentException("Cannot set external_id to null when identifiers is not set. You must provide a customer_number.");
-            }
-            
-            return $this->createIdentifiers($externalId, $externalId);
-        }
-        
-        $this->identifiers->setExternalId($externalId);
         return $this->set('identifiers', $this->identifiers->toArray());
     }
     
@@ -521,7 +496,7 @@ class Organization extends BaseModel
     public function setPostalCode(string $postalCode): self
     {
         if (!$this->address) {
-            throw new InvalidArgumentException("Cannot set postal code on organization without an address. Create an address first.");
+            throw new InvalidArgumentException("Cannot set postal code without an address. Create an address first.");
         }
         
         $this->address->setPostalCode($postalCode);
@@ -538,7 +513,7 @@ class Organization extends BaseModel
     public function setLocality(string $locality): self
     {
         if (!$this->address) {
-            throw new InvalidArgumentException("Cannot set locality on organization without an address. Create an address first.");
+            throw new InvalidArgumentException("Cannot set locality without an address. Create an address first.");
         }
         
         $this->address->setLocality($locality);
@@ -555,7 +530,7 @@ class Organization extends BaseModel
     public function setCountry(string $country): self
     {
         if (!$this->address) {
-            throw new InvalidArgumentException("Cannot set country on organization without an address. Create an address first.");
+            throw new InvalidArgumentException("Cannot set country without an address. Create an address first.");
         }
         
         $this->address->setCountry($country);
@@ -572,7 +547,7 @@ class Organization extends BaseModel
     public function setRoute(?string $route): self
     {
         if (!$this->address) {
-            throw new InvalidArgumentException("Cannot set route on organization without an address. Create an address first.");
+            throw new InvalidArgumentException("Cannot set route without an address. Create an address first.");
         }
         
         $this->address->setRoute($route);
@@ -601,63 +576,11 @@ class Organization extends BaseModel
     public function setHouseNumber(?string $houseNumber): self
     {
         if (!$this->address) {
-            throw new InvalidArgumentException("Cannot set house number on organization without an address. Create an address first.");
+            throw new InvalidArgumentException("Cannot set house number without an address. Create an address first.");
         }
         
         $this->address->setHouseNumber($houseNumber);
         return $this->set('address', $this->address->toArray());
-    }
-    
-    /**
-     * Create and set social media
-     *
-     * @param string|null $web The website URL
-     * @return $this
-     * @throws ValidationException If validation fails
-     */
-    public function createSocialMedia(?string $web = null): self
-    {
-        $socialMedia = new SocialMedia();
-        
-        if ($web !== null) {
-            $socialMedia->setWeb($web);
-        }
-        
-        $this->socialMedia = $socialMedia;
-        return $this->set('social_media', $socialMedia->toArray());
-    }
-    
-    /**
-     * Set the social media
-     *
-     * @param SocialMedia $socialMedia The social media
-     * @return $this
-     */
-    public function setSocialMedia(SocialMedia $socialMedia): self
-    {
-        $this->socialMedia = $socialMedia;
-        return $this->set('social_media', $socialMedia->toArray());
-    }
-    
-    /**
-     * Set the website (creates social media if needed)
-     *
-     * @param string|null $website The website URL or null to remove
-     * @return $this
-     * @throws ValidationException If validation fails
-     */
-    public function setWebsite(?string $website): self
-    {
-        if ($this->socialMedia === null) {
-            if ($website === null) {
-                return $this;
-            }
-            
-            return $this->createSocialMedia($website);
-        }
-        
-        $this->socialMedia->setWeb($website);
-        return $this->set('social_media', $this->socialMedia->toArray());
     }
     
     /**
@@ -795,84 +718,6 @@ class Organization extends BaseModel
     }
     
     /**
-     * Create and set business information
-     *
-     * @param string|null $vatId The VAT ID
-     * @param string|null $iban The IBAN
-     * @return $this
-     * @throws ValidationException If validation fails
-     */
-    public function createBusinessInformation(?string $vatId = null, ?string $iban = null): self
-    {
-        $businessInfo = new BusinessInformation();
-        
-        if ($vatId !== null) {
-            $businessInfo->setVatId($vatId);
-        }
-        
-        if ($iban !== null) {
-            $businessInfo->setIban($iban);
-        }
-        
-        $this->businessInformation = $businessInfo;
-        return $this->set('business_information', $businessInfo->toArray());
-    }
-    
-    /**
-     * Set the business information
-     *
-     * @param BusinessInformation $businessInfo The business information
-     * @return $this
-     */
-    public function setBusinessInformation(BusinessInformation $businessInfo): self
-    {
-        $this->businessInformation = $businessInfo;
-        return $this->set('business_information', $businessInfo->toArray());
-    }
-    
-    /**
-     * Set the VAT ID (creates business information if needed)
-     *
-     * @param string|null $vatId The VAT ID or null to remove
-     * @return $this
-     * @throws ValidationException If validation fails
-     */
-    public function setVatId(?string $vatId): self
-    {
-        if ($this->businessInformation === null) {
-            if ($vatId === null) {
-                return $this;
-            }
-            
-            return $this->createBusinessInformation($vatId);
-        }
-        
-        $this->businessInformation->setVatId($vatId);
-        return $this->set('business_information', $this->businessInformation->toArray());
-    }
-    
-    /**
-     * Set the IBAN (creates business information if needed)
-     *
-     * @param string|null $iban The IBAN or null to remove
-     * @return $this
-     * @throws ValidationException If validation fails
-     */
-    public function setIban(?string $iban): self
-    {
-        if ($this->businessInformation === null) {
-            if ($iban === null) {
-                return $this;
-            }
-            
-            return $this->createBusinessInformation(null, $iban);
-        }
-        
-        $this->businessInformation->setIban($iban);
-        return $this->set('business_information', $this->businessInformation->toArray());
-    }
-    
-    /**
      * Create and set agent
      *
      * @param string|int|null $externalId The external ID
@@ -922,70 +767,6 @@ class Organization extends BaseModel
         
         $this->agent->setExternalId($externalId);
         return $this->set('agent', $this->agent->toArray());
-    }
-    
-    /**
-     * Create and add a contact to the organization
-     *
-     * @param string $firstName First name
-     * @param string $lastName Last name
-     * @param array $additionalData Additional contact data
-     * @return $this
-     * @throws ValidationException If validation fails
-     */
-    public function addContact(string $firstName, string $lastName, array $additionalData = []): self
-    {
-        $contact = new Contact();
-        $contact->setFirstName($firstName)
-                ->setLastName($lastName);
-        
-        // Set additional data using setters when available
-        foreach ($additionalData as $key => $value) {
-            $method = 'set' . str_replace('_', '', ucwords($key, '_'));
-            if (method_exists($contact, $method)) {
-                $contact->$method($value);
-            } else {
-                $contact->setCustomField($key, $value);
-            }
-        }
-        
-        // Validate the contact
-        $contact->validate();
-        
-        // Add the contact to the organization
-        if (!isset($this->data['contacts'])) {
-            $this->data['contacts'] = [];
-            $this->contactObjects = [];
-        }
-        
-        $this->contactObjects[] = $contact;
-        $this->data['contacts'][] = $contact->toArray();
-        
-        return $this;
-    }
-    
-    /**
-     * Add a pre-configured contact object to the organization
-     *
-     * @param Contact $contact The contact to add
-     * @return $this
-     * @throws ValidationException If validation fails
-     */
-    public function addContactObject(Contact $contact): self
-    {
-        // Validate the contact
-        $contact->validate();
-        
-        // Add the contact to the organization
-        if (!isset($this->data['contacts'])) {
-            $this->data['contacts'] = [];
-            $this->contactObjects = [];
-        }
-        
-        $this->contactObjects[] = $contact;
-        $this->data['contacts'][] = $contact->toArray();
-        
-        return $this;
     }
     
     /**
@@ -1073,23 +854,53 @@ class Organization extends BaseModel
     }
     
     /**
-     * Get the organization name
+     * Get the salutation
      *
      * @return string|null
      */
-    public function getName(): ?string
+    public function getSalutation(): ?string
     {
-        return $this->get('name');
+        return $this->get('salutation');
     }
     
     /**
-     * Get the additional name
+     * Get the honorifics
      *
      * @return string|null
      */
-    public function getAdditionalName(): ?string
+    public function getHonorifics(): ?string
     {
-        return $this->get('additional_name');
+        return $this->get('honorifics');
+    }
+    
+    /**
+     * Get the first name
+     *
+     * @return string|null
+     */
+    public function getFirstName(): ?string
+    {
+        return $this->get('firstname');
+    }
+    
+    /**
+     * Get the last name
+     *
+     * @return string|null
+     */
+    public function getLastName(): ?string
+    {
+        return $this->get('lastname');
+    }
+    
+    /**
+     * Get the date of birth
+     *
+     * @return string|null
+     */
+    public function getDateOfBirth(): ?string
+    {
+        return $this->get('date_of_birth');
     }
     
     /**
@@ -1103,6 +914,16 @@ class Organization extends BaseModel
     }
     
     /**
+     * Get the customer number
+     *
+     * @return string|int|null
+     */
+    public function getCustomerNumber()
+    {
+        return $this->identifiers ? $this->identifiers->getCustomerNumber() : null;
+    }
+    
+    /**
      * Get the address
      *
      * @return Address|null
@@ -1110,26 +931,6 @@ class Organization extends BaseModel
     public function getAddress(): ?Address
     {
         return $this->address;
-    }
-    
-    /**
-     * Get the social media
-     *
-     * @return SocialMedia|null
-     */
-    public function getSocialMedia(): ?SocialMedia
-    {
-        return $this->socialMedia;
-    }
-    
-    /**
-     * Get the website URL
-     *
-     * @return string|null
-     */
-    public function getWebsite(): ?string
-    {
-        return $this->socialMedia ? $this->socialMedia->getWeb() : null;
     }
     
     /**
@@ -1183,36 +984,6 @@ class Organization extends BaseModel
     }
     
     /**
-     * Get the business information
-     *
-     * @return BusinessInformation|null
-     */
-    public function getBusinessInformation(): ?BusinessInformation
-    {
-        return $this->businessInformation;
-    }
-    
-    /**
-     * Get the VAT ID
-     *
-     * @return string|null
-     */
-    public function getVatId(): ?string
-    {
-        return $this->businessInformation ? $this->businessInformation->getVatId() : null;
-    }
-    
-    /**
-     * Get the IBAN
-     *
-     * @return string|null
-     */
-    public function getIban(): ?string
-    {
-        return $this->businessInformation ? $this->businessInformation->getIban() : null;
-    }
-    
-    /**
      * Get the agent
      *
      * @return Agent|null
@@ -1223,17 +994,7 @@ class Organization extends BaseModel
     }
     
     /**
-     * Get the contacts
-     *
-     * @return array
-     */
-    public function getContacts(): array
-    {
-        return $this->contactObjects;
-    }
-    
-    /**
-     * Send the organization to the Ameax API
+     * Send the private person to the Ameax API
      *
      * @return array The API response
      * @throws ValidationException If validation fails
@@ -1241,7 +1002,7 @@ class Organization extends BaseModel
      */
     public function sendToAmeax(): array
     {
-        // Validate the organization before sending
+        // Validate the private person before sending
         $this->validate();
         
         if (!$this->apiClient) {
@@ -1250,6 +1011,6 @@ class Organization extends BaseModel
             );
         }
         
-        return $this->apiClient->sendOrganization($this->data);
+        return $this->apiClient->sendPrivatePerson($this->data);
     }
 }

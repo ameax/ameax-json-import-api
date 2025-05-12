@@ -36,7 +36,10 @@ class Address extends BaseModel
             $this->setCountry($data['country']);
         }
         
-        if (isset($data['street'])) {
+        if (isset($data['route'])) {
+            $this->setRoute($data['route']);
+        } elseif (isset($data['street'])) {
+            // Backward compatibility
             $this->setStreet($data['street']);
         }
         
@@ -46,7 +49,7 @@ class Address extends BaseModel
         
         // Handle any other fields
         foreach ($data as $key => $value) {
-            if (!in_array($key, ['postal_code', 'locality', 'country', 'street', 'house_number'])) {
+            if (!in_array($key, ['postal_code', 'locality', 'country', 'route', 'street', 'house_number'])) {
                 $this->set($key, $value);
             }
         }
@@ -133,7 +136,26 @@ class Address extends BaseModel
     }
     
     /**
-     * Set the street
+     * Set the route (street)
+     *
+     * @param string|null $route The route/street or null to remove
+     * @return $this
+     * @throws ValidationException If validation fails
+     */
+    public function setRoute(?string $route): self
+    {
+        if ($route === null) {
+            return $this->set('route', null);
+        }
+        
+        Validator::string($route, 'Route');
+        Validator::maxLength($route, 100, 'Route');
+        
+        return $this->set('route', $route);
+    }
+    
+    /**
+     * Set the street (alias for setRoute)
      *
      * @param string|null $street The street or null to remove
      * @return $this
@@ -141,14 +163,7 @@ class Address extends BaseModel
      */
     public function setStreet(?string $street): self
     {
-        if ($street === null) {
-            return $this->remove('street');
-        }
-        
-        Validator::string($street, 'Street');
-        Validator::maxLength($street, 100, 'Street');
-        
-        return $this->set('street', $street);
+        return $this->setRoute($street);
     }
     
     /**

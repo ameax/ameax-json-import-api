@@ -1,0 +1,61 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "properties": {
+    "meta": {
+      "type": "object",
+      "properties": {
+        "document_type": { "type": "string", "enum": ["ameax_private_person_account"] },
+        "schema_version": { "type": "string" },
+        "import_status": {
+          "type": "object",
+          "additionalProperties": true
+        }
+      },
+      "required": ["document_type", "schema_version"]
+    },
+    "salutation": { "type": ["string", "null"], "enum": ["Mr.", "Ms.", "Mx.", null] },
+    "honorifics": { "type": ["string", "null"] },
+    "firstname": { "type": "string" },
+    "lastname": { "type": "string" },
+    "date_of_birth": { "type": ["string", "null"], "format": "date" },
+    "identifiers": {
+      "type": "object",
+      "properties": {
+        "customer_number": { "type": ["string", "null"] }
+      }
+    },
+    "address": {
+      "type": "object",
+      "properties": {
+        "route": { "type": ["string", "null"] },
+        "house_number": { "type": ["string", "null"] },
+        "postal_code": { "type": "string" },
+        "locality": { "type": "string" },
+        "country": { "type": "string", "pattern": "^[A-Z]{2}$" }
+      },
+      "required": ["postal_code", "locality", "country"]
+    },
+    "communications": {
+      "type": ["object", "null"],
+      "properties": {
+        "phone_number": { "type": ["string", "null"] },
+        "mobile_phone": { "type": ["string", "null"] },
+        "email": { "type": ["string", "null"], "format": "email" },
+        "fax": { "type": ["string", "null"] }
+      }
+    },
+    "agent": {
+      "type": ["object"],
+      "properties": {
+        "external_id": { "type": ["string", "null"] }
+      }
+    },
+    "custom_data": {
+      "type": ["object", "null"],
+      "additionalProperties": true
+    }
+  },
+  "required": ["meta", "firstname", "lastname", "address"],
+  "additionalProperties": false
+}
