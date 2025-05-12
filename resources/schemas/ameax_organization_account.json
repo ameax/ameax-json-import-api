@@ -1,0 +1,69 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Ameax Organization Account",
+  "type": "object",
+  "required": ["document_type", "schema_version", "name", "address"],
+  "properties": {
+    "document_type": {
+      "type": "string",
+      "const": "ameax_organization_account"
+    },
+    "schema_version": {
+      "type": "string",
+      "const": "1.0"
+    },
+    "name": {
+      "type": "string",
+      "description": "Organization name"
+    },
+    "address": {
+      "type": "object",
+      "required": ["postal_code", "locality", "country"],
+      "properties": {
+        "street": {
+          "type": "string"
+        },
+        "house_number": {
+          "type": "string"
+        },
+        "postal_code": {
+          "type": "string"
+        },
+        "locality": {
+          "type": "string"
+        },
+        "country": {
+          "type": "string",
+          "description": "ISO 3166-1 alpha-2 country code"
+        }
+      }
+    },
+    "contacts": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "first_name": {
+            "type": "string"
+          },
+          "last_name": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string",
+            "format": "email"
+          },
+          "phone": {
+            "type": "string"
+          },
+          "job_title": {
+            "type": "string"
+          },
+          "department": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+}

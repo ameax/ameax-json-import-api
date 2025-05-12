@@ -1,24 +1,26 @@
 {
-    "name": ":vendor_slug/:package_slug",
-    "description": ":package_description",
+    "name": "ameax/ameax-json-import-api",
+    "description": "A PHP package for sending data to Ameax via their JSON API",
     "keywords": [
-        ":vendor_name",
+        "ameax Unternehmenssoftware",
         "laravel",
-        ":package_slug"
+        "ameax-json-import-api"
     ],
-    "homepage": "https://github.com/:vendor_slug/:package_slug",
+    "homepage": "https://github.com/ameax/ameax-json-import-api",
     "license": "MIT",
     "authors": [
         {
-            "name": ":author_name",
-            "email": "author@domain.com",
+            "name": "Michael Schmidt",
+            "email": "69188126+ms-aranes@users.noreply.github.com",
             "role": "Developer"
         }
     ],
     "require": {
-        "php": "^8.4",
+        "php": "^8.2",
         "spatie/laravel-package-tools": "^1.16",
-        "illuminate/contracts": "^10.0||^11.0||^12.0"
+        "illuminate/contracts": "^10.0||^11.0||^12.0",
+        "guzzlehttp/guzzle": "^7.0",
+        "justinrainbow/json-schema": "^5.2"
     },
     "require-dev": {
         "laravel/pint": "^1.14",
@@ -35,13 +37,13 @@
     },
     "autoload": {
         "psr-4": {
-            "VendorName\\Skeleton\\": "src/",
-            "VendorName\\Skeleton\\Database\\Factories\\": "database/factories/"
+            "Ameax\\AmeaxJsonImportApi\\": "src/",
+            "Ameax\\AmeaxJsonImportApi\\Database\\Factories\\": "database/factories/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "VendorName\\Skeleton\\Tests\\": "tests/",
+            "Ameax\\AmeaxJsonImportApi\\Tests\\": "tests/",
             "Workbench\\App\\": "workbench/app/"
         }
     },
@@ -63,10 +65,10 @@
     "extra": {
         "laravel": {
             "providers": [
-                "VendorName\\Skeleton\\SkeletonServiceProvider"
+                "Ameax\\AmeaxJsonImportApi\\AmeaxJsonImportApiServiceProvider"
             ],
             "aliases": {
-                "Skeleton": "VendorName\\Skeleton\\Facades\\Skeleton"
+                "AmeaxJsonImportApi": "Ameax\\AmeaxJsonImportApi\\Facades\\AmeaxJsonImportApi"
             }
         }
     },
