@@ -13,11 +13,13 @@ class AmeaxJsonImportApi
     protected HttpClient $client;
     protected string $apiKey;
     protected string $baseUrl;
+    protected ?string $schemasPath;
     
-    public function __construct(string $apiKey, string $host)
+    public function __construct(string $apiKey, string $host, ?string $schemasPath = null)
     {
         $this->apiKey = $apiKey;
         $this->baseUrl = rtrim($host, '/') . '/rest-api';
+        $this->schemasPath = $schemasPath;
         
         $this->client = new HttpClient([
             'headers' => [
@@ -94,10 +96,8 @@ class AmeaxJsonImportApi
      */
     protected function getSchemaFilePath(string $documentType): string
     {
-        $customPath = config('ameax-json-import-api.schemas_path');
-        
-        if ($customPath) {
-            return rtrim($customPath, '/') . "/{$documentType}.json";
+        if ($this->schemasPath) {
+            return rtrim($this->schemasPath, '/') . "/{$documentType}.json";
         }
         
         return __DIR__ . "/../resources/schemas/{$documentType}.json";

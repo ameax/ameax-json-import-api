@@ -11,11 +11,12 @@ The main client class for interacting with the Ameax API.
 #### Constructor
 
 ```php
-public function __construct(string $apiKey, string $host)
+public function __construct(string $apiKey, string $host, ?string $schemasPath = null)
 ```
 
 - `$apiKey`: Your Ameax API key for authentication
 - `$host`: Your Ameax API host URL (e.g., 'https://your-database.ameax.de' or 'http://your-database.ameax.localhost')
+- `$schemasPath`: Optional path to custom JSON schema files
 
 #### Methods
 
@@ -116,32 +117,58 @@ Gets the validation error messages.
 
 ## Laravel Integration
 
-### Service Provider
+This package is framework-agnostic but can be easily integrated with Laravel.
 
-The package includes a service provider that automatically registers the client with your Laravel application:
+### Creating a Service Provider
+
+You can create a simple service provider to integrate with Laravel:
 
 ```php
-Ameax\AmeaxJsonImportApi\AmeaxJsonImportApiServiceProvider::class
+<?php
+
+namespace App\Providers;
+
+use Illuminate\Support\ServiceProvider;
+use Ameax\AmeaxJsonImportApi\AmeaxJsonImportApi;
+
+class AmeaxServiceProvider extends ServiceProvider
+{
+    public function register()
+    {
+        $this->app->singleton('ameax-json-import-api', function ($app) {
+            return new AmeaxJsonImportApi(
+                config('services.ameax.api_key'),
+                config('services.ameax.host'),
+                config('services.ameax.schemas_path')
+            );
+        });
+        
+        $this->app->alias('ameax-json-import-api', AmeaxJsonImportApi::class);
+    }
+}
 ```
 
-### Facade
-
-For Laravel applications, you can use the facade to access the client:
+Add it to your `config/app.php` providers array:
 
 ```php
-use Ameax\AmeaxJsonImportApi\Facades\AmeaxJsonImportApi;
+App\Providers\AmeaxServiceProvider::class,
+```
 
-$organization = AmeaxJsonImportApi::createOrganization(
-    'ACME Corporation',
-    '12345',
-    'Berlin',
-    'DE'
-);
+### Configuration
+
+Add the following to your `config/services.php`:
+
+```php
+'ameax' => [
+    'api_key' => env('AMEAX_API_KEY'),
+    'host' => env('AMEAX_API_HOST', 'https://your-database.ameax.de'),
+    'schemas_path' => null,
+],
 ```
 
 ### Dependency Injection
 
-You can also use dependency injection to get the client instance:
+You can use dependency injection to get the client instance:
 
 ```php
 use Ameax\AmeaxJsonImportApi\AmeaxJsonImportApi;

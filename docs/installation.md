@@ -6,7 +6,6 @@ This package can be installed via Composer. It requires PHP 8.2 or higher.
 
 - PHP 8.2 or higher
 - Composer
-- Laravel 10.0+ (for Laravel integration)
 
 ## Installation Steps
 
@@ -16,61 +15,70 @@ This package can be installed via Composer. It requires PHP 8.2 or higher.
 composer require ameax/ameax-json-import-api
 ```
 
-### Laravel Setup
+## Basic Usage
 
-1. Publish the configuration file:
-
-```bash
-php artisan vendor:publish --tag="ameax-json-import-api-config"
-```
-
-2. Add your credentials to your `.env` file:
-
-```
-AMEAX_API_KEY=your-api-key
-AMEAX_API_HOST=https://your-database.ameax.de
-```
-
-For local development, you can use a local host:
-
-```
-AMEAX_API_HOST=http://your-database.ameax.localhost
-```
-
-3. The package will automatically register the service provider and facade.
-
-### Non-Laravel Setup
-
-For non-Laravel PHP projects, you'll need to require the package via Composer and then instantiate the client manually:
+After installing the package, you can use it in your PHP project:
 
 ```php
 use Ameax\AmeaxJsonImportApi\AmeaxJsonImportApi;
 
-$client = new AmeaxJsonImportApi('your-api-key', 'your-database-name');
+// Initialize the client with your API key and host
+$client = new AmeaxJsonImportApi(
+    'your-api-key',
+    'https://your-database.ameax.de'
+);
+
+// Create and send an organization
+$organization = $client->createOrganization(
+    'ACME Corporation',
+    '12345',
+    'Berlin',
+    'DE'
+);
+
+$response = $client->sendOrganization($organization);
 ```
 
 ## JSON Schema Files
 
 The package includes JSON schema files for validating your data before sending it to the Ameax API. By default, it uses the schema files in the `resources/schemas` directory of the package.
 
-If you want to use your own schema files, you can specify the path in the config file (for Laravel) or when initializing the client (for non-Laravel projects).
+### Custom Schema Path
 
-### Custom Schema Path in Laravel
-
-In your published config file:
+If you want to use your own schema files, you can specify the path when initializing the client:
 
 ```php
-'schemas_path' => storage_path('app/schemas'),
+$client = new AmeaxJsonImportApi(
+    'your-api-key',
+    'https://your-database.ameax.de',
+    '/path/to/your/schemas'
+);
 ```
 
-### Custom Schema Path in Non-Laravel Projects
+## Environment Flexibility
 
-Create a config array and pass it to the client:
+You can use different hosts for different environments:
 
+### Production
 ```php
-$config = [
-    'schemas_path' => '/path/to/your/schemas',
-];
+$client = new AmeaxJsonImportApi(
+    'your-api-key',
+    'https://your-database.ameax.de'
+);
+```
 
-$client = new AmeaxJsonImportApi('your-api-key', 'https://your-database.ameax.de', $config);
+### Local Development
+```php
+$client = new AmeaxJsonImportApi(
+    'your-api-key',
+    'http://your-database.ameax.localhost'
+);
+```
+
+### Testing
+```php
+$client = new AmeaxJsonImportApi(
+    'test-api-key',
+    'http://test-ameax-api'
+);
 ```
