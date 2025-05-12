@@ -15,7 +15,7 @@ try {
     $organization = $client->createOrganization(
         'ACME Corporation',  // name
         '12345',             // postal_code
-        'Berlin',            // locality
+        '12345',             // locality
         'DE'                 // country
     );
     
@@ -41,10 +41,21 @@ try {
         ]
     );
     
-    // Add another contact
+    // Add another contact with more direct validation
     $organization->addContact('Jane', 'Smith', [
         'email' => 'jane.smith@acme-corp.com',
         'job_title' => 'CTO'
+    ]);
+    
+    // Set some custom fields
+    $organization->setCustomField('industry', 'Technology');
+    $organization->setCustomField('founded_year', 1995);
+    
+    // Set multiple custom fields at once
+    $organization->setCustomData([
+        'employees_count' => 250,
+        'annual_revenue' => '10M-50M',
+        'public_company' => false
     ]);
     
     // Method 2: Create from an existing array
@@ -62,17 +73,24 @@ try {
     $organization2 = $client->organizationFromArray($data);
     $organization2->setEmail('info@xyz-ltd.com');
     
-    // Submit the first organization to Ameax
-    $response = $organization->submit();
+    // Validate before sending
+    if ($organization->validate()) {
+        echo "Organization data is valid!\n";
+    }
+    
+    // Send the first organization to Ameax
+    $response = $organization->sendToAmeax();
     
     echo "Organization successfully sent to Ameax!\n";
     echo "Response: " . json_encode($response, JSON_PRETTY_PRINT) . "\n";
     
 } catch (ValidationException $e) {
-    echo "JSON validation failed:\n";
+    echo "Validation failed:\n";
     foreach ($e->getErrors() as $error) {
         echo "- {$error}\n";
     }
+} catch (\InvalidArgumentException $e) {
+    echo "Invalid argument: " . $e->getMessage() . "\n";
 } catch (\Exception $e) {
     echo "Error: " . $e->getMessage() . "\n";
 }

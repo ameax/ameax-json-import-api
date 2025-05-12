@@ -7,6 +7,8 @@ use GuzzleHttp\Exception\GuzzleException;
 use JsonSchema\Validator;
 use Ameax\AmeaxJsonImportApi\Exceptions\ValidationException;
 use Ameax\AmeaxJsonImportApi\Models\Organization;
+use Ameax\AmeaxJsonImportApi\Models\Address;
+use Ameax\AmeaxJsonImportApi\Models\Contact;
 
 class AmeaxJsonImportApi
 {
@@ -45,6 +47,7 @@ class AmeaxJsonImportApi
      * @param string $locality City/town
      * @param string $country Country code (ISO 3166-1 alpha-2)
      * @return Organization
+     * @throws ValidationException If validation fails
      */
     public function createOrganization(string $name, string $postalCode, string $locality, string $country): Organization
     {
@@ -57,11 +60,39 @@ class AmeaxJsonImportApi
      *
      * @param array $data The organization data
      * @return Organization
+     * @throws ValidationException If validation fails
      */
     public function organizationFromArray(array $data): Organization
     {
         $organization = Organization::fromArray($data);
         return $organization->setApiClient($this);
+    }
+    
+    /**
+     * Create an address with required fields
+     * 
+     * @param string $postalCode Postal code
+     * @param string $locality City/town
+     * @param string $country Country code (ISO 3166-1 alpha-2)
+     * @return Address
+     * @throws ValidationException If validation fails
+     */
+    public function createAddress(string $postalCode, string $locality, string $country): Address
+    {
+        return Address::create($postalCode, $locality, $country);
+    }
+    
+    /**
+     * Create a contact with required fields
+     * 
+     * @param string $firstName First name
+     * @param string $lastName Last name
+     * @return Contact
+     * @throws ValidationException If validation fails
+     */
+    public function createContact(string $firstName, string $lastName): Contact
+    {
+        return Contact::create($firstName, $lastName);
     }
     
     /**
@@ -78,8 +109,11 @@ class AmeaxJsonImportApi
             throw new \InvalidArgumentException('Invalid organization data: document_type must be ' . Organization::DOCUMENT_TYPE);
         }
         
-        // Validate the organization data against the JSON schema
-        $this->validate($organization, Organization::DOCUMENT_TYPE);
+        // For schemas path validation
+        $schemaFile = $this->getSchemaFilePath(Organization::DOCUMENT_TYPE);
+        if (file_exists($schemaFile)) {
+            $this->validateAgainstSchema($organization, Organization::DOCUMENT_TYPE);
+        }
         
         try {
             $response = $this->client->post("{$this->baseUrl}/imports", [
@@ -93,14 +127,14 @@ class AmeaxJsonImportApi
     }
     
     /**
-     * Validate data against the appropriate JSON schema
+     * Validate data against the appropriate JSON schema file
      *
      * @param array $data The data to validate
      * @param string $documentType The type of document being validated
      * @return bool True if validation passes
      * @throws ValidationException If validation fails
      */
-    protected function validate(array $data, string $documentType): bool
+    protected function validateAgainstSchema(array $data, string $documentType): bool
     {
         $schemaFile = $this->getSchemaFilePath($documentType);
         

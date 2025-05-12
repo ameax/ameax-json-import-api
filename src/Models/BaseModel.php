@@ -3,6 +3,7 @@
 namespace Ameax\AmeaxJsonImportApi\Models;
 
 use JsonSerializable;
+use Ameax\AmeaxJsonImportApi\Exceptions\ValidationException;
 
 abstract class BaseModel implements JsonSerializable
 {
@@ -13,14 +14,32 @@ abstract class BaseModel implements JsonSerializable
      *
      * @param array $data
      * @return static
+     * @throws ValidationException If the data fails validation
      */
     public static function fromArray(array $data): static
     {
         $instance = new static();
-        $instance->data = $data;
+        $instance->populate($data);
         
         return $instance;
     }
+    
+    /**
+     * Populate the model with data using setters
+     *
+     * @param array $data
+     * @return $this
+     * @throws ValidationException If the data fails validation
+     */
+    abstract protected function populate(array $data): self;
+    
+    /**
+     * Validate the model data before saving/sending
+     *
+     * @return bool True if validation passes
+     * @throws ValidationException If validation fails
+     */
+    abstract public function validate(): bool;
     
     /**
      * Convert the model instance to an array
@@ -33,40 +52,117 @@ abstract class BaseModel implements JsonSerializable
     }
     
     /**
-     * Set a value in the data array
+     * Set a value in the data array with dot notation support
      *
-     * @param string $key
-     * @param mixed $value
+     * @param string $key The key to set (can use dot notation)
+     * @param mixed $value The value to set
      * @return $this
      */
     protected function set(string $key, $value): self
     {
-        $this->data[$key] = $value;
+        if (strpos($key, '.') === false) {
+            $this->data[$key] = $value;
+            return $this;
+        }
+        
+        $keys = explode('.', $key);
+        $lastKey = array_pop($keys);
+        
+        $current = &$this->data;
+        foreach ($keys as $nestedKey) {
+            if (!isset($current[$nestedKey]) || !is_array($current[$nestedKey])) {
+                $current[$nestedKey] = [];
+            }
+            
+            $current = &$current[$nestedKey];
+        }
+        
+        $current[$lastKey] = $value;
         
         return $this;
     }
     
     /**
-     * Get a value from the data array
+     * Get a value from the data array with dot notation support
      *
-     * @param string $key
-     * @param mixed $default
+     * @param string $key The key to get (can use dot notation)
+     * @param mixed $default The default value if key doesn't exist
      * @return mixed
      */
     protected function get(string $key, $default = null)
     {
-        return $this->data[$key] ?? $default;
+        if (strpos($key, '.') === false) {
+            return $this->data[$key] ?? $default;
+        }
+        
+        $keys = explode('.', $key);
+        $value = $this->data;
+        
+        foreach ($keys as $nestedKey) {
+            if (!isset($value[$nestedKey])) {
+                return $default;
+            }
+            
+            $value = $value[$nestedKey];
+        }
+        
+        return $value;
     }
     
     /**
-     * Check if a key exists in the data array
+     * Check if a key exists in the data array with dot notation support
      *
-     * @param string $key
+     * @param string $key The key to check (can use dot notation)
      * @return bool
      */
     protected function has(string $key): bool
     {
-        return isset($this->data[$key]);
+        if (strpos($key, '.') === false) {
+            return isset($this->data[$key]);
+        }
+        
+        $keys = explode('.', $key);
+        $value = $this->data;
+        
+        foreach ($keys as $nestedKey) {
+            if (!isset($value[$nestedKey])) {
+                return false;
+            }
+            
+            $value = $value[$nestedKey];
+        }
+        
+        return true;
+    }
+    
+    /**
+     * Remove a key from the data array with dot notation support
+     *
+     * @param string $key The key to remove (can use dot notation)
+     * @return $this
+     */
+    protected function remove(string $key): self
+    {
+        if (strpos($key, '.') === false) {
+            unset($this->data[$key]);
+            return $this;
+        }
+        
+        $keys = explode('.', $key);
+        $lastKey = array_pop($keys);
+        
+        $current = &$this->data;
+        foreach ($keys as $nestedKey) {
+            if (!isset($current[$nestedKey])) {
+                return $this;
+            }
+            
+            $current = &$current[$nestedKey];
+        }
+        
+        unset($current[$lastKey]);
+        
+        return $this;
     }
     
     /**
