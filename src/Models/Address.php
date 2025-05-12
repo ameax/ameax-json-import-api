@@ -8,23 +8,11 @@ use Ameax\AmeaxJsonImportApi\Validation\Validator;
 class Address extends BaseModel
 {
     /**
-     * Create a new address with required fields
-     *
-     * @param string $postalCode Postal code
-     * @param string $locality City/town
-     * @param string $country Country code (ISO 3166-1 alpha-2)
-     * @return static
-     * @throws ValidationException If validation fails
+     * Constructor initializes an empty address
      */
-    public static function create(string $postalCode, string $locality, string $country): self
+    public function __construct()
     {
-        $address = new static();
-        
-        $address->setPostalCode($postalCode)
-                ->setLocality($locality)
-                ->setCountry($country);
-        
-        return $address;
+        $this->data = [];
     }
     
     /**

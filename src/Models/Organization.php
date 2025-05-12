@@ -28,35 +28,16 @@ class Organization extends BaseModel
     protected array $customData = [];
     
     /**
-     * Create a new organization with required fields
-     *
-     * @param string $name The organization name
-     * @param string $postalCode The postal code
-     * @param string $locality The city/town
-     * @param string $country The country code (ISO 3166-1 alpha-2)
-     * @return static
-     * @throws ValidationException If validation fails
+     * Constructor initializes a new organization with document type and schema version
      */
-    public static function create(
-        string $name, 
-        string $postalCode, 
-        string $locality, 
-        string $country
-    ): self {
-        $instance = new static();
-        
-        $instance->data = [
+    public function __construct()
+    {
+        $this->data = [
             'document_type' => self::DOCUMENT_TYPE,
             'schema_version' => self::SCHEMA_VERSION,
         ];
         
-        $instance->setName($name);
-        
-        // Create and set address
-        $address = Address::create($postalCode, $locality, $country);
-        $instance->setAddress($address);
-        
-        return $instance;
+        $this->customData = [];
     }
     
     /**
@@ -239,6 +220,26 @@ class Organization extends BaseModel
         Validator::maxLength($name, 255, 'Name');
         
         return $this->set('name', $name);
+    }
+    
+    /**
+     * Create and set a new address from components
+     *
+     * @param string $postalCode The postal code
+     * @param string $locality The city/town
+     * @param string $country The country code (ISO 3166-1 alpha-2)
+     * @return $this
+     * @throws ValidationException If validation fails
+     */
+    public function createAddress(string $postalCode, string $locality, string $country): self
+    {
+        $address = new Address();
+        $address->setPostalCode($postalCode)
+                ->setLocality($locality)
+                ->setCountry($country);
+        
+        $this->address = $address;
+        return $this->set('address', $address->toArray());
     }
     
     /**
@@ -434,7 +435,7 @@ class Organization extends BaseModel
     }
     
     /**
-     * Add a contact to the organization
+     * Create and add a contact to the organization
      *
      * @param string $firstName First name
      * @param string $lastName Last name
@@ -444,7 +445,9 @@ class Organization extends BaseModel
      */
     public function addContact(string $firstName, string $lastName, array $additionalData = []): self
     {
-        $contact = Contact::create($firstName, $lastName);
+        $contact = new Contact();
+        $contact->setFirstName($firstName)
+                ->setLastName($lastName);
         
         // Set additional data using setters when available
         foreach ($additionalData as $key => $value) {
@@ -456,6 +459,28 @@ class Organization extends BaseModel
             }
         }
         
+        // Validate the contact
+        $contact->validate();
+        
+        // Add the contact to the organization
+        if (!isset($this->data['contacts'])) {
+            $this->data['contacts'] = [];
+        }
+        
+        $this->data['contacts'][] = $contact->toArray();
+        
+        return $this;
+    }
+    
+    /**
+     * Add a pre-configured contact object to the organization
+     *
+     * @param Contact $contact The contact to add
+     * @return $this
+     * @throws ValidationException If validation fails
+     */
+    public function addContactObject(Contact $contact): self
+    {
         // Validate the contact
         $contact->validate();
         

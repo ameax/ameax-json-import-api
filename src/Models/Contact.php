@@ -8,21 +8,11 @@ use Ameax\AmeaxJsonImportApi\Validation\Validator;
 class Contact extends BaseModel
 {
     /**
-     * Create a new contact with required fields
-     *
-     * @param string $firstName First name
-     * @param string $lastName Last name
-     * @return static
-     * @throws ValidationException If validation fails
+     * Constructor initializes an empty contact
      */
-    public static function create(string $firstName, string $lastName): self
+    public function __construct()
     {
-        $contact = new static();
-        
-        $contact->setFirstName($firstName)
-                ->setLastName($lastName);
-        
-        return $contact;
+        $this->data = [];
     }
     
     /**

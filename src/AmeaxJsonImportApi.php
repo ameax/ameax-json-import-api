@@ -40,18 +40,13 @@ class AmeaxJsonImportApi
     }
     
     /**
-     * Create a new organization with required fields
+     * Create a new empty organization
      *
-     * @param string $name Organization name
-     * @param string $postalCode Postal code
-     * @param string $locality City/town
-     * @param string $country Country code (ISO 3166-1 alpha-2)
-     * @return Organization
-     * @throws ValidationException If validation fails
+     * @return Organization A new organization instance
      */
-    public function createOrganization(string $name, string $postalCode, string $locality, string $country): Organization
+    public function createOrganization(): Organization
     {
-        $organization = Organization::create($name, $postalCode, $locality, $country);
+        $organization = new Organization();
         return $organization->setApiClient($this);
     }
     
@@ -69,30 +64,23 @@ class AmeaxJsonImportApi
     }
     
     /**
-     * Create an address with required fields
+     * Create a new empty address
      * 
-     * @param string $postalCode Postal code
-     * @param string $locality City/town
-     * @param string $country Country code (ISO 3166-1 alpha-2)
-     * @return Address
-     * @throws ValidationException If validation fails
+     * @return Address A new address instance
      */
-    public function createAddress(string $postalCode, string $locality, string $country): Address
+    public function createAddress(): Address
     {
-        return Address::create($postalCode, $locality, $country);
+        return new Address();
     }
     
     /**
-     * Create a contact with required fields
+     * Create a new empty contact
      * 
-     * @param string $firstName First name
-     * @param string $lastName Last name
-     * @return Contact
-     * @throws ValidationException If validation fails
+     * @return Contact A new contact instance
      */
-    public function createContact(string $firstName, string $lastName): Contact
+    public function createContact(): Contact
     {
-        return Contact::create($firstName, $lastName);
+        return new Contact();
     }
     
     /**

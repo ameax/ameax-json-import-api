@@ -12,14 +12,15 @@ $client = new AmeaxJsonImportApi($apiKey, $host);
 
 try {
     // Method 1: Create an organization with fluent setters
-    $organization = $client->createOrganization(
-        'ACME Corporation',  // name
-        '12345',             // postal_code
-        '12345',             // locality
-        'DE'                 // country
-    );
+    $organization = $client->createOrganization();
     
-    // Add more organization data using fluent setters
+    // Set required fields
+    $organization->setName('ACME Corporation');
+    
+    // Create and set address
+    $organization->createAddress('12345', 'Berlin', 'DE');
+    
+    // Set more optional fields using fluent setters
     $organization
         ->setStreet('Main Street')
         ->setHouseNumber('123')
@@ -29,7 +30,7 @@ try {
         ->setVatId('DE123456789')
         ->setTaxId('1234567890');
     
-    // Add a contact person
+    // Add a contact person - method 1
     $organization->addContact(
         'John',              // first_name
         'Doe',               // last_name
@@ -41,11 +42,15 @@ try {
         ]
     );
     
-    // Add another contact with more direct validation
-    $organization->addContact('Jane', 'Smith', [
-        'email' => 'jane.smith@acme-corp.com',
-        'job_title' => 'CTO'
-    ]);
+    // Add a contact person - method 2
+    $contact = $client->createContact();
+    $contact
+        ->setFirstName('Jane')
+        ->setLastName('Smith')
+        ->setEmail('jane.smith@acme-corp.com')
+        ->setJobTitle('CTO');
+    
+    $organization->addContactObject($contact);
     
     // Set some custom fields
     $organization->setCustomField('industry', 'Technology');
