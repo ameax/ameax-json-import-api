@@ -5,8 +5,8 @@ namespace Ameax\AmeaxJsonImportApi;
 use GuzzleHttp\Client as HttpClient;
 use GuzzleHttp\Exception\GuzzleException;
 use JsonSchema\Validator;
-use Ameax\AmeaxJsonImportApi\Schema\OrganizationSchema;
 use Ameax\AmeaxJsonImportApi\Exceptions\ValidationException;
+use Ameax\AmeaxJsonImportApi\Models\Organization;
 
 class AmeaxJsonImportApi
 {
@@ -15,6 +15,13 @@ class AmeaxJsonImportApi
     protected string $baseUrl;
     protected ?string $schemasPath;
     
+    /**
+     * Create a new API client instance
+     *
+     * @param string $apiKey Your Ameax API key
+     * @param string $host The API host URL (e.g., https://your-database.ameax.de)
+     * @param string|null $schemasPath Optional path to custom schema files
+     */
     public function __construct(string $apiKey, string $host, ?string $schemasPath = null)
     {
         $this->apiKey = $apiKey;
@@ -31,20 +38,48 @@ class AmeaxJsonImportApi
     }
     
     /**
+     * Create a new organization with required fields
+     *
+     * @param string $name Organization name
+     * @param string $postalCode Postal code
+     * @param string $locality City/town
+     * @param string $country Country code (ISO 3166-1 alpha-2)
+     * @return Organization
+     */
+    public function createOrganization(string $name, string $postalCode, string $locality, string $country): Organization
+    {
+        $organization = Organization::create($name, $postalCode, $locality, $country);
+        return $organization->setApiClient($this);
+    }
+    
+    /**
+     * Create an organization from an existing array of data
+     *
+     * @param array $data The organization data
+     * @return Organization
+     */
+    public function organizationFromArray(array $data): Organization
+    {
+        $organization = Organization::fromArray($data);
+        return $organization->setApiClient($this);
+    }
+    
+    /**
      * Send organization data to Ameax API
-     * 
+     *
      * @param array $organization The organization data
      * @return array The API response
      * @throws \Exception If validation or request fails
+     * @internal This is used by the Organization class and generally should not be called directly
      */
     public function sendOrganization(array $organization): array
     {
-        if (!isset($organization['document_type']) || $organization['document_type'] !== OrganizationSchema::DOCUMENT_TYPE) {
-            throw new \InvalidArgumentException('Invalid organization data: document_type must be ' . OrganizationSchema::DOCUMENT_TYPE);
+        if (!isset($organization['document_type']) || $organization['document_type'] !== Organization::DOCUMENT_TYPE) {
+            throw new \InvalidArgumentException('Invalid organization data: document_type must be ' . Organization::DOCUMENT_TYPE);
         }
         
         // Validate the organization data against the JSON schema
-        $this->validate($organization, OrganizationSchema::DOCUMENT_TYPE);
+        $this->validate($organization, Organization::DOCUMENT_TYPE);
         
         try {
             $response = $this->client->post("{$this->baseUrl}/imports", [
@@ -59,7 +94,7 @@ class AmeaxJsonImportApi
     
     /**
      * Validate data against the appropriate JSON schema
-     * 
+     *
      * @param array $data The data to validate
      * @param string $documentType The type of document being validated
      * @return bool True if validation passes
@@ -90,7 +125,7 @@ class AmeaxJsonImportApi
     
     /**
      * Get the schema file path for a document type
-     * 
+     *
      * @param string $documentType The document type
      * @return string The schema file path
      */
@@ -101,33 +136,5 @@ class AmeaxJsonImportApi
         }
         
         return __DIR__ . "/../resources/schemas/{$documentType}.json";
-    }
-    
-    /**
-     * Create a new organization with required fields
-     * 
-     * @param string $name Organization name
-     * @param string $postalCode Postal code
-     * @param string $locality City/town
-     * @param string $country Country code (ISO 3166-1 alpha-2)
-     * @return array The created organization data
-     */
-    public function createOrganization(string $name, string $postalCode, string $locality, string $country): array
-    {
-        return OrganizationSchema::create($name, $postalCode, $locality, $country);
-    }
-    
-    /**
-     * Add a contact to an organization
-     * 
-     * @param array $organization The organization data
-     * @param string $firstName First name
-     * @param string $lastName Last name
-     * @param array $additionalData Additional contact data
-     * @return array The updated organization data
-     */
-    public function addOrganizationContact(array $organization, string $firstName, string $lastName, array $additionalData = []): array
-    {
-        return OrganizationSchema::addContact($organization, $firstName, $lastName, $additionalData);
     }
 }

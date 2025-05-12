@@ -20,22 +20,10 @@ public function __construct(string $apiKey, string $host, ?string $schemasPath =
 
 #### Methods
 
-**sendOrganization**
-
-```php
-public function sendOrganization(array $organization): array
-```
-
-Sends organization data to the Ameax API.
-
-- `$organization`: An array containing the organization data
-- Returns: The API response as an array
-- Throws: `ValidationException` if validation fails, `\Exception` if the request fails
-
 **createOrganization**
 
 ```php
-public function createOrganization(string $name, string $postalCode, string $locality, string $country): array
+public function createOrganization(string $name, string $postalCode, string $locality, string $country): Organization
 ```
 
 Creates a new organization with the required fields.
@@ -44,60 +32,192 @@ Creates a new organization with the required fields.
 - `$postalCode`: Postal/ZIP code
 - `$locality`: City or town
 - `$country`: ISO 3166-1 alpha-2 country code
-- Returns: An array containing the basic organization data
+- Returns: An Organization instance with the API client set
 
-**addOrganizationContact**
+**organizationFromArray**
 
 ```php
-public function addOrganizationContact(array $organization, string $firstName, string $lastName, array $additionalData = []): array
+public function organizationFromArray(array $data): Organization
 ```
 
-Adds a contact person to an organization.
+Creates an organization from an existing array of data.
 
-- `$organization`: The organization array
-- `$firstName`: Contact person's first name
-- `$lastName`: Contact person's last name
-- `$additionalData`: Optional additional contact data (email, phone, etc.)
-- Returns: The updated organization array with the new contact added
+- `$data`: The organization data array
+- Returns: An Organization instance with the API client set
 
-### `Ameax\AmeaxJsonImportApi\Schema\OrganizationSchema`
+### `Ameax\AmeaxJsonImportApi\Models\Organization`
 
-Helper class for working with organization schemas.
-
-#### Constants
-
-- `DOCUMENT_TYPE`: The document type for organizations ("ameax_organization_account")
-- `SCHEMA_VERSION`: The schema version ("1.0")
+Class for working with organization data and submitting it to the API.
 
 #### Static Methods
 
 **create**
 
 ```php
-public static function create(string $name, string $postalCode, string $locality, string $country): array
+public static function create(
+    string $name, 
+    string $postalCode, 
+    string $locality, 
+    string $country
+): self
 ```
 
-Creates a new organization schema with required fields.
+Creates a new organization with required fields.
 
 - `$name`: Organization name
 - `$postalCode`: Postal/ZIP code
 - `$locality`: City or town
 - `$country`: ISO 3166-1 alpha-2 country code
-- Returns: An array containing the basic organization data
+- Returns: A new Organization instance
+
+**fromArray**
+
+```php
+public static function fromArray(array $data): static
+```
+
+Creates a new organization from an array of data.
+
+- `$data`: The organization data
+- Returns: A new Organization instance
+
+#### Instance Methods
+
+**setApiClient**
+
+```php
+public function setApiClient(AmeaxJsonImportApi $apiClient): self
+```
+
+Sets the API client for this organization (required for submission).
+
+- `$apiClient`: The API client
+- Returns: The Organization instance for method chaining
 
 **addContact**
 
 ```php
-public static function addContact(array $organization, string $firstName, string $lastName, array $additionalData = []): array
+public function addContact(string $firstName, string $lastName, array $additionalData = []): self
 ```
 
-Adds a contact to an organization.
+Adds a contact to the organization.
 
-- `$organization`: The organization array
 - `$firstName`: Contact person's first name
 - `$lastName`: Contact person's last name
-- `$additionalData`: Optional additional contact data
-- Returns: The updated organization array with the new contact added
+- `$additionalData`: Optional additional contact data (email, phone, etc.)
+- Returns: The Organization instance for method chaining
+
+**setStreet**
+
+```php
+public function setStreet(string $street): self
+```
+
+Sets the street name in the address.
+
+- `$street`: The street name
+- Returns: The Organization instance for method chaining
+
+**setHouseNumber**
+
+```php
+public function setHouseNumber(string $houseNumber): self
+```
+
+Sets the house number in the address.
+
+- `$houseNumber`: The house number
+- Returns: The Organization instance for method chaining
+
+**setEmail**
+
+```php
+public function setEmail(string $email): self
+```
+
+Sets the organization's email address.
+
+- `$email`: The email address
+- Returns: The Organization instance for method chaining
+
+**setPhone**
+
+```php
+public function setPhone(string $phone): self
+```
+
+Sets the organization's phone number.
+
+- `$phone`: The phone number
+- Returns: The Organization instance for method chaining
+
+**setWebsite**
+
+```php
+public function setWebsite(string $website): self
+```
+
+Sets the organization's website.
+
+- `$website`: The website URL
+- Returns: The Organization instance for method chaining
+
+**setVatId**
+
+```php
+public function setVatId(string $vatId): self
+```
+
+Sets the organization's VAT ID.
+
+- `$vatId`: The VAT ID
+- Returns: The Organization instance for method chaining
+
+**setTaxId**
+
+```php
+public function setTaxId(string $taxId): self
+```
+
+Sets the organization's tax ID.
+
+- `$taxId`: The tax ID
+- Returns: The Organization instance for method chaining
+
+**setCustomField**
+
+```php
+public function setCustomField(string $key, $value): self
+```
+
+Sets a custom field in the organization data.
+
+- `$key`: The field key
+- `$value`: The field value
+- Returns: The Organization instance for method chaining
+
+**toArray**
+
+```php
+public function toArray(): array
+```
+
+Converts the organization to an array.
+
+- Returns: The organization data as an array
+
+**submit**
+
+```php
+public function submit(): array
+```
+
+Submits the organization to the Ameax API.
+
+- Returns: The API response as an array
+- Throws: `\InvalidArgumentException` if no API client is set
+- Throws: `ValidationException` if validation fails
+- Throws: `\Exception` if the API request fails
 
 ### `Ameax\AmeaxJsonImportApi\Exceptions\ValidationException`
 
@@ -114,82 +234,3 @@ public function getErrors(): array
 Gets the validation error messages.
 
 - Returns: An array of validation error messages
-
-## Laravel Integration
-
-This package is framework-agnostic but can be easily integrated with Laravel.
-
-### Creating a Service Provider
-
-You can create a simple service provider to integrate with Laravel:
-
-```php
-<?php
-
-namespace App\Providers;
-
-use Illuminate\Support\ServiceProvider;
-use Ameax\AmeaxJsonImportApi\AmeaxJsonImportApi;
-
-class AmeaxServiceProvider extends ServiceProvider
-{
-    public function register()
-    {
-        $this->app->singleton('ameax-json-import-api', function ($app) {
-            return new AmeaxJsonImportApi(
-                config('services.ameax.api_key'),
-                config('services.ameax.host'),
-                config('services.ameax.schemas_path')
-            );
-        });
-        
-        $this->app->alias('ameax-json-import-api', AmeaxJsonImportApi::class);
-    }
-}
-```
-
-Add it to your `config/app.php` providers array:
-
-```php
-App\Providers\AmeaxServiceProvider::class,
-```
-
-### Configuration
-
-Add the following to your `config/services.php`:
-
-```php
-'ameax' => [
-    'api_key' => env('AMEAX_API_KEY'),
-    'host' => env('AMEAX_API_HOST', 'https://your-database.ameax.de'),
-    'schemas_path' => null,
-],
-```
-
-### Dependency Injection
-
-You can use dependency injection to get the client instance:
-
-```php
-use Ameax\AmeaxJsonImportApi\AmeaxJsonImportApi;
-
-public function store(Request $request, AmeaxJsonImportApi $client)
-{
-    $organization = $client->createOrganization(
-        $request->name,
-        $request->postal_code,
-        $request->locality,
-        $request->country
-    );
-    
-    // ...
-}
-```
-
-### Service Container
-
-Or you can resolve the client from the service container:
-
-```php
-$client = app('ameax-json-import-api');
-```

@@ -7,30 +7,32 @@ use Ameax\AmeaxJsonImportApi\Exceptions\ValidationException;
 
 // Initialize API client with API key and host URL
 $apiKey = 'your-api-key';
-$host = 'https://your-database.ameax.de'; // Or http://your-database.ameax.localhost for local development
+$host = 'https://your-database.ameax.de';
 $client = new AmeaxJsonImportApi($apiKey, $host);
 
 try {
-    // Create a new organization with required fields
+    // Method 1: Create an organization with fluent setters
     $organization = $client->createOrganization(
-        'ACME Corporation',
-        '12345',
-        'Berlin',
-        'DE'
+        'ACME Corporation',  // name
+        '12345',             // postal_code
+        'Berlin',            // locality
+        'DE'                 // country
     );
     
-    // Add additional organization data
-    $organization['street'] = 'Main Street';
-    $organization['house_number'] = '123';
-    $organization['email'] = 'info@acme-corp.com';
-    $organization['phone'] = '+49 30 123456789';
-    $organization['website'] = 'https://www.acme-corp.com';
+    // Add more organization data using fluent setters
+    $organization
+        ->setStreet('Main Street')
+        ->setHouseNumber('123')
+        ->setEmail('info@acme-corp.com')
+        ->setPhone('+49 30 123456789')
+        ->setWebsite('https://www.acme-corp.com')
+        ->setVatId('DE123456789')
+        ->setTaxId('1234567890');
     
-    // Add contact person
-    $organization = $client->addOrganizationContact(
-        $organization,
-        'John',
-        'Doe',
+    // Add a contact person
+    $organization->addContact(
+        'John',              // first_name
+        'Doe',               // last_name
         [
             'email' => 'john.doe@acme-corp.com',
             'phone' => '+49 30 123456789',
@@ -39,8 +41,29 @@ try {
         ]
     );
     
-    // Send the organization data to Ameax
-    $response = $client->sendOrganization($organization);
+    // Add another contact
+    $organization->addContact('Jane', 'Smith', [
+        'email' => 'jane.smith@acme-corp.com',
+        'job_title' => 'CTO'
+    ]);
+    
+    // Method 2: Create from an existing array
+    $data = [
+        'document_type' => 'ameax_organization_account',
+        'schema_version' => '1.0',
+        'name' => 'XYZ Ltd',
+        'address' => [
+            'postal_code' => '54321',
+            'locality' => 'Munich',
+            'country' => 'DE',
+        ],
+    ];
+    
+    $organization2 = $client->organizationFromArray($data);
+    $organization2->setEmail('info@xyz-ltd.com');
+    
+    // Submit the first organization to Ameax
+    $response = $organization->submit();
     
     echo "Organization successfully sent to Ameax!\n";
     echo "Response: " . json_encode($response, JSON_PRETTY_PRINT) . "\n";

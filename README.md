@@ -26,7 +26,7 @@ $client = new AmeaxJsonImportApi(
     'https://your-database.ameax.de'
 );
 
-// Create an organization
+// Create an organization with fluent setters
 $organization = $client->createOrganization(
     'ACME Corporation',  // name
     '12345',             // postal_code
@@ -34,26 +34,31 @@ $organization = $client->createOrganization(
     'DE'                 // country
 );
 
+// Add organization details using fluent setters
+$organization
+    ->setStreet('Main Street')
+    ->setEmail('info@acme-corp.com')
+    ->setPhone('+49 30 123456789');
+
 // Add a contact
-$organization = $client->addOrganizationContact(
-    $organization,
+$organization->addContact(
     'John',
     'Doe',
     ['email' => 'john.doe@example.com']
 );
 
-// Send to Ameax
+// Submit to Ameax
 try {
-    $response = $client->sendOrganization($organization);
+    $response = $organization->submit();
     echo "Success!";
 } catch (\Exception $e) {
     echo "Error: " . $e->getMessage();
 }
 ```
 
-## Creating and Sending Organizations
+## Object-Oriented Approach
 
-You can create organizations with the required fields and then add additional data:
+The package provides an object-oriented approach with fluent setters for building and submitting data:
 
 ```php
 use Ameax\AmeaxJsonImportApi\AmeaxJsonImportApi;
@@ -70,14 +75,16 @@ try {
         'DE'                 // country (ISO 3166-1 alpha-2)
     );
     
-    // Add optional additional organization data
-    $organization['street'] = 'Main Street';
-    $organization['house_number'] = '123';
-    $organization['email'] = 'info@acme-corp.com';
+    // Add optional additional organization data using fluent setters
+    $organization
+        ->setStreet('Main Street')
+        ->setHouseNumber('123')
+        ->setEmail('info@acme-corp.com')
+        ->setPhone('+49 30 123456789')
+        ->setWebsite('https://www.acme-corp.com');
     
     // Add a contact person to the organization
-    $organization = $client->addOrganizationContact(
-        $organization,
+    $organization->addContact(
         'John',              // first_name
         'Doe',               // last_name
         [
@@ -87,8 +94,8 @@ try {
         ]
     );
     
-    // Send the organization data to Ameax
-    $response = $client->sendOrganization($organization);
+    // Submit the organization to Ameax
+    $response = $organization->submit();
     
     // Handle the successful response
     print_r($response);
@@ -100,6 +107,27 @@ try {
     // Handle other errors
     echo $e->getMessage();
 }
+```
+
+### Creating from Existing Data
+
+You can also create an organization object from existing data:
+
+```php
+$data = [
+    'document_type' => 'ameax_organization_account',
+    'schema_version' => '1.0',
+    'name' => 'XYZ Ltd',
+    'address' => [
+        'postal_code' => '54321',
+        'locality' => 'Munich',
+        'country' => 'DE',
+    ],
+];
+
+$organization = $client->organizationFromArray($data);
+$organization->setEmail('info@xyz-ltd.com');
+$response = $organization->submit();
 ```
 
 ## JSON Schema Validation
