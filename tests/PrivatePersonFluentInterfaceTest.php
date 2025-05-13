@@ -14,7 +14,7 @@ test('privateperson provides fluent interface', function () {
         ->setSalutation('Mr.')
         ->setHonorifics('Dr.')
         ->setDateOfBirth('1990-01-15')
-        ->setCustomerNumber('CUST12345')
+        ->setCustomerNumber('12345')
         ->createAddress('12345', 'New York', 'US')
         ->setRoute('Broadway')
         ->setHouseNumber('42')
@@ -31,7 +31,7 @@ test('privateperson provides fluent interface', function () {
         ->and($person->getSalutation())->toBe('Mr.')
         ->and($person->getHonorifics())->toBe('Dr.')
         ->and($person->getDateOfBirth())->toBe('1990-01-15')
-        ->and($person->getCustomerNumber())->toBe('CUST12345')
+        ->and($person->getCustomerNumber())->toBe('12345')
         ->and($person->getAddress())->toBeInstanceOf(Address::class)
         ->and($person->getAddress()->getPostalCode())->toBe('12345')
         ->and($person->getEmail())->toBe('john.doe@example.com')
@@ -72,7 +72,7 @@ test('privateperson objects can be created and set', function () {
 
     // Create and set identifiers
     $identifiers = new Identifiers;
-    $identifiers->setCustomerNumber('CUST12345');
+    $identifiers->setCustomerNumber('12345');
     $person->setIdentifiers($identifiers);
 
     $data = $person->toArray();
@@ -84,7 +84,7 @@ test('privateperson objects can be created and set', function () {
         ->and($data['address']['postal_code'])->toBe('12345')
         ->and($data['communications']['email'])->toBe('john.doe@example.com')
         ->and($data['agent']['external_id'])->toBe('AGENT123')
-        ->and($data['identifiers']['customer_number'])->toBe('CUST12345');
+        ->and($data['identifiers']['customer_number'])->toBe('12345');
 });
 
 test('privateperson supports type conversion for custom fields', function () {
@@ -157,7 +157,15 @@ test('privateperson handles customer number conversion', function () {
     expect($person->getCustomerNumber())->toBe('12345')
         ->and($person->getCustomerNumber())->toBeString();
 
-    // Test with string
-    $person->setCustomerNumber('CUST-9876');
-    expect($person->getCustomerNumber())->toBe('CUST-9876');
+    // Test with numeric string
+    $person->setCustomerNumber('9876');
+    expect($person->getCustomerNumber())->toBe('9876');
+    
+    // Test with null
+    $person->setCustomerNumber(null);
+    expect($person->getCustomerNumber())->toBeNull();
+    
+    // Test with empty string (should be converted to null)
+    $person->setCustomerNumber('');
+    expect($person->getCustomerNumber())->toBeNull();
 });

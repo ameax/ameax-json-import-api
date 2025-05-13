@@ -13,7 +13,7 @@ test('organization provides fluent interface', function () {
 
     $result = $organization->setName('Acme Inc.')
         ->setAdditionalName('Acme Corporation')
-        ->setCustomerNumber('CUST12345')
+        ->setCustomerNumber('12345')
         ->createAddress('12345', 'New York', 'US')
         ->setRoute('Broadway')
         ->setHouseNumber('42')
@@ -30,7 +30,7 @@ test('organization provides fluent interface', function () {
     expect($result)->toBeInstanceOf(Organization::class)
         ->and($organization->getName())->toBe('Acme Inc.')
         ->and($organization->getAdditionalName())->toBe('Acme Corporation')
-        ->and($organization->getCustomerNumber())->toBe('CUST12345')
+        ->and($organization->getCustomerNumber())->toBe('12345')
         ->and($organization->getAddress())->toBeInstanceOf(Address::class)
         ->and($organization->getAddress()->getPostalCode())->toBe('12345')
         ->and($organization->getEmail())->toBe('info@acme.com')

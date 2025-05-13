@@ -6,7 +6,7 @@ test('privateperson can be created with basic data', function () {
     $person = new PrivatePerson;
     $person->setFirstName('John');
     $person->setLastName('Doe');
-    $person->setCustomerNumber('CUST12345');
+    $person->setCustomerNumber('12345');
 
     $data = $person->toArray();
 
@@ -17,7 +17,7 @@ test('privateperson can be created with basic data', function () {
         ->and($data)->toHaveKey('identifiers')
         ->and($data['firstname'])->toBe('John')
         ->and($data['lastname'])->toBe('Doe')
-        ->and($data['identifiers']['customer_number'])->toBe('CUST12345');
+        ->and($data['identifiers']['customer_number'])->toBe('12345');
 });
 
 test('privateperson can include salutation and honorifics', function () {
@@ -59,6 +59,62 @@ test('privateperson can normalize salutation values', function () {
     // Test Mx
     $person->setSalutation('mx');
     expect($person->getSalutation())->toBe('Mx.');
+});
+
+test('privateperson can handle German salutation variations', function () {
+    $person = new PrivatePerson;
+
+    // Test German Mr variations
+    $person->setSalutation('herr');
+    expect($person->getSalutation())->toBe('Mr.');
+
+    $person->setSalutation('herrn');
+    expect($person->getSalutation())->toBe('Mr.');
+
+    $person->setSalutation('hr');
+    expect($person->getSalutation())->toBe('Mr.');
+
+    $person->setSalutation('hr.');
+    expect($person->getSalutation())->toBe('Mr.');
+
+    // Test German Ms variations
+    $person->setSalutation('frau');
+    expect($person->getSalutation())->toBe('Ms.');
+
+    $person->setSalutation('fr');
+    expect($person->getSalutation())->toBe('Ms.');
+
+    $person->setSalutation('fr.');
+    expect($person->getSalutation())->toBe('Ms.');
+
+    $person->setSalutation('fräulein');
+    expect($person->getSalutation())->toBe('Ms.');
+});
+
+test('privateperson can extract salutation and honorifics from combined string', function () {
+    $person = new PrivatePerson;
+
+    // Test English combined strings
+    $person->setSalutation('Mr. Dr.');
+    expect($person->getSalutation())->toBe('Mr.');
+    expect($person->getHonorifics())->toBe('Dr.');
+
+    $person->setSalutation('Ms. Professor');
+    expect($person->getSalutation())->toBe('Ms.');
+    expect($person->getHonorifics())->toBe('Professor');
+
+    // Test German combined strings
+    $person->setSalutation('Herr Prof. Dr.');
+    expect($person->getSalutation())->toBe('Mr.');
+    expect($person->getHonorifics())->toBe('Prof. Dr.');
+
+    $person->setSalutation('Frau Dr. med.');
+    expect($person->getSalutation())->toBe('Ms.');
+    expect($person->getHonorifics())->toBe('Dr. med.');
+
+    $person->setSalutation('Hr. Dipl.-Ing.');
+    expect($person->getSalutation())->toBe('Mr.');
+    expect($person->getHonorifics())->toBe('Dipl.-Ing.');
 });
 
 test('privateperson can include date of birth', function () {
@@ -174,7 +230,7 @@ test('privateperson can build complete data structure', function () {
         ->setSalutation('Mr.')
         ->setHonorifics('Dr.')
         ->setDateOfBirth('1990-01-15')
-        ->setCustomerNumber('CUST12345')
+        ->setCustomerNumber('12345')
         ->createAddress('12345', 'New York', 'US')
         ->setRoute('Broadway')
         ->setHouseNumber('42')
@@ -200,6 +256,6 @@ test('privateperson can build complete data structure', function () {
         ->and($data['lastname'])->toBe('Doe')
         ->and($data['salutation'])->toBe('Mr.')
         ->and($data['date_of_birth'])->toBe('1990-01-15')
-        ->and($data['identifiers']['customer_number'])->toBe('CUST12345')
+        ->and($data['identifiers']['customer_number'])->toBe('12345')
         ->and($data['address']['postal_code'])->toBe('12345');
 });

@@ -5,7 +5,7 @@ use Ameax\AmeaxJsonImportApi\Models\Organization;
 test('organization can be created with basic data', function () {
     $organization = new Organization;
     $organization->setName('Acme Inc.');
-    $organization->setCustomerNumber('CUST12345');
+    $organization->setCustomerNumber('12345');
 
     $data = $organization->toArray();
 
@@ -14,7 +14,7 @@ test('organization can be created with basic data', function () {
         ->and($data)->toHaveKey('name')
         ->and($data)->toHaveKey('identifiers')
         ->and($data['name'])->toBe('Acme Inc.')
-        ->and($data['identifiers']['customer_number'])->toBe('CUST12345');
+        ->and($data['identifiers']['customer_number'])->toBe('12345');
 });
 
 test('organization can include address data', function () {
@@ -151,7 +151,7 @@ test('organization can build complete data structure', function () {
     $organization = new Organization;
     $organization->setName('Acme Inc.')
         ->setAdditionalName('Acme Corporation')
-        ->setCustomerNumber('CUST12345')
+        ->setCustomerNumber('12345')
         ->createAddress('12345', 'New York', 'US')
         ->setRoute('Broadway')
         ->setHouseNumber('42')
@@ -183,7 +183,7 @@ test('organization can build complete data structure', function () {
         ->and($data)->toHaveKey('custom_data')
         ->and($data['name'])->toBe('Acme Inc.')
         ->and($data['additional_name'])->toBe('Acme Corporation')
-        ->and($data['identifiers']['customer_number'])->toBe('CUST12345')
+        ->and($data['identifiers']['customer_number'])->toBe('12345')
         ->and($data['address']['postal_code'])->toBe('12345')
         ->and($data['contacts'])->toHaveCount(1)
         ->and($data['contacts'][0]['firstname'])->toBe('John');
