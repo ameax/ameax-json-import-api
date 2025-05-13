@@ -636,6 +636,17 @@ class Organization extends BaseModel
         $this->communications->setMobilePhone($mobilePhone);
         return $this->set('communications', $this->communications->toArray());
     }
+    
+    /**
+     * Set the mobile phone number (alias for setMobilePhone)
+     *
+     * @param string|null $mobilePhone The mobile phone number or null to remove
+     * @return $this
+     */
+    public function setMobile(?string $mobilePhone): self
+    {
+        return $this->setMobilePhone($mobilePhone);
+    }
 
     /**
      * Set the fax number (creates communications if needed)

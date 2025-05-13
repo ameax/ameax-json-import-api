@@ -2,9 +2,6 @@
 
 namespace Ameax\AmeaxJsonImportApi\Models;
 
-
-
-
 class SocialMedia extends BaseModel
 {
     /**
@@ -14,48 +11,48 @@ class SocialMedia extends BaseModel
     {
         $this->data = [];
     }
-    
+
     /**
      * Populate the model with data using setters
      *
      * @param array $data
      * @return $this
-     * 
+     *
      */
     protected function populate(array $data): self
     {
         if (isset($data['web'])) {
             $this->setWeb($data['web']);
         }
-        
+
         // Handle any other fields
         foreach ($data as $key => $value) {
             if (!in_array($key, ['web'])) {
                 $this->set($key, $value);
             }
         }
-        
+
         return $this;
     }
-    
-    
-    
+
+
+
     /**
      * Set the web URL
      *
      * @param string|null $url The website URL or null to remove
      * @return $this
-     * 
+     *
      */
     public function setWeb(?string $url): self
     {
         if ($url === null) {
             return $this->set('web', null);
         }
-        
+
         return $this->set('web', $url);
     }
-    
+
     /**
      * Get the web URL
      *

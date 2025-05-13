@@ -11,7 +11,7 @@ class Address extends BaseModel
     {
         $this->data = [];
     }
-    
+
     /**
      * Populate the model with data using setters
      *
@@ -23,37 +23,37 @@ class Address extends BaseModel
         if (isset($data['postal_code'])) {
             $this->setPostalCode($data['postal_code']);
         }
-        
+
         if (isset($data['locality'])) {
             $this->setLocality($data['locality']);
         }
-        
+
         if (isset($data['country'])) {
             $this->setCountry($data['country']);
         }
-        
+
         if (isset($data['route'])) {
             $this->setRoute($data['route']);
         } elseif (isset($data['street'])) {
             // Backward compatibility
             $this->setStreet($data['street']);
         }
-        
+
         if (isset($data['house_number'])) {
             $this->setHouseNumber($data['house_number']);
         }
-        
+
         // Handle any other fields
         foreach ($data as $key => $value) {
             if (!in_array($key, ['postal_code', 'locality', 'country', 'route', 'street', 'house_number'])) {
                 $this->set($key, $value);
             }
         }
-        
+
         return $this;
     }
-    
-    
+
+
     /**
      * Set the postal code
      *
@@ -64,7 +64,7 @@ class Address extends BaseModel
     {
         return $this->set('postal_code', $postalCode);
     }
-    
+
     /**
      * Set the locality (city/town)
      *
@@ -75,7 +75,7 @@ class Address extends BaseModel
     {
         return $this->set('locality', $locality);
     }
-    
+
     /**
      * Set the country code
      *
@@ -86,7 +86,7 @@ class Address extends BaseModel
     {
         return $this->set('country', strtoupper($country));
     }
-    
+
     /**
      * Set the route (street)
      *
@@ -97,7 +97,7 @@ class Address extends BaseModel
     {
         return $this->set('route', $route);
     }
-    
+
     /**
      * Set the street (alias for setRoute)
      *
@@ -108,7 +108,7 @@ class Address extends BaseModel
     {
         return $this->setRoute($street);
     }
-    
+
     /**
      * Set the house number
      *
@@ -120,10 +120,10 @@ class Address extends BaseModel
         if ($houseNumber === null) {
             return $this->remove('house_number');
         }
-        
+
         return $this->set('house_number', $houseNumber);
     }
-    
+
     /**
      * Set a custom field
      *

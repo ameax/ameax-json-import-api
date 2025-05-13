@@ -232,9 +232,9 @@ class PrivatePerson extends BaseModel
         // Convert common variations to standardized format
         if (in_array(strtolower(trim($salutation)), ['mr', 'mister'])) {
             $salutation = 'Mr.';
-        } else if (in_array(strtolower(trim($salutation)), ['ms', 'miss', 'mrs'])) {
+        } elseif (in_array(strtolower(trim($salutation)), ['ms', 'miss', 'mrs'])) {
             $salutation = 'Ms.';
-        } else if (in_array(strtolower(trim($salutation)), ['mx'])) {
+        } elseif (in_array(strtolower(trim($salutation)), ['mx'])) {
             $salutation = 'Mx.';
         }
 
@@ -298,7 +298,7 @@ class PrivatePerson extends BaseModel
         // If DateTime object provided, convert to string
         if ($dateOfBirth instanceof \DateTime) {
             $dateOfBirth = $dateOfBirth->format('Y-m-d');
-        } else if (is_string($dateOfBirth) && !preg_match('/^\d{4}-\d{2}-\d{2}$/', $dateOfBirth)) {
+        } elseif (is_string($dateOfBirth) && !preg_match('/^\d{4}-\d{2}-\d{2}$/', $dateOfBirth)) {
             // Try to parse the date string if it's not in ISO format
             try {
                 $date = new \DateTime($dateOfBirth);
@@ -701,13 +701,13 @@ class PrivatePerson extends BaseModel
 
             return $this;
         }
-        
+
         // Type casting for common types
         if ($value === 'true' || $value === 'TRUE' || $value === '1') {
             $value = true;
-        } else if ($value === 'false' || $value === 'FALSE' || $value === '0') {
+        } elseif ($value === 'false' || $value === 'FALSE' || $value === '0') {
             $value = false;
-        } else if (is_string($value) && is_numeric($value) && strpos($value, '.') === false) {
+        } elseif (is_string($value) && is_numeric($value) && strpos($value, '.') === false) {
             // Convert string integers to actual integers
             $value = (int)$value;
         }

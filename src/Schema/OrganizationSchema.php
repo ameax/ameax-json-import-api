@@ -6,7 +6,7 @@ class OrganizationSchema
 {
     public const DOCUMENT_TYPE = 'ameax_organization_account';
     public const SCHEMA_VERSION = '1.0';
-    
+
     /**
      * Create a new organization schema with required fields
      *
@@ -29,7 +29,7 @@ class OrganizationSchema
             ],
         ];
     }
-    
+
     /**
      * Add contact to organization
      *
@@ -44,14 +44,14 @@ class OrganizationSchema
         if (!isset($organization['contacts'])) {
             $organization['contacts'] = [];
         }
-        
+
         $contact = array_merge([
             'first_name' => $firstName,
             'last_name' => $lastName,
         ], $additionalData);
-        
+
         $organization['contacts'][] = $contact;
-        
+
         return $organization;
     }
 }

@@ -2,31 +2,28 @@
 
 namespace Ameax\AmeaxJsonImportApi\Models;
 
-
-
-
 class Contact extends BaseModel
 {
     /**
      * @var Identifiers|null The contact identifiers
      */
     protected ?Identifiers $identifiers = null;
-    
+
     /**
      * @var Employment|null The contact employment info
      */
     protected ?Employment $employment = null;
-    
+
     /**
      * @var Communications|null The contact communications
      */
     protected ?Communications $communications = null;
-    
+
     /**
      * @var array Custom data fields
      */
     protected array $customData = [];
-    
+
     /**
      * Constructor initializes an empty contact
      */
@@ -35,13 +32,13 @@ class Contact extends BaseModel
         $this->data = [];
         $this->customData = [];
     }
-    
+
     /**
      * Populate the model with data using setters
      *
      * @param array $data
      * @return $this
-     * 
+     *
      */
     protected function populate(array $data): self
     {
@@ -49,31 +46,31 @@ class Contact extends BaseModel
         if (isset($data['salutation'])) {
             $this->setSalutation($data['salutation']);
         }
-        
+
         if (isset($data['honorifics'])) {
             $this->setHonorifics($data['honorifics']);
         }
-        
+
         if (isset($data['firstname']) || isset($data['first_name'])) {
             $firstname = $data['firstname'] ?? $data['first_name'];
             $this->setFirstName($firstname);
         }
-        
+
         if (isset($data['lastname']) || isset($data['last_name'])) {
             $lastname = $data['lastname'] ?? $data['last_name'];
             $this->setLastName($lastname);
         }
-        
+
         if (isset($data['date_of_birth'])) {
             $this->setDateOfBirth($data['date_of_birth']);
         }
-        
+
         // Handle nested objects
         if (isset($data['identifiers']) && is_array($data['identifiers'])) {
             $this->identifiers = Identifiers::fromArray($data['identifiers']);
             $this->data['identifiers'] = $this->identifiers->toArray();
         }
-        
+
         if (isset($data['employment']) && is_array($data['employment'])) {
             $this->employment = Employment::fromArray($data['employment']);
             $this->data['employment'] = $this->employment->toArray();
@@ -89,7 +86,7 @@ class Contact extends BaseModel
             $this->employment = Employment::fromArray($employmentData);
             $this->data['employment'] = $this->employment->toArray();
         }
-        
+
         if (isset($data['communications']) && is_array($data['communications'])) {
             $this->communications = Communications::fromArray($data['communications']);
             $this->data['communications'] = $this->communications->toArray();
@@ -111,21 +108,21 @@ class Contact extends BaseModel
             $this->communications = Communications::fromArray($communicationsData);
             $this->data['communications'] = $this->communications->toArray();
         }
-        
+
         // Handle custom data
         if (isset($data['custom_data']) && is_array($data['custom_data'])) {
             $this->customData = $data['custom_data'];
             $this->data['custom_data'] = $this->customData;
         }
-        
+
         return $this;
     }
-    
-    
-    
+
+
+
     /**
      * Set the salutation
-     * 
+     *
      * The API accepts the following salutation values: 'Mr.', 'Ms.', 'Mx.'
      * Other values are accepted but may not validate on the server.
      *
@@ -137,68 +134,61 @@ class Contact extends BaseModel
         if ($salutation === null) {
             return $this->set('salutation', null);
         }
-        
+
         // Convert common variations to standardized format
         if (in_array(strtolower(trim($salutation)), ['mr', 'mister'])) {
             $salutation = 'Mr.';
-        } else if (in_array(strtolower(trim($salutation)), ['ms', 'miss', 'mrs'])) {
+        } elseif (in_array(strtolower(trim($salutation)), ['ms', 'miss', 'mrs'])) {
             $salutation = 'Ms.';
-        } else if (in_array(strtolower(trim($salutation)), ['mx'])) {
+        } elseif (in_array(strtolower(trim($salutation)), ['mx'])) {
             $salutation = 'Mx.';
         }
-        
+
         return $this->set('salutation', $salutation);
     }
-    
+
     /**
      * Set the honorifics
      *
      * @param string|null $honorifics The honorifics or null to remove
      * @return $this
-     * 
+     *
      */
     public function setHonorifics(?string $honorifics): self
     {
         if ($honorifics === null) {
             return $this->set('honorifics', null);
         }
-        
+
         return $this->set('honorifics', $honorifics);
     }
-    
+
     /**
      * Set the first name
      *
      * @param string $firstName The first name
      * @return $this
-     * 
+     *
      */
     public function setFirstName(string $firstName): self
     {
-        
+
         return $this->set('firstname', $firstName);
     }
-    
+
     /**
      * Set the last name
      *
      * @param string $lastName The last name
      * @return $this
-     * 
+     *
      */
     public function setLastName(string $lastName): self
     {
-        
+
         return $this->set('lastname', $lastName);
     }
-    
-    /**
-     * Set the date of birth
-     *
-     * @param string|null $dateOfBirth The date of birth (format: YYYY-MM-DD) or null to remove
-     * @return $this
-     * 
-     */
+
     /**
      * Set the date of birth
      *
@@ -210,11 +200,11 @@ class Contact extends BaseModel
         if ($dateOfBirth === null) {
             return $this->set('date_of_birth', null);
         }
-        
+
         // If DateTime object provided, convert to string
         if ($dateOfBirth instanceof \DateTime) {
             $dateOfBirth = $dateOfBirth->format('Y-m-d');
-        } else if (is_string($dateOfBirth) && !preg_match('/^\d{4}-\d{2}-\d{2}$/', $dateOfBirth)) {
+        } elseif (is_string($dateOfBirth) && !preg_match('/^\d{4}-\d{2}-\d{2}$/', $dateOfBirth)) {
             // Try to parse the date string if it's not in ISO format
             try {
                 $date = new \DateTime($dateOfBirth);
@@ -223,29 +213,29 @@ class Contact extends BaseModel
                 // If we can't parse it, just pass it through - API will validate it
             }
         }
-        
+
         return $this->set('date_of_birth', $dateOfBirth);
     }
-    
+
     /**
      * Create and set identifiers
      *
      * @param string|int|null $externalId The external ID
      * @return $this
-     * 
+     *
      */
     public function createIdentifiers($externalId = null): self
     {
         $identifiers = new Identifiers();
-        
+
         if ($externalId !== null) {
             $identifiers->setExternalId($externalId);
         }
-        
+
         $this->identifiers = $identifiers;
         return $this->set('identifiers', $identifiers->toArray());
     }
-    
+
     /**
      * Set the identifiers
      *
@@ -257,13 +247,13 @@ class Contact extends BaseModel
         $this->identifiers = $identifiers;
         return $this->set('identifiers', $identifiers->toArray());
     }
-    
+
     /**
      * Set the external ID
      *
      * @param string|int|null $externalId The external ID or null to remove
      * @return $this
-     * 
+     *
      */
     public function setExternalId($externalId): self
     {
@@ -271,35 +261,35 @@ class Contact extends BaseModel
             $this->createIdentifiers($externalId);
             return $this;
         }
-        
+
         $this->identifiers->setExternalId($externalId);
         return $this->set('identifiers', $this->identifiers->toArray());
     }
-    
+
     /**
      * Create and set employment information
      *
      * @param string|null $jobTitle The job title
      * @param string|null $department The department
      * @return $this
-     * 
+     *
      */
     public function createEmployment(?string $jobTitle = null, ?string $department = null): self
     {
         $employment = new Employment();
-        
+
         if ($jobTitle !== null) {
             $employment->setJobTitle($jobTitle);
         }
-        
+
         if ($department !== null) {
             $employment->setDepartment($department);
         }
-        
+
         $this->employment = $employment;
         return $this->set('employment', $employment->toArray());
     }
-    
+
     /**
      * Set the employment
      *
@@ -311,41 +301,41 @@ class Contact extends BaseModel
         $this->employment = $employment;
         return $this->set('employment', $employment->toArray());
     }
-    
+
     /**
      * Set the job title (creates employment if needed)
      *
      * @param string|null $jobTitle The job title or null to remove
      * @return $this
-     * 
+     *
      */
     public function setJobTitle(?string $jobTitle): self
     {
         if ($this->employment === null) {
             return $this->createEmployment($jobTitle);
         }
-        
+
         $this->employment->setJobTitle($jobTitle);
         return $this->set('employment', $this->employment->toArray());
     }
-    
+
     /**
      * Set the department (creates employment if needed)
      *
      * @param string|null $department The department or null to remove
      * @return $this
-     * 
+     *
      */
     public function setDepartment(?string $department): self
     {
         if ($this->employment === null) {
             return $this->createEmployment(null, $department);
         }
-        
+
         $this->employment->setDepartment($department);
         return $this->set('employment', $this->employment->toArray());
     }
-    
+
     /**
      * Create and set communications
      *
@@ -354,7 +344,7 @@ class Contact extends BaseModel
      * @param string|null $mobilePhone The mobile phone number
      * @param string|null $fax The fax number
      * @return $this
-     * 
+     *
      */
     public function createCommunications(
         ?string $email = null,
@@ -363,27 +353,27 @@ class Contact extends BaseModel
         ?string $fax = null
     ): self {
         $communications = new Communications();
-        
+
         if ($email !== null) {
             $communications->setEmail($email);
         }
-        
+
         if ($phoneNumber !== null) {
             $communications->setPhoneNumber($phoneNumber);
         }
-        
+
         if ($mobilePhone !== null) {
             $communications->setMobilePhone($mobilePhone);
         }
-        
+
         if ($fax !== null) {
             $communications->setFax($fax);
         }
-        
+
         $this->communications = $communications;
         return $this->set('communications', $communications->toArray());
     }
-    
+
     /**
      * Set the communications
      *
@@ -395,111 +385,126 @@ class Contact extends BaseModel
         $this->communications = $communications;
         return $this->set('communications', $communications->toArray());
     }
-    
+
     /**
      * Set the email (creates communications if needed)
      *
      * @param string|null $email The email address or null to remove
      * @return $this
-     * 
+     *
      */
     public function setEmail(?string $email): self
     {
         if ($this->communications === null) {
             return $this->createCommunications($email);
         }
-        
+
         $this->communications->setEmail($email);
         return $this->set('communications', $this->communications->toArray());
     }
-    
+
     /**
      * Set the phone number (creates communications if needed)
      *
      * @param string|null $phoneNumber The phone number or null to remove
      * @return $this
-     * 
+     *
      */
     public function setPhone(?string $phoneNumber): self
     {
         if ($this->communications === null) {
             return $this->createCommunications(null, $phoneNumber);
         }
-        
+
         $this->communications->setPhoneNumber($phoneNumber);
         return $this->set('communications', $this->communications->toArray());
     }
-    
+
     /**
      * Set the mobile phone number (creates communications if needed)
      *
      * @param string|null $mobilePhone The mobile phone number or null to remove
      * @return $this
-     * 
+     *
      */
-    public function setMobile(?string $mobilePhone): self
+    public function setMobilePhone(?string $mobilePhone): self
     {
         if ($this->communications === null) {
             return $this->createCommunications(null, null, $mobilePhone);
         }
-        
+
         $this->communications->setMobilePhone($mobilePhone);
         return $this->set('communications', $this->communications->toArray());
     }
     
     /**
+     * Set the mobile phone number (alias for setMobilePhone)
+     *
+     * @param string|null $mobilePhone The mobile phone number or null to remove
+     * @return $this
+     */
+    public function setMobile(?string $mobilePhone): self
+    {
+        return $this->setMobilePhone($mobilePhone);
+    }
+
+    /**
      * Set the fax number (creates communications if needed)
      *
      * @param string|null $fax The fax number or null to remove
      * @return $this
-     * 
+     *
      */
     public function setFax(?string $fax): self
     {
         if ($this->communications === null) {
             return $this->createCommunications(null, null, null, $fax);
         }
-        
+
         $this->communications->setFax($fax);
         return $this->set('communications', $this->communications->toArray());
     }
-    
+
     /**
      * Set a custom data field
      *
      * @param string $key The field key
-     * @param mixed $value The field value
+     * @param mixed $value The field value or null to remove
      * @return $this
      */
-    /**
-     * Set a custom data field
-     *
-     * @param string $key The field key
-     * @param mixed $value The field value
-     * @return $this
-     */
-    public function setCustomField(string $key, $value): self
+    public function setCustomField(string $key, $value = null): self
     {
         if (!isset($this->data['custom_data'])) {
             $this->data['custom_data'] = [];
         }
-        
+
+        if ($value === null) {
+            unset($this->customData[$key]);
+            unset($this->data['custom_data'][$key]);
+
+            if (empty($this->customData)) {
+                $this->remove('custom_data');
+            }
+
+            return $this;
+        }
+
         // Type casting for common types
         if ($value === 'true' || $value === 'TRUE' || $value === '1') {
             $value = true;
-        } else if ($value === 'false' || $value === 'FALSE' || $value === '0') {
+        } elseif ($value === 'false' || $value === 'FALSE' || $value === '0') {
             $value = false;
-        } else if (is_string($value) && is_numeric($value) && strpos($value, '.') === false) {
+        } elseif (is_string($value) && is_numeric($value) && strpos($value, '.') === false) {
             // Convert string integers to actual integers
             $value = (int)$value;
         }
-        
+
         $this->customData[$key] = $value;
         $this->data['custom_data'][$key] = $value;
-        
+
         return $this;
     }
-    
+
     /**
      * Set custom data fields in bulk
      *
@@ -510,10 +515,10 @@ class Contact extends BaseModel
     {
         $this->customData = $data;
         $this->data['custom_data'] = $data;
-        
+
         return $this;
     }
-    
+
     /**
      * Get the custom data
      *
@@ -523,7 +528,7 @@ class Contact extends BaseModel
     {
         return $this->customData;
     }
-    
+
     /**
      * Get the salutation
      *
@@ -533,7 +538,7 @@ class Contact extends BaseModel
     {
         return $this->get('salutation');
     }
-    
+
     /**
      * Get the honorifics
      *
@@ -543,7 +548,7 @@ class Contact extends BaseModel
     {
         return $this->get('honorifics');
     }
-    
+
     /**
      * Get the first name
      *
@@ -553,7 +558,7 @@ class Contact extends BaseModel
     {
         return $this->get('firstname');
     }
-    
+
     /**
      * Get the last name
      *
@@ -563,7 +568,7 @@ class Contact extends BaseModel
     {
         return $this->get('lastname');
     }
-    
+
     /**
      * Get the date of birth
      *
@@ -573,7 +578,7 @@ class Contact extends BaseModel
     {
         return $this->get('date_of_birth');
     }
-    
+
     /**
      * Get the identifiers
      *
@@ -583,7 +588,7 @@ class Contact extends BaseModel
     {
         return $this->identifiers;
     }
-    
+
     /**
      * Get the employment
      *
@@ -593,7 +598,7 @@ class Contact extends BaseModel
     {
         return $this->employment;
     }
-    
+
     /**
      * Get the communications
      *

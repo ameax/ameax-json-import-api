@@ -7,7 +7,7 @@ use JsonSerializable;
 abstract class BaseModel implements JsonSerializable
 {
     protected array $data = [];
-    
+
     /**
      * Create a new model instance from an array of data
      *
@@ -18,10 +18,10 @@ abstract class BaseModel implements JsonSerializable
     {
         $instance = new static();
         $instance->populate($data);
-        
+
         return $instance;
     }
-    
+
     /**
      * Populate the model with data using setters
      *
@@ -29,7 +29,7 @@ abstract class BaseModel implements JsonSerializable
      * @return $this
      */
     abstract protected function populate(array $data): self;
-    
+
     /**
      * Convert the model instance to an array
      *
@@ -39,7 +39,7 @@ abstract class BaseModel implements JsonSerializable
     {
         return $this->data;
     }
-    
+
     /**
      * Set a value in the data array with dot notation support
      *
@@ -53,24 +53,24 @@ abstract class BaseModel implements JsonSerializable
             $this->data[$key] = $value;
             return $this;
         }
-        
+
         $keys = explode('.', $key);
         $lastKey = array_pop($keys);
-        
+
         $current = &$this->data;
         foreach ($keys as $nestedKey) {
             if (!isset($current[$nestedKey]) || !is_array($current[$nestedKey])) {
                 $current[$nestedKey] = [];
             }
-            
+
             $current = &$current[$nestedKey];
         }
-        
+
         $current[$lastKey] = $value;
-        
+
         return $this;
     }
-    
+
     /**
      * Get a value from the data array with dot notation support
      *
@@ -83,21 +83,21 @@ abstract class BaseModel implements JsonSerializable
         if (strpos($key, '.') === false) {
             return $this->data[$key] ?? $default;
         }
-        
+
         $keys = explode('.', $key);
         $value = $this->data;
-        
+
         foreach ($keys as $nestedKey) {
             if (!isset($value[$nestedKey])) {
                 return $default;
             }
-            
+
             $value = $value[$nestedKey];
         }
-        
+
         return $value;
     }
-    
+
     /**
      * Check if a key exists in the data array with dot notation support
      *
@@ -109,21 +109,21 @@ abstract class BaseModel implements JsonSerializable
         if (strpos($key, '.') === false) {
             return isset($this->data[$key]);
         }
-        
+
         $keys = explode('.', $key);
         $value = $this->data;
-        
+
         foreach ($keys as $nestedKey) {
             if (!isset($value[$nestedKey])) {
                 return false;
             }
-            
+
             $value = $value[$nestedKey];
         }
-        
+
         return true;
     }
-    
+
     /**
      * Remove a key from the data array with dot notation support
      *
@@ -136,24 +136,24 @@ abstract class BaseModel implements JsonSerializable
             unset($this->data[$key]);
             return $this;
         }
-        
+
         $keys = explode('.', $key);
         $lastKey = array_pop($keys);
-        
+
         $current = &$this->data;
         foreach ($keys as $nestedKey) {
             if (!isset($current[$nestedKey])) {
                 return $this;
             }
-            
+
             $current = &$current[$nestedKey];
         }
-        
+
         unset($current[$lastKey]);
-        
+
         return $this;
     }
-    
+
     /**
      * Specify data which should be serialized to JSON
      *

@@ -21,7 +21,7 @@ class AmeaxJsonImportApi
     protected HttpClient $client;
     protected string $apiKey;
     protected string $baseUrl;
-    
+
     /**
      * Create a new API client instance
      *
@@ -32,7 +32,7 @@ class AmeaxJsonImportApi
     {
         $this->apiKey = $apiKey;
         $this->baseUrl = rtrim($host, '/') . '/rest-api';
-        
+
         $this->client = new HttpClient([
             'headers' => [
                 'Authorization' => "Bearer {$this->apiKey}",
@@ -41,7 +41,7 @@ class AmeaxJsonImportApi
             ],
         ]);
     }
-    
+
     /**
      * Create a new empty organization
      *
@@ -52,7 +52,7 @@ class AmeaxJsonImportApi
         $organization = new Organization();
         return $organization->setApiClient($this);
     }
-    
+
     /**
      * Create an organization from an existing array of data
      *
@@ -63,30 +63,30 @@ class AmeaxJsonImportApi
     {
         $organization = Organization::fromArray($data);
         $organization->setApiClient($this);
-        
+
         return $organization;
     }
-    
+
     /**
      * Create a new empty address
-     * 
+     *
      * @return Address A new address instance
      */
     public function createAddress(): Address
     {
         return new Address();
     }
-    
+
     /**
      * Create a new empty contact
-     * 
+     *
      * @return Contact A new contact instance
      */
     public function createContact(): Contact
     {
         return new Contact();
     }
-    
+
     /**
      * Create a new empty private person
      *
@@ -97,7 +97,7 @@ class AmeaxJsonImportApi
         $privatePerson = new PrivatePerson();
         return $privatePerson->setApiClient($this);
     }
-    
+
     /**
      * Create a private person from an existing array of data
      *
@@ -108,10 +108,10 @@ class AmeaxJsonImportApi
     {
         $privatePerson = PrivatePerson::fromArray($data);
         $privatePerson->setApiClient($this);
-        
+
         return $privatePerson;
     }
-    
+
     /**
      * Send organization data to Ameax API
      *
@@ -134,18 +134,18 @@ class AmeaxJsonImportApi
                 $organization['meta']['schema_version'] = Meta::SCHEMA_VERSION;
             }
         }
-        
+
         try {
             $response = $this->client->post("{$this->baseUrl}/imports", [
                 'json' => $organization,
             ]);
-            
+
             return json_decode($response->getBody()->getContents(), true);
         } catch (GuzzleException $e) {
             throw new \Exception("Error sending organization data to Ameax: " . $e->getMessage(), $e->getCode(), $e);
         }
     }
-    
+
     /**
      * Send private person data to Ameax API
      *
@@ -168,16 +168,16 @@ class AmeaxJsonImportApi
                 $privatePerson['meta']['schema_version'] = Meta::SCHEMA_VERSION;
             }
         }
-        
+
         try {
             $response = $this->client->post("{$this->baseUrl}/imports", [
                 'json' => $privatePerson,
             ]);
-            
+
             return json_decode($response->getBody()->getContents(), true);
         } catch (GuzzleException $e) {
             throw new \Exception("Error sending private person data to Ameax: " . $e->getMessage(), $e->getCode(), $e);
         }
     }
-    
+
 }

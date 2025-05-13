@@ -2,9 +2,6 @@
 
 namespace Ameax\AmeaxJsonImportApi\Models;
 
-
-
-
 class Identifiers extends BaseModel
 {
     /**
@@ -14,36 +11,36 @@ class Identifiers extends BaseModel
     {
         $this->data = [];
     }
-    
+
     /**
      * Populate the model with data using setters
      *
      * @param array $data
      * @return $this
-     * 
+     *
      */
     protected function populate(array $data): self
     {
         if (isset($data['customer_number'])) {
             $this->setCustomerNumber($data['customer_number']);
         }
-        
+
         if (isset($data['external_id'])) {
             $this->setExternalId($data['external_id']);
         }
-        
+
         // Handle any other fields
         foreach ($data as $key => $value) {
             if (!in_array($key, ['customer_number', 'external_id'])) {
                 $this->set($key, $value);
             }
         }
-        
+
         return $this;
     }
-    
-    
-    
+
+
+
     /**
      * Set the customer number
      *
@@ -54,10 +51,10 @@ class Identifiers extends BaseModel
     {
         // Convert to string regardless of input type
         $customerNumber = (string) $customerNumber;
-        
+
         return $this->set('customer_number', $customerNumber);
     }
-    
+
     /**
      * Set the external ID
      *
@@ -69,13 +66,13 @@ class Identifiers extends BaseModel
         if ($externalId === null) {
             return $this->remove('external_id');
         }
-        
+
         // Convert to string regardless of input type
         $externalId = (string) $externalId;
-        
+
         return $this->set('external_id', $externalId);
     }
-    
+
     /**
      * Get the customer number
      *
@@ -85,7 +82,7 @@ class Identifiers extends BaseModel
     {
         return $this->get('customer_number');
     }
-    
+
     /**
      * Get the external ID
      *
