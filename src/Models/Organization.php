@@ -195,9 +195,7 @@ class Organization extends BaseModel
             $this->contactObjects = [];
 
             foreach ($data['contacts'] as $contactData) {
-                // Skip validation during creation to avoid premature validation errors
-                // The entire object will be validated at the end
-                $contact = Contact::fromArray($contactData, true);
+                $contact = Contact::fromArray($contactData);
                 $this->contactObjects[] = $contact;
                 $this->data['contacts'][] = $contact->toArray();
             }

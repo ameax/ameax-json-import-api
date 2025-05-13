@@ -76,7 +76,7 @@ class PrivatePerson extends BaseModel
             // Ensure correct document_type
             $metaData['document_type'] = self::DOCUMENT_TYPE;
 
-            $this->meta = Meta::fromArray($metaData, true);
+            $this->meta = Meta::fromArray($metaData);
             $this->data['meta'] = $this->meta->toArray();
         } else {
             // For backward compatibility
@@ -93,7 +93,7 @@ class PrivatePerson extends BaseModel
                 $metaData['schema_version'] = $data['schema_version'];
             }
 
-            $this->meta = Meta::fromArray($metaData, true);
+            $this->meta = Meta::fromArray($metaData);
             $this->data['meta'] = $this->meta->toArray();
         }
 
@@ -120,24 +120,24 @@ class PrivatePerson extends BaseModel
 
         // Handle nested objects
         if (isset($data['identifiers']) && is_array($data['identifiers'])) {
-            $this->identifiers = Identifiers::fromArray($data['identifiers'], true);
+            $this->identifiers = Identifiers::fromArray($data['identifiers']);
             $this->data['identifiers'] = $this->identifiers->toArray();
         } elseif (isset($data['customer_number'])) {
             // For backward compatibility
             $identifiersData = [
                 'customer_number' => $data['customer_number']
             ];
-            $this->identifiers = Identifiers::fromArray($identifiersData, true);
+            $this->identifiers = Identifiers::fromArray($identifiersData);
             $this->data['identifiers'] = $this->identifiers->toArray();
         }
 
         if (isset($data['address']) && is_array($data['address'])) {
-            $this->address = Address::fromArray($data['address'], true);
+            $this->address = Address::fromArray($data['address']);
             $this->data['address'] = $this->address->toArray();
         }
 
         if (isset($data['communications']) && is_array($data['communications'])) {
-            $this->communications = Communications::fromArray($data['communications'], true);
+            $this->communications = Communications::fromArray($data['communications']);
             $this->data['communications'] = $this->communications->toArray();
         } elseif (isset($data['email']) || isset($data['phone']) || isset($data['mobile']) || isset($data['fax'])) {
             // For backward compatibility
@@ -154,12 +154,12 @@ class PrivatePerson extends BaseModel
             if (isset($data['fax'])) {
                 $communicationsData['fax'] = $data['fax'];
             }
-            $this->communications = Communications::fromArray($communicationsData, true);
+            $this->communications = Communications::fromArray($communicationsData);
             $this->data['communications'] = $this->communications->toArray();
         }
 
         if (isset($data['agent']) && is_array($data['agent'])) {
-            $this->agent = Agent::fromArray($data['agent'], true);
+            $this->agent = Agent::fromArray($data['agent']);
             $this->data['agent'] = $this->agent->toArray();
         }
 
@@ -218,7 +218,7 @@ class PrivatePerson extends BaseModel
      * Set the salutation
      *
      * The API accepts the following salutation values: 'Mr.', 'Ms.', 'Mx.'
-     * Other values are accepted but may not validate on the server.
+     * Common values: 'Mr.', 'Ms.', 'Mx.'
      *
      * @param string|null $salutation The salutation or null to remove
      * @return $this
@@ -304,7 +304,7 @@ class PrivatePerson extends BaseModel
                 $date = new \DateTime($dateOfBirth);
                 $dateOfBirth = $date->format('Y-m-d');
             } catch (\Exception $e) {
-                // If we can't parse it, just pass it through - API will validate it
+                // If we can't parse it, just pass it through
             }
         }
 

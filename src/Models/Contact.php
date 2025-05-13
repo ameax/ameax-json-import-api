@@ -124,7 +124,7 @@ class Contact extends BaseModel
      * Set the salutation
      *
      * The API accepts the following salutation values: 'Mr.', 'Ms.', 'Mx.'
-     * Other values are accepted but may not validate on the server.
+     * Common values: 'Mr.', 'Ms.', 'Mx.'
      *
      * @param string|null $salutation The salutation or null to remove
      * @return $this
@@ -210,7 +210,7 @@ class Contact extends BaseModel
                 $date = new \DateTime($dateOfBirth);
                 $dateOfBirth = $date->format('Y-m-d');
             } catch (\Exception $e) {
-                // If we can't parse it, just pass it through - API will validate it
+                // If we can't parse it, just pass it through
             }
         }
 
