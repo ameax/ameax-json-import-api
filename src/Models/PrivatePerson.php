@@ -230,61 +230,64 @@ class PrivatePerson extends BaseModel
 
         $originalInput = $salutation;
         $salutation = trim($salutation);
-        
+
         // Map of recognized English and German salutations
         $mrVariations = ['mr', 'mr.', 'mister', 'sir', 'herr', 'herrn', 'hr', 'hr.'];
         $msVariations = ['ms', 'ms.', 'miss', 'mrs', 'mrs.', 'madam', 'frau', 'fr', 'fr.', 'fräulein'];
         $mxVariations = ['mx', 'mx.'];
-        
+
         $lowerSalutation = strtolower($salutation);
-        
+
         // First check for exact matches
         if (in_array($lowerSalutation, $mrVariations)) {
             return $this->set('salutation', 'Mr.');
         }
-        
+
         if (in_array($lowerSalutation, $msVariations)) {
             return $this->set('salutation', 'Ms.');
         }
-        
+
         if (in_array($lowerSalutation, $mxVariations)) {
             return $this->set('salutation', 'Mx.');
         }
-        
+
         // Now check for combined forms (salutation + honorific)
         // Mr. variations
         foreach ($mrVariations as $prefix) {
-            $pattern = '/^' . preg_quote($prefix, '/') . '\s+(.+)$/i';
+            $pattern = '/^'.preg_quote($prefix, '/').'\s+(.+)$/i';
             if (preg_match($pattern, $salutation, $matches)) {
-                if (!empty($matches[1])) {
+                if (! empty($matches[1])) {
                     $this->setHonorifics($matches[1]);
                 }
+
                 return $this->set('salutation', 'Mr.');
             }
         }
-        
+
         // Ms. variations
         foreach ($msVariations as $prefix) {
-            $pattern = '/^' . preg_quote($prefix, '/') . '\s+(.+)$/i';
+            $pattern = '/^'.preg_quote($prefix, '/').'\s+(.+)$/i';
             if (preg_match($pattern, $salutation, $matches)) {
-                if (!empty($matches[1])) {
+                if (! empty($matches[1])) {
                     $this->setHonorifics($matches[1]);
                 }
+
                 return $this->set('salutation', 'Ms.');
             }
         }
-        
+
         // Mx. variations
         foreach ($mxVariations as $prefix) {
-            $pattern = '/^' . preg_quote($prefix, '/') . '\s+(.+)$/i';
+            $pattern = '/^'.preg_quote($prefix, '/').'\s+(.+)$/i';
             if (preg_match($pattern, $salutation, $matches)) {
-                if (!empty($matches[1])) {
+                if (! empty($matches[1])) {
                     $this->setHonorifics($matches[1]);
                 }
+
                 return $this->set('salutation', 'Mx.');
             }
         }
-        
+
         // If we couldn't map to a standard value, use the original input
         return $this->set('salutation', $originalInput);
     }

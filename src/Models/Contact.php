@@ -134,52 +134,55 @@ class Contact extends BaseModel
 
         $trimmedInput = trim($salutation);
         $lowerInput = strtolower($trimmedInput);
-        
+
         // Direct mapping of salutations
         $mrVariations = ['mr', 'mr.', 'mister', 'sir', 'herr', 'herrn', 'hr', 'hr.'];
         $msVariations = ['ms', 'ms.', 'miss', 'mrs', 'mrs.', 'madam', 'frau', 'fr', 'fr.', 'fräulein'];
         $mxVariations = ['mx', 'mx.'];
-        
+
         // Special handling for cases like "Mr. Dr." where we need to extract honorifics
         $patternMr = '/^(mr\.|mr|herr|herrn|hr\.?)\s+(.+)/i';
         $patternMs = '/^(ms\.|ms|miss|mrs\.?|frau|fr\.?|fräulein)\s+(.+)/i';
         $patternMx = '/^(mx\.?)\s+(.+)/i';
-        
+
         // Test for combined strings first (salutation + honorific)
         if (preg_match($patternMr, $trimmedInput, $matches)) {
-            if (!empty($matches[2])) {
+            if (! empty($matches[2])) {
                 $this->setHonorifics($matches[2]);
             }
+
             return $this->set('salutation', 'Mr.');
         }
-        
+
         if (preg_match($patternMs, $trimmedInput, $matches)) {
-            if (!empty($matches[2])) {
+            if (! empty($matches[2])) {
                 $this->setHonorifics($matches[2]);
             }
+
             return $this->set('salutation', 'Ms.');
         }
-        
+
         if (preg_match($patternMx, $trimmedInput, $matches)) {
-            if (!empty($matches[2])) {
+            if (! empty($matches[2])) {
                 $this->setHonorifics($matches[2]);
             }
+
             return $this->set('salutation', 'Mx.');
         }
-        
+
         // If no combined string, check for exact matches
         if (in_array($lowerInput, $mrVariations)) {
             return $this->set('salutation', 'Mr.');
         }
-        
+
         if (in_array($lowerInput, $msVariations)) {
             return $this->set('salutation', 'Ms.');
         }
-        
+
         if (in_array($lowerInput, $mxVariations)) {
             return $this->set('salutation', 'Mx.');
         }
-        
+
         // If we couldn't map to a standard value, use the original input
         return $this->set('salutation', $trimmedInput);
     }

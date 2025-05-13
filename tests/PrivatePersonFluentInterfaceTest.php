@@ -160,11 +160,11 @@ test('privateperson handles customer number conversion', function () {
     // Test with numeric string
     $person->setCustomerNumber('9876');
     expect($person->getCustomerNumber())->toBe('9876');
-    
+
     // Test with null
     $person->setCustomerNumber(null);
     expect($person->getCustomerNumber())->toBeNull();
-    
+
     // Test with empty string (should be converted to null)
     $person->setCustomerNumber('');
     expect($person->getCustomerNumber())->toBeNull();
