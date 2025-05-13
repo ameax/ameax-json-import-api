@@ -15,6 +15,20 @@ This package can be installed via Composer. It requires PHP 8.2 or higher.
 composer require ameax/ameax-json-import-api
 ```
 
+### Version Constraints
+
+When requiring this package, you can specify version constraints:
+
+```bash
+# Install the latest 1.* version
+composer require ameax/ameax-json-import-api:^1.0
+
+# Install a specific version
+composer require ameax/ameax-json-import-api:1.0.0
+```
+
+For more details on versioning, see the [Versioning Guide](versioning.md).
+
 ## Basic Usage
 
 After installing the package, you can use it in your PHP project:

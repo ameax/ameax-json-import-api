@@ -8,6 +8,7 @@ Welcome to the documentation for the Ameax JSON Import API package. This package
 - [Installation](installation.md) - How to install and set up the package
 - [Organizations](organizations.md) - Working with organization data
 - [API Reference](api-reference.md) - Complete API reference
+- [Versioning](versioning.md) - Version policy and compatibility information
 
 ## Quick Start
 
@@ -56,6 +57,7 @@ For more detailed information, please refer to the specific documentation pages:
 - [Installation](installation.md) for setup instructions
 - [Organizations](organizations.md) for working with organization data
 - [API Reference](api-reference.md) for a complete API reference
+- [Versioning](versioning.md) for version policy and compatibility information
 
 ## About Ameax JSON Schema
 

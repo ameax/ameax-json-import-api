@@ -17,11 +17,12 @@ The Ameax JSON Import API package is designed to:
 
 ## Key Features
 
-- **Organization Data Support**: Create and send organization data to Ameax
-- **JSON Schema Validation**: Validate your data before sending to prevent API errors
-- **Laravel Integration**: Easy integration with Laravel applications
+- **Organization & PrivatePerson Support**: Create and send organization and private person data to Ameax
+- **Fluent Interface**: Chainable methods for cleaner, more readable code
+- **Type Casting**: Automatic conversion of data types (strings to integers, booleans, etc.)
+- **Semantic Versioning**: Clear version policy with backward compatibility guarantees
 - **Comprehensive Documentation**: Detailed guides and API references
-- **Modern PHP Support**: Built for PHP 8.2+ with type hints and modern PHP features
+- **Modern PHP Support**: Built for PHP 8.2+ with strict type declarations and modern PHP features
 
 ## Understanding Ameax JSON Schemas
 
@@ -38,3 +39,5 @@ This package includes schema definitions for organizations and provides an API t
 To get started, refer to the [Installation Guide](installation.md) and then check out the [Organizations Guide](organizations.md) for creating and sending organization data.
 
 For a complete list of available methods and classes, see the [API Reference](api-reference.md).
+
+For information about versioning and compatibility guarantees, see the [Versioning Guide](versioning.md).
