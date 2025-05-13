@@ -39,14 +39,25 @@ class Identifiers extends BaseModel
 
     /**
      * Set the customer number
+     * Must be a numerical string or null if empty
      *
      * @param  string|int|null  $customerNumber  The customer number
      * @return $this
      */
     public function setCustomerNumber(string|int|null $customerNumber): self
     {
-        // Convert to string regardless of input type
+        // Handle null or empty string case
+        if ($customerNumber === null || $customerNumber === '') {
+            return $this->set('customer_number', null);
+        }
+        
+        // Convert to string
         $customerNumber = (string) $customerNumber;
+        
+        // Validate that it contains only numeric characters
+        if (!ctype_digit($customerNumber)) {
+            throw new \InvalidArgumentException('Customer number must contain only numeric characters.');
+        }
 
         return $this->set('customer_number', $customerNumber);
     }
