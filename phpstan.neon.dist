@@ -12,3 +12,10 @@ parameters:
         - '#Function env not found#'
         - '#Unsafe usage of new static\(\)#'
     treatPhpDocTypesAsCertain: false
+    reportUnmatchedIgnoredErrors: false
+    # These rules will check for missing type declarations in later upgrades
+    # checkMissingIterableValueType: true
+    # checkGenericClassInNonGenericObjectType: true
+    # checkUninitializedProperties: true
+    # checkImplicitMixed: true
+    # checkBenevolentUnionTypes: true

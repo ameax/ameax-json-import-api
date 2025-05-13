@@ -8,7 +8,7 @@ This is a Laravel package for JSON import API functionality, built using the spa
 ## Commands
 - **Test**: `composer test` (runs all tests with Pest)
 - **Test Single**: `composer test tests/path/to/TestFile.php` or `composer test -- --filter=testName`
-- **Static Analysis**: `composer analyse` (PHPStan level 5)
+- **Static Analysis**: `composer analyse` (PHPStan level 6 with strict type checking)
 - **Code Formatting**: `composer format` (Laravel Pint)
 - **Test Coverage**: `composer test-coverage`
 
@@ -17,6 +17,8 @@ This is a Laravel package for JSON import API functionality, built using the spa
 - PSR-4 autoloading standards
 - Follow Laravel conventions and naming
 - Use strict type declarations for all parameters and return types (including mixed where appropriate)
+- Always specify array types with their value types (e.g., `array<string, mixed>` instead of just `array`)
+- Check that PHPStan reports no errors before committing changes
 - Prefer dependency injection over facades in core code
 - Handle exceptions gracefully, use custom exceptions when appropriate
 - Use Laravel Pint defaults (based on PHP-CS-Fixer)
