@@ -1,5 +1,5 @@
 <?php
 
-use Ameax Unternehmenssoftware\AmeaxJsonImportApi\Tests\TestCase;
+use Ameax\AmeaxJsonImportApi\Tests\TestCase;
 
 uses(TestCase::class)->in(__DIR__);
