@@ -50,12 +50,12 @@ class Identifiers extends BaseModel
         if ($customerNumber === null || $customerNumber === '') {
             return $this->set('customer_number', null);
         }
-        
+
         // Convert to string
         $customerNumber = (string) $customerNumber;
-        
+
         // Validate that it contains only numeric characters
-        if (!ctype_digit($customerNumber)) {
+        if (! ctype_digit($customerNumber)) {
             throw new \InvalidArgumentException('Customer number must contain only numeric characters.');
         }
 
