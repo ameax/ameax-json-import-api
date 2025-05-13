@@ -46,7 +46,7 @@ class Agent extends BaseModel
      * @return $this
      *
      */
-    public function setExternalId($externalId): self
+    public function setExternalId(string|int|null $externalId): self
     {
         if ($externalId === null) {
             return $this->set('external_id', null);
@@ -62,10 +62,9 @@ class Agent extends BaseModel
     /**
      * Get the external ID
      *
-     * @return string|int|null
+     * @return string|null
      */
-    public function getExternalId()
-    {
+    public function getExternalId(): ?string {
         return $this->get('external_id');
     }
 }

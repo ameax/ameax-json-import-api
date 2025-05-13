@@ -48,7 +48,7 @@ abstract class BaseModel implements JsonSerializable
      * @param mixed $value The value to set
      * @return $this
      */
-    protected function set(string $key, $value): self
+    protected function set(string $key, mixed $value): self
     {
         if (strpos($key, '.') === false) {
             $this->data[$key] = $value;
@@ -79,7 +79,7 @@ abstract class BaseModel implements JsonSerializable
      * @param mixed $default The default value if key doesn't exist
      * @return mixed
      */
-    protected function get(string $key, $default = null)
+    protected function get(string $key, mixed $default = null): mixed
     {
         if (strpos($key, '.') === false) {
             return $this->data[$key] ?? $default;

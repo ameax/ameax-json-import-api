@@ -16,7 +16,7 @@ This is a Laravel package for JSON import API functionality, built using the spa
 - PHP 8.2+ required
 - PSR-4 autoloading standards
 - Follow Laravel conventions and naming
-- Use type declarations for parameters and return types
+- Use strict type declarations for all parameters and return types (including mixed where appropriate)
 - Prefer dependency injection over facades in core code
 - Handle exceptions gracefully, use custom exceptions when appropriate
 - Use Laravel Pint defaults (based on PHP-CS-Fixer)

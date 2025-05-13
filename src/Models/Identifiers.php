@@ -44,10 +44,10 @@ class Identifiers extends BaseModel
     /**
      * Set the customer number
      *
-     * @param string|int|mixed $customerNumber The customer number
+     * @param string|int|null $customerNumber The customer number
      * @return $this
      */
-    public function setCustomerNumber($customerNumber): self
+    public function setCustomerNumber(string|int|null $customerNumber): self
     {
         // Convert to string regardless of input type
         $customerNumber = (string) $customerNumber;
@@ -58,10 +58,10 @@ class Identifiers extends BaseModel
     /**
      * Set the external ID
      *
-     * @param string|int|null|mixed $externalId The external ID or null to remove
+     * @param string|int|null $externalId The external ID or null to remove
      * @return $this
      */
-    public function setExternalId($externalId): self
+    public function setExternalId(string|int|null $externalId): self
     {
         if ($externalId === null) {
             return $this->remove('external_id');
@@ -76,9 +76,9 @@ class Identifiers extends BaseModel
     /**
      * Get the customer number
      *
-     * @return string|int|null
+     * @return string|null
      */
-    public function getCustomerNumber()
+    public function getCustomerNumber(): ?string
     {
         return $this->get('customer_number');
     }
@@ -86,9 +86,9 @@ class Identifiers extends BaseModel
     /**
      * Get the external ID
      *
-     * @return string|int|null
+     * @return string|null
      */
-    public function getExternalId()
+    public function getExternalId(): ?string
     {
         return $this->get('external_id');
     }

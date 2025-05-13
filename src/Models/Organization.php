@@ -278,7 +278,7 @@ class Organization extends BaseModel
      * @return $this
      *
      */
-    public function createIdentifiers($customerNumber, $externalId = null): self
+    public function createIdentifiers(string|int|null $customerNumber, $externalId = null): self
     {
         $identifiers = new Identifiers();
         $identifiers->setCustomerNumber($customerNumber);
@@ -306,11 +306,10 @@ class Organization extends BaseModel
     /**
      * Set the customer number
      *
-     * @param string|int $customerNumber The customer number
+     * @param string|int|null $customerNumber The customer number
      * @return $this
-     *
      */
-    public function setCustomerNumber($customerNumber): self
+    public function setCustomerNumber(string|int|null $customerNumber): self
     {
         if ($this->identifiers === null) {
             return $this->createIdentifiers($customerNumber);
@@ -327,7 +326,7 @@ class Organization extends BaseModel
      * @return $this
      *
      */
-    public function setExternalId($externalId): self
+    public function setExternalId(string|int|null $externalId): self
     {
         if ($this->identifiers === null) {
             if ($externalId === null) {
@@ -781,9 +780,8 @@ class Organization extends BaseModel
      *
      * @param string|int|null $externalId The external ID or null to remove
      * @return $this
-     *
      */
-    public function setAgentExternalId($externalId): self
+    public function setAgentExternalId(string|int|null $externalId): self
     {
         if ($this->agent === null) {
             if ($externalId === null) {

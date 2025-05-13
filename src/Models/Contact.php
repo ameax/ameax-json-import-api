@@ -255,7 +255,7 @@ class Contact extends BaseModel
      * @return $this
      *
      */
-    public function setExternalId($externalId): self
+    public function setExternalId(string|int|null $externalId): self
     {
         if ($this->identifiers === null) {
             $this->createIdentifiers($externalId);

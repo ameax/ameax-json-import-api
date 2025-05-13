@@ -349,7 +349,7 @@ class PrivatePerson extends BaseModel
      * @return $this
      *
      */
-    public function setCustomerNumber($customerNumber): self
+    public function setCustomerNumber(string|int|null $customerNumber): self
     {
         if ($this->identifiers === null) {
             if ($customerNumber === null) {
@@ -664,7 +664,7 @@ class PrivatePerson extends BaseModel
      * @return $this
      *
      */
-    public function setAgentExternalId($externalId): self
+    public function setAgentExternalId(string|int|null $externalId): self
     {
         if ($this->agent === null) {
             if ($externalId === null) {
@@ -835,10 +835,9 @@ class PrivatePerson extends BaseModel
     /**
      * Get the customer number
      *
-     * @return string|int|null
+     * @return string|null
      */
-    public function getCustomerNumber()
-    {
+    public function getCustomerNumber(): ?string {
         return $this->identifiers ? $this->identifiers->getCustomerNumber() : null;
     }
 

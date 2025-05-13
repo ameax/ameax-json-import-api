@@ -131,7 +131,7 @@ class Address extends BaseModel
      * @param mixed $value The field value
      * @return $this
      */
-    public function setCustomField(string $key, $value): self
+    public function setCustomField(string $key, mixed $value): self
     {
         return $this->set($key, $value);
     }
