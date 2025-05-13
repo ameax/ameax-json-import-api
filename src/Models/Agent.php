@@ -2,7 +2,7 @@
 
 namespace Ameax\AmeaxJsonImportApi\Models;
 
-use Ameax\AmeaxJsonImportApi\Exceptions\ValidationException;
+
 
 class Agent extends BaseModel
 {
@@ -19,7 +19,7 @@ class Agent extends BaseModel
      *
      * @param array $data
      * @return $this
-     * @throws ValidationException If validation fails
+     * 
      */
     protected function populate(array $data): self
     {
@@ -37,24 +37,14 @@ class Agent extends BaseModel
         return $this;
     }
     
-    /**
-     * Validate the model data before saving/sending
-     *
-     * @return bool True if validation passes
-     * @throws ValidationException If validation fails
-     */
-    public function validate(): bool
-    {
-        // No specific validation rules for agent at this time
-        return true;
-    }
+    
     
     /**
      * Set the external ID
      *
      * @param string|int|null $externalId The external ID or null to remove
      * @return $this
-     * @throws ValidationException If validation fails
+     * 
      */
     public function setExternalId($externalId): self
     {
@@ -63,7 +53,7 @@ class Agent extends BaseModel
         }
         
         if (!is_string($externalId) && !is_int($externalId)) {
-            throw new ValidationException(["External ID must be a string, integer, or null"]);
+            throw new InvalidArgumentException("External ID must be a string, integer, or null");
         }
         
         return $this->set('external_id', $externalId);

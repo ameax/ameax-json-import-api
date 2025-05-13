@@ -4,7 +4,6 @@ namespace Ameax\AmeaxJsonImportApi;
 
 use GuzzleHttp\Client as HttpClient;
 use GuzzleHttp\Exception\GuzzleException;
-use Ameax\AmeaxJsonImportApi\Exceptions\ValidationException;
 use Ameax\AmeaxJsonImportApi\Models\Organization;
 use Ameax\AmeaxJsonImportApi\Models\PrivatePerson;
 use Ameax\AmeaxJsonImportApi\Models\Address;
@@ -16,14 +15,12 @@ use Ameax\AmeaxJsonImportApi\Models\Communications;
 use Ameax\AmeaxJsonImportApi\Models\BusinessInformation;
 use Ameax\AmeaxJsonImportApi\Models\Agent;
 use Ameax\AmeaxJsonImportApi\Models\Employment;
-use Ameax\AmeaxJsonImportApi\Validation\SchemaValidator;
 
 class AmeaxJsonImportApi
 {
     protected HttpClient $client;
     protected string $apiKey;
     protected string $baseUrl;
-    protected ?string $schemasPath;
     
     /**
      * Create a new API client instance
@@ -35,7 +32,6 @@ class AmeaxJsonImportApi
     {
         $this->apiKey = $apiKey;
         $this->baseUrl = rtrim($host, '/') . '/rest-api';
-        $this->schemasPath = null;
         
         $this->client = new HttpClient([
             'headers' => [
@@ -44,18 +40,6 @@ class AmeaxJsonImportApi
                 'Content-Type' => 'application/json',
             ],
         ]);
-    }
-    
-    /**
-     * Set the path to custom JSON schema files
-     *
-     * @param string $schemasPath Path to the directory containing schema files
-     * @return $this
-     */
-    public function setSchemasPath(string $schemasPath): self
-    {
-        $this->schemasPath = rtrim($schemasPath, '/');
-        return $this;
     }
     
     /**
@@ -73,18 +57,12 @@ class AmeaxJsonImportApi
      * Create an organization from an existing array of data
      *
      * @param array $data The organization data
-     * @param bool $validate Whether to validate the data immediately
      * @return Organization
-     * @throws ValidationException If validation fails and $validate is true
      */
-    public function organizationFromArray(array $data, bool $validate = true): Organization
+    public function organizationFromArray(array $data): Organization
     {
-        $organization = Organization::fromArray($data, !$validate);
+        $organization = Organization::fromArray($data);
         $organization->setApiClient($this);
-        
-        if ($validate) {
-            $organization->validate();
-        }
         
         return $organization;
     }
@@ -124,18 +102,12 @@ class AmeaxJsonImportApi
      * Create a private person from an existing array of data
      *
      * @param array $data The private person data
-     * @param bool $validate Whether to validate the data immediately
      * @return PrivatePerson
-     * @throws ValidationException If validation fails and $validate is true
      */
-    public function privatePersonFromArray(array $data, bool $validate = true): PrivatePerson
+    public function privatePersonFromArray(array $data): PrivatePerson
     {
-        $privatePerson = PrivatePerson::fromArray($data, !$validate);
+        $privatePerson = PrivatePerson::fromArray($data);
         $privatePerson->setApiClient($this);
-        
-        if ($validate) {
-            $privatePerson->validate();
-        }
         
         return $privatePerson;
     }
@@ -145,7 +117,7 @@ class AmeaxJsonImportApi
      *
      * @param array $organization The organization data
      * @return array The API response
-     * @throws \Exception If validation or request fails
+     * @throws \Exception If request fails
      * @internal This is used by the Organization class and generally should not be called directly
      */
     public function sendOrganization(array $organization): array
@@ -161,12 +133,6 @@ class AmeaxJsonImportApi
             if (!isset($organization['meta']['schema_version'])) {
                 $organization['meta']['schema_version'] = Meta::SCHEMA_VERSION;
             }
-        }
-        
-        // For schemas path validation
-        $schemaFile = $this->getSchemaFilePath(Meta::DOCUMENT_TYPE_ORGANIZATION);
-        if (file_exists($schemaFile)) {
-            $this->validateAgainstSchema($organization, Meta::DOCUMENT_TYPE_ORGANIZATION);
         }
         
         try {
@@ -185,7 +151,7 @@ class AmeaxJsonImportApi
      *
      * @param array $privatePerson The private person data
      * @return array The API response
-     * @throws \Exception If validation or request fails
+     * @throws \Exception If request fails
      * @internal This is used by the PrivatePerson class and generally should not be called directly
      */
     public function sendPrivatePerson(array $privatePerson): array
@@ -203,12 +169,6 @@ class AmeaxJsonImportApi
             }
         }
         
-        // For schemas path validation
-        $schemaFile = $this->getSchemaFilePath(Meta::DOCUMENT_TYPE_PRIVATE_PERSON);
-        if (file_exists($schemaFile)) {
-            $this->validateAgainstSchema($privatePerson, Meta::DOCUMENT_TYPE_PRIVATE_PERSON);
-        }
-        
         try {
             $response = $this->client->post("{$this->baseUrl}/imports", [
                 'json' => $privatePerson,
@@ -220,37 +180,4 @@ class AmeaxJsonImportApi
         }
     }
     
-    /**
-     * Validate data against the appropriate JSON schema file
-     *
-     * @param array $data The data to validate
-     * @param string $documentType The type of document being validated
-     * @return bool True if validation passes
-     * @throws ValidationException If validation fails
-     */
-    protected function validateAgainstSchema(array $data, string $documentType): bool
-    {
-        $schemaFile = $this->getSchemaFilePath($documentType);
-        
-        if (!file_exists($schemaFile)) {
-            throw new \InvalidArgumentException("Schema file not found for document type: {$documentType}");
-        }
-        
-        return SchemaValidator::validate($data, $schemaFile);
-    }
-    
-    /**
-     * Get the schema file path for a document type
-     *
-     * @param string $documentType The document type
-     * @return string The schema file path
-     */
-    protected function getSchemaFilePath(string $documentType): string
-    {
-        if ($this->schemasPath) {
-            return rtrim($this->schemasPath, '/') . "/{$documentType}.json";
-        }
-        
-        return __DIR__ . "/../resources/schemas/{$documentType}.json";
-    }
 }

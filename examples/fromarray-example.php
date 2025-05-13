@@ -3,7 +3,6 @@
 require_once __DIR__ . '/../vendor/autoload.php';
 
 use Ameax\AmeaxJsonImportApi\AmeaxJsonImportApi;
-use Ameax\AmeaxJsonImportApi\Exceptions\ValidationException;
 
 // Create the API client
 $apiKey = 'your-api-key';
@@ -96,8 +95,8 @@ try {
     // Create the organization from the complete data array
     $organization = $client->organizationFromArray($completeData);
     
-    // Validation happens automatically
-    echo "Organization is valid!\n";
+    // Organization is created successfully
+    echo "Organization created successfully!\n";
     
     // You can still make changes if needed
     $organization->setEmail('new-email@xyz-ltd.com');
@@ -112,11 +111,6 @@ try {
     // echo "API Response:\n";
     // echo json_encode($response, JSON_PRETTY_PRINT);
     
-} catch (ValidationException $e) {
-    echo "Validation error:\n";
-    foreach ($e->getErrors() as $error) {
-        echo " - {$error}\n";
-    }
 } catch (\Exception $e) {
     echo "Error: " . $e->getMessage() . "\n";
 }
@@ -139,11 +133,11 @@ try {
         ],
     ];
     
-    // Pass false to disable immediate validation
-    $organization = $client->organizationFromArray($minimalData, false);
-    echo "Organization created without validation\n";
+    // Create the organization
+    $organization = $client->organizationFromArray($minimalData);
+    echo "Organization created with minimal data\n";
     
-    // Fill in more data before validation
+    // Fill in more data
     $organization->setEmail('info@abc-gmbh.de')
                 ->setWebsite('https://www.abc-gmbh.de')
                 ->setPhone('+49 30 123456789');
@@ -154,9 +148,7 @@ try {
         'phone' => '+49 30 123456780'
     ]);
     
-    // Manually validate when ready
-    $organization->validate();
-    echo "Organization is now valid after adding more data\n";
+    echo "Organization updated with additional data\n";
     
     // Print the organization data in pretty JSON format
     echo "Organization data:\n";
@@ -168,11 +160,6 @@ try {
     // echo "API Response:\n";
     // echo json_encode($response, JSON_PRETTY_PRINT);
     
-} catch (ValidationException $e) {
-    echo "Validation error:\n";
-    foreach ($e->getErrors() as $error) {
-        echo " - {$error}\n";
-    }
 } catch (\Exception $e) {
     echo "Error: " . $e->getMessage() . "\n";
 }

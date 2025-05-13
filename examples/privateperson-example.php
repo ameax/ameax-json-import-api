@@ -84,20 +84,10 @@ try {
         ->setFirstName('Alice')
         ->setLastName('Smith');
     
-    // Check validation error for missing required field (address)
-    try {
-        $privatePerson->validate();
-    } catch (Exception $e) {
-        echo "Expected validation error: " . $e->getMessage() . PHP_EOL;
-    }
-    
-    // Add the missing required field
+    // Add required address information
     $privatePerson->createAddress('67890', 'Hamburg', 'DE');
     
-    // Now validation should pass
-    $privatePerson->validate();
-    
-    echo "Validation passed after adding required address." . PHP_EOL;
+    echo "Private person created with required address." . PHP_EOL;
 } catch (Exception $e) {
     echo "Error: " . $e->getMessage() . PHP_EOL;
 }

@@ -3,8 +3,6 @@
 namespace Ameax\AmeaxJsonImportApi\Models;
 
 use Ameax\AmeaxJsonImportApi\AmeaxJsonImportApi;
-use Ameax\AmeaxJsonImportApi\Exceptions\ValidationException;
-use Ameax\AmeaxJsonImportApi\Validation\Validator;
 use InvalidArgumentException;
 
 class PrivatePerson extends BaseModel
@@ -68,7 +66,7 @@ class PrivatePerson extends BaseModel
      *
      * @param array $data
      * @return $this
-     * @throws ValidationException If validation fails
+     * 
      */
     protected function populate(array $data): self
     {
@@ -174,98 +172,7 @@ class PrivatePerson extends BaseModel
         return $this;
     }
     
-    /**
-     * Validate the model data before saving/sending
-     *
-     * @return bool True if validation passes
-     * @throws ValidationException If validation fails
-     */
-    public function validate(): bool
-    {
-        $errors = [];
-        
-        // Validate meta (always required)
-        try {
-            $this->meta->validate();
-        } catch (ValidationException $e) {
-            foreach ($e->getErrors() as $error) {
-                $errors[] = "meta: {$error}";
-            }
-        }
-        
-        // Required fields
-        if (!$this->has('firstname')) {
-            $errors[] = "firstname is required";
-        }
-        
-        if (!$this->has('lastname')) {
-            $errors[] = "lastname is required";
-        }
-        
-        if (!$this->has('address')) {
-            $errors[] = "address is required";
-        } elseif (is_array($this->get('address'))) {
-            try {
-                $this->address->validate();
-            } catch (ValidationException $e) {
-                foreach ($e->getErrors() as $error) {
-                    $errors[] = "address: {$error}";
-                }
-            }
-        }
-        
-        // Validate salutation if present
-        if ($this->has('salutation') && $this->get('salutation') !== null) {
-            $validSalutations = ['Mr.', 'Ms.', 'Mx.'];
-            if (!in_array($this->get('salutation'), $validSalutations)) {
-                $errors[] = "Salutation must be one of: " . implode(', ', $validSalutations);
-            }
-        }
-        
-        // Validate date of birth if present
-        if ($this->has('date_of_birth') && $this->get('date_of_birth') !== null) {
-            if (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $this->get('date_of_birth'))) {
-                $errors[] = "Date of birth must be in format YYYY-MM-DD";
-            }
-        }
-        
-        // Validate optional nested objects if present
-        if ($this->identifiers !== null) {
-            try {
-                $this->identifiers->validate();
-            } catch (ValidationException $e) {
-                foreach ($e->getErrors() as $error) {
-                    $errors[] = "identifiers: {$error}";
-                }
-            }
-        }
-        
-        if ($this->communications !== null) {
-            try {
-                $this->communications->validate();
-            } catch (ValidationException $e) {
-                foreach ($e->getErrors() as $error) {
-                    $errors[] = "communications: {$error}";
-                }
-            }
-        }
-        
-        if ($this->agent !== null) {
-            try {
-                $this->agent->validate();
-            } catch (ValidationException $e) {
-                foreach ($e->getErrors() as $error) {
-                    $errors[] = "agent: {$error}";
-                }
-            }
-        }
-        
-        if (!empty($errors)) {
-            throw new ValidationException($errors);
-        }
-        
-        return true;
-    }
+    
     
     /**
      * Set the API client for this private person (required for sending)
@@ -299,7 +206,7 @@ class PrivatePerson extends BaseModel
      *
      * @param string $version The schema version
      * @return $this
-     * @throws ValidationException If validation fails
+     * 
      */
     public function setSchemaVersion(string $version): self
     {
@@ -312,7 +219,7 @@ class PrivatePerson extends BaseModel
      *
      * @param string|null $salutation The salutation (Mr., Ms., Mx.) or null to remove
      * @return $this
-     * @throws ValidationException If validation fails
+     * 
      */
     public function setSalutation(?string $salutation): self
     {
@@ -322,7 +229,7 @@ class PrivatePerson extends BaseModel
         
         $validSalutations = ['Mr.', 'Ms.', 'Mx.'];
         if (!in_array($salutation, $validSalutations)) {
-            throw new ValidationException(["Salutation must be one of: " . implode(', ', $validSalutations)]);
+            throw new InvalidArgumentException("Salutation must be one of: " . implode(', ', $validSalutations));
         }
         
         return $this->set('salutation', $salutation);
@@ -333,16 +240,13 @@ class PrivatePerson extends BaseModel
      *
      * @param string|null $honorifics The honorifics (e.g., Dr., Prof.) or null to remove
      * @return $this
-     * @throws ValidationException If validation fails
+     * 
      */
     public function setHonorifics(?string $honorifics): self
     {
         if ($honorifics === null) {
             return $this->set('honorifics', null);
         }
-        
-        Validator::string($honorifics, 'Honorifics');
-        Validator::maxLength($honorifics, 50, 'Honorifics');
         
         return $this->set('honorifics', $honorifics);
     }
@@ -352,13 +256,10 @@ class PrivatePerson extends BaseModel
      *
      * @param string $firstName The first name
      * @return $this
-     * @throws ValidationException If validation fails
+     * 
      */
     public function setFirstName(string $firstName): self
     {
-        Validator::string($firstName, 'First name');
-        Validator::notEmpty($firstName, 'First name');
-        Validator::maxLength($firstName, 255, 'First name');
         
         return $this->set('firstname', $firstName);
     }
@@ -368,13 +269,10 @@ class PrivatePerson extends BaseModel
      *
      * @param string $lastName The last name
      * @return $this
-     * @throws ValidationException If validation fails
+     * 
      */
     public function setLastName(string $lastName): self
     {
-        Validator::string($lastName, 'Last name');
-        Validator::notEmpty($lastName, 'Last name');
-        Validator::maxLength($lastName, 255, 'Last name');
         
         return $this->set('lastname', $lastName);
     }
@@ -384,7 +282,7 @@ class PrivatePerson extends BaseModel
      *
      * @param string|null $dateOfBirth The date of birth (format: YYYY-MM-DD) or null to remove
      * @return $this
-     * @throws ValidationException If validation fails
+     * 
      */
     public function setDateOfBirth(?string $dateOfBirth): self
     {
@@ -392,11 +290,9 @@ class PrivatePerson extends BaseModel
             return $this->set('date_of_birth', null);
         }
         
-        Validator::string($dateOfBirth, 'Date of birth');
-        
         // Validate date format (YYYY-MM-DD)
         if (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $dateOfBirth)) {
-            throw new ValidationException(["Date of birth must be in format YYYY-MM-DD"]);
+            throw new InvalidArgumentException("Date of birth must be in format YYYY-MM-DD");
         }
         
         return $this->set('date_of_birth', $dateOfBirth);
@@ -407,7 +303,7 @@ class PrivatePerson extends BaseModel
      *
      * @param string|null $customerNumber The customer number
      * @return $this
-     * @throws ValidationException If validation fails
+     * 
      */
     public function createIdentifiers(?string $customerNumber = null): self
     {
@@ -438,7 +334,7 @@ class PrivatePerson extends BaseModel
      *
      * @param string|int|null $customerNumber The customer number or null to remove
      * @return $this
-     * @throws ValidationException If validation fails
+     * 
      */
     public function setCustomerNumber($customerNumber): self
     {
@@ -461,7 +357,7 @@ class PrivatePerson extends BaseModel
      * @param string $locality The city/town
      * @param string $country The country code (ISO 3166-1 alpha-2)
      * @return $this
-     * @throws ValidationException If validation fails
+     * 
      */
     public function createAddress(string $postalCode, string $locality, string $country): self
     {
@@ -491,7 +387,7 @@ class PrivatePerson extends BaseModel
      *
      * @param string $postalCode The postal code
      * @return $this
-     * @throws ValidationException If validation fails
+     * 
      */
     public function setPostalCode(string $postalCode): self
     {
@@ -508,7 +404,7 @@ class PrivatePerson extends BaseModel
      *
      * @param string $locality The locality
      * @return $this
-     * @throws ValidationException If validation fails
+     * 
      */
     public function setLocality(string $locality): self
     {
@@ -525,7 +421,7 @@ class PrivatePerson extends BaseModel
      *
      * @param string $country The country code (ISO 3166-1 alpha-2)
      * @return $this
-     * @throws ValidationException If validation fails
+     * 
      */
     public function setCountry(string $country): self
     {
@@ -542,7 +438,7 @@ class PrivatePerson extends BaseModel
      *
      * @param string|null $route The route/street or null to remove
      * @return $this
-     * @throws ValidationException If validation fails
+     * 
      */
     public function setRoute(?string $route): self
     {
@@ -559,7 +455,7 @@ class PrivatePerson extends BaseModel
      *
      * @param string|null $street The street or null to remove
      * @return $this
-     * @throws ValidationException If validation fails
+     * 
      */
     public function setStreet(?string $street): self
     {
@@ -571,7 +467,7 @@ class PrivatePerson extends BaseModel
      *
      * @param string|null $houseNumber The house number or null to remove
      * @return $this
-     * @throws ValidationException If validation fails
+     * 
      */
     public function setHouseNumber(?string $houseNumber): self
     {
@@ -591,7 +487,7 @@ class PrivatePerson extends BaseModel
      * @param string|null $mobilePhone The mobile phone number
      * @param string|null $fax The fax number
      * @return $this
-     * @throws ValidationException If validation fails
+     * 
      */
     public function createCommunications(
         ?string $email = null,
@@ -638,7 +534,7 @@ class PrivatePerson extends BaseModel
      *
      * @param string|null $email The email address or null to remove
      * @return $this
-     * @throws ValidationException If validation fails
+     * 
      */
     public function setEmail(?string $email): self
     {
@@ -659,7 +555,7 @@ class PrivatePerson extends BaseModel
      *
      * @param string|null $phoneNumber The phone number or null to remove
      * @return $this
-     * @throws ValidationException If validation fails
+     * 
      */
     public function setPhone(?string $phoneNumber): self
     {
@@ -680,7 +576,7 @@ class PrivatePerson extends BaseModel
      *
      * @param string|null $mobilePhone The mobile phone number or null to remove
      * @return $this
-     * @throws ValidationException If validation fails
+     * 
      */
     public function setMobilePhone(?string $mobilePhone): self
     {
@@ -701,7 +597,7 @@ class PrivatePerson extends BaseModel
      *
      * @param string|null $fax The fax number or null to remove
      * @return $this
-     * @throws ValidationException If validation fails
+     * 
      */
     public function setFax(?string $fax): self
     {
@@ -722,7 +618,7 @@ class PrivatePerson extends BaseModel
      *
      * @param string|int|null $externalId The external ID
      * @return $this
-     * @throws ValidationException If validation fails
+     * 
      */
     public function createAgent($externalId = null): self
     {
@@ -753,7 +649,7 @@ class PrivatePerson extends BaseModel
      *
      * @param string|int|null $externalId The external ID or null to remove
      * @return $this
-     * @throws ValidationException If validation fails
+     * 
      */
     public function setAgentExternalId($externalId): self
     {
@@ -997,14 +893,11 @@ class PrivatePerson extends BaseModel
      * Send the private person to the Ameax API
      *
      * @return array The API response
-     * @throws ValidationException If validation fails
+     * 
      * @throws InvalidArgumentException If no API client is set
      */
     public function sendToAmeax(): array
     {
-        // Validate the private person before sending
-        $this->validate();
-        
         if (!$this->apiClient) {
             throw new InvalidArgumentException(
                 'No API client set. Use setApiClient() before calling sendToAmeax().'

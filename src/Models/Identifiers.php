@@ -2,8 +2,8 @@
 
 namespace Ameax\AmeaxJsonImportApi\Models;
 
-use Ameax\AmeaxJsonImportApi\Exceptions\ValidationException;
-use Ameax\AmeaxJsonImportApi\Validation\Validator;
+
+
 
 class Identifiers extends BaseModel
 {
@@ -20,7 +20,7 @@ class Identifiers extends BaseModel
      *
      * @param array $data
      * @return $this
-     * @throws ValidationException If validation fails
+     * 
      */
     protected function populate(array $data): self
     {
@@ -42,24 +42,14 @@ class Identifiers extends BaseModel
         return $this;
     }
     
-    /**
-     * Validate the model data before saving/sending
-     *
-     * @return bool True if validation passes
-     * @throws ValidationException If validation fails
-     */
-    public function validate(): bool
-    {
-        // No specific validation rules for identifiers at this time
-        return true;
-    }
+    
     
     /**
      * Set the customer number
      *
      * @param string|int $customerNumber The customer number
      * @return $this
-     * @throws ValidationException If validation fails
+     * 
      */
     public function setCustomerNumber($customerNumber): self
     {
@@ -68,7 +58,7 @@ class Identifiers extends BaseModel
         }
         
         if (!is_string($customerNumber) && !is_int($customerNumber)) {
-            throw new ValidationException(["Customer number must be a string or integer"]);
+            throw new InvalidArgumentException("Customer number must be a string or integer");
         }
         
         return $this->set('customer_number', $customerNumber);
@@ -79,7 +69,7 @@ class Identifiers extends BaseModel
      *
      * @param string|int|null $externalId The external ID or null to remove
      * @return $this
-     * @throws ValidationException If validation fails
+     * 
      */
     public function setExternalId($externalId): self
     {
@@ -92,7 +82,7 @@ class Identifiers extends BaseModel
         }
         
         if (!is_string($externalId) && !is_int($externalId)) {
-            throw new ValidationException(["External ID must be a string, integer, or null"]);
+            throw new InvalidArgumentException("External ID must be a string, integer, or null");
         }
         
         return $this->set('external_id', $externalId);

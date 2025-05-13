@@ -3,7 +3,6 @@
 require_once __DIR__ . '/../vendor/autoload.php';
 
 use Ameax\AmeaxJsonImportApi\AmeaxJsonImportApi;
-use Ameax\AmeaxJsonImportApi\Exceptions\ValidationException;
 
 // Initialize API client with API key and host URL
 $apiKey = 'your-api-key';
@@ -79,10 +78,8 @@ try {
     $organization2 = $client->organizationFromArray($data);
     $organization2->setEmail('info@xyz-ltd.com');
     
-    // Validate before sending
-    if ($organization->validate()) {
-        echo "Organization data is valid!\n";
-    }
+    // Organization data is ready to send
+    echo "Organization data is ready to send!\n";
     
     // Send the first organization to Ameax
     $response = $organization->sendToAmeax();
@@ -90,11 +87,6 @@ try {
     echo "Organization successfully sent to Ameax!\n";
     echo "Response: " . json_encode($response, JSON_PRETTY_PRINT) . "\n";
     
-} catch (ValidationException $e) {
-    echo "Validation failed:\n";
-    foreach ($e->getErrors() as $error) {
-        echo "- {$error}\n";
-    }
 } catch (\InvalidArgumentException $e) {
     echo "Invalid argument: " . $e->getMessage() . "\n";
 } catch (\Exception $e) {

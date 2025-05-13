@@ -3,7 +3,6 @@
 require_once __DIR__ . '/../vendor/autoload.php';
 
 use Ameax\AmeaxJsonImportApi\AmeaxJsonImportApi;
-use Ameax\AmeaxJsonImportApi\Exceptions\ValidationException;
 
 // Create the API client
 $apiKey = 'your-api-key';
@@ -72,9 +71,8 @@ try {
         'customer_tier' => 'premium'
     ]);
     
-    // Validate the organization before sending
-    $organization->validate();
-    echo "Organization is valid!\n";
+    // Organization is ready to be sent
+    echo "Organization is ready to be sent!\n";
     
     // Convert to array for inspection
     $orgArray = $organization->toArray();
@@ -85,13 +83,7 @@ try {
     // echo "Organization sent successfully!\n";
     // echo json_encode($response, JSON_PRETTY_PRINT) . "\n";
     
-} catch (ValidationException $e) {
-    // Handle validation errors
-    echo "Validation error:\n";
-    foreach ($e->getErrors() as $error) {
-        echo " - {$error}\n";
-    }
 } catch (\Exception $e) {
-    // Handle other errors
+    // Handle errors
     echo "Error: " . $e->getMessage() . "\n";
 }

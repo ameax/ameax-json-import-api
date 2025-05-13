@@ -2,8 +2,8 @@
 
 namespace Ameax\AmeaxJsonImportApi\Models;
 
-use Ameax\AmeaxJsonImportApi\Exceptions\ValidationException;
-use Ameax\AmeaxJsonImportApi\Validation\Validator;
+
+
 
 class Contact extends BaseModel
 {
@@ -41,7 +41,7 @@ class Contact extends BaseModel
      *
      * @param array $data
      * @return $this
-     * @throws ValidationException If validation fails
+     * 
      */
     protected function populate(array $data): self
     {
@@ -121,84 +121,14 @@ class Contact extends BaseModel
         return $this;
     }
     
-    /**
-     * Validate the model data before saving/sending
-     *
-     * @return bool True if validation passes
-     * @throws ValidationException If validation fails
-     */
-    public function validate(): bool
-    {
-        $errors = [];
-        
-        // Required fields
-        if (!$this->has('firstname')) {
-            $errors[] = "Contact firstname is required";
-        }
-        
-        if (!$this->has('lastname')) {
-            $errors[] = "Contact lastname is required";
-        }
-        
-        // Validate salutation if present
-        if ($this->has('salutation') && $this->get('salutation') !== null) {
-            $validSalutations = ['Mr.', 'Ms.', 'Mx.'];
-            if (!in_array($this->get('salutation'), $validSalutations)) {
-                $errors[] = "Salutation must be one of: " . implode(', ', $validSalutations);
-            }
-        }
-        
-        // Validate date of birth if present
-        if ($this->has('date_of_birth') && $this->get('date_of_birth') !== null) {
-            if (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $this->get('date_of_birth'))) {
-                $errors[] = "Date of birth must be in format YYYY-MM-DD";
-            }
-        }
-        
-        // Validate nested objects if present
-        if ($this->identifiers !== null) {
-            try {
-                $this->identifiers->validate();
-            } catch (ValidationException $e) {
-                foreach ($e->getErrors() as $error) {
-                    $errors[] = "identifiers: {$error}";
-                }
-            }
-        }
-        
-        if ($this->employment !== null) {
-            try {
-                $this->employment->validate();
-            } catch (ValidationException $e) {
-                foreach ($e->getErrors() as $error) {
-                    $errors[] = "employment: {$error}";
-                }
-            }
-        }
-        
-        if ($this->communications !== null) {
-            try {
-                $this->communications->validate();
-            } catch (ValidationException $e) {
-                foreach ($e->getErrors() as $error) {
-                    $errors[] = "communications: {$error}";
-                }
-            }
-        }
-        
-        if (!empty($errors)) {
-            throw new ValidationException($errors);
-        }
-        
-        return true;
-    }
+    
     
     /**
      * Set the salutation
      *
      * @param string|null $salutation The salutation or null to remove
      * @return $this
-     * @throws ValidationException If validation fails
+     * 
      */
     public function setSalutation(?string $salutation): self
     {
@@ -208,7 +138,7 @@ class Contact extends BaseModel
         
         $validSalutations = ['Mr.', 'Ms.', 'Mx.'];
         if (!in_array($salutation, $validSalutations)) {
-            throw new ValidationException(["Salutation must be one of: " . implode(', ', $validSalutations)]);
+            throw new InvalidArgumentException("Salutation must be one of: " . implode(', ', $validSalutations));
         }
         
         return $this->set('salutation', $salutation);
@@ -219,16 +149,13 @@ class Contact extends BaseModel
      *
      * @param string|null $honorifics The honorifics or null to remove
      * @return $this
-     * @throws ValidationException If validation fails
+     * 
      */
     public function setHonorifics(?string $honorifics): self
     {
         if ($honorifics === null) {
             return $this->set('honorifics', null);
         }
-        
-        Validator::string($honorifics, 'Honorifics');
-        Validator::maxLength($honorifics, 50, 'Honorifics');
         
         return $this->set('honorifics', $honorifics);
     }
@@ -238,13 +165,10 @@ class Contact extends BaseModel
      *
      * @param string $firstName The first name
      * @return $this
-     * @throws ValidationException If validation fails
+     * 
      */
     public function setFirstName(string $firstName): self
     {
-        Validator::string($firstName, 'First name');
-        Validator::notEmpty($firstName, 'First name');
-        Validator::maxLength($firstName, 100, 'First name');
         
         return $this->set('firstname', $firstName);
     }
@@ -254,13 +178,10 @@ class Contact extends BaseModel
      *
      * @param string $lastName The last name
      * @return $this
-     * @throws ValidationException If validation fails
+     * 
      */
     public function setLastName(string $lastName): self
     {
-        Validator::string($lastName, 'Last name');
-        Validator::notEmpty($lastName, 'Last name');
-        Validator::maxLength($lastName, 100, 'Last name');
         
         return $this->set('lastname', $lastName);
     }
@@ -270,7 +191,7 @@ class Contact extends BaseModel
      *
      * @param string|null $dateOfBirth The date of birth (format: YYYY-MM-DD) or null to remove
      * @return $this
-     * @throws ValidationException If validation fails
+     * 
      */
     public function setDateOfBirth(?string $dateOfBirth): self
     {
@@ -278,11 +199,9 @@ class Contact extends BaseModel
             return $this->set('date_of_birth', null);
         }
         
-        Validator::string($dateOfBirth, 'Date of birth');
-        
         // Validate date format (YYYY-MM-DD)
         if (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $dateOfBirth)) {
-            throw new ValidationException(["Date of birth must be in format YYYY-MM-DD"]);
+            throw new InvalidArgumentException("Date of birth must be in format YYYY-MM-DD");
         }
         
         return $this->set('date_of_birth', $dateOfBirth);
@@ -293,7 +212,7 @@ class Contact extends BaseModel
      *
      * @param string|int|null $externalId The external ID
      * @return $this
-     * @throws ValidationException If validation fails
+     * 
      */
     public function createIdentifiers($externalId = null): self
     {
@@ -324,7 +243,7 @@ class Contact extends BaseModel
      *
      * @param string|int|null $externalId The external ID or null to remove
      * @return $this
-     * @throws ValidationException If validation fails
+     * 
      */
     public function setExternalId($externalId): self
     {
@@ -343,7 +262,7 @@ class Contact extends BaseModel
      * @param string|null $jobTitle The job title
      * @param string|null $department The department
      * @return $this
-     * @throws ValidationException If validation fails
+     * 
      */
     public function createEmployment(?string $jobTitle = null, ?string $department = null): self
     {
@@ -378,7 +297,7 @@ class Contact extends BaseModel
      *
      * @param string|null $jobTitle The job title or null to remove
      * @return $this
-     * @throws ValidationException If validation fails
+     * 
      */
     public function setJobTitle(?string $jobTitle): self
     {
@@ -395,7 +314,7 @@ class Contact extends BaseModel
      *
      * @param string|null $department The department or null to remove
      * @return $this
-     * @throws ValidationException If validation fails
+     * 
      */
     public function setDepartment(?string $department): self
     {
@@ -415,7 +334,7 @@ class Contact extends BaseModel
      * @param string|null $mobilePhone The mobile phone number
      * @param string|null $fax The fax number
      * @return $this
-     * @throws ValidationException If validation fails
+     * 
      */
     public function createCommunications(
         ?string $email = null,
@@ -462,7 +381,7 @@ class Contact extends BaseModel
      *
      * @param string|null $email The email address or null to remove
      * @return $this
-     * @throws ValidationException If validation fails
+     * 
      */
     public function setEmail(?string $email): self
     {
@@ -479,7 +398,7 @@ class Contact extends BaseModel
      *
      * @param string|null $phoneNumber The phone number or null to remove
      * @return $this
-     * @throws ValidationException If validation fails
+     * 
      */
     public function setPhone(?string $phoneNumber): self
     {
@@ -496,7 +415,7 @@ class Contact extends BaseModel
      *
      * @param string|null $mobilePhone The mobile phone number or null to remove
      * @return $this
-     * @throws ValidationException If validation fails
+     * 
      */
     public function setMobile(?string $mobilePhone): self
     {
@@ -513,7 +432,7 @@ class Contact extends BaseModel
      *
      * @param string|null $fax The fax number or null to remove
      * @return $this
-     * @throws ValidationException If validation fails
+     * 
      */
     public function setFax(?string $fax): self
     {

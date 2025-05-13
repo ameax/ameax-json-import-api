@@ -2,8 +2,7 @@
 
 namespace Ameax\AmeaxJsonImportApi\Models;
 
-use Ameax\AmeaxJsonImportApi\Exceptions\ValidationException;
-use Ameax\AmeaxJsonImportApi\Validation\Validator;
+use InvalidArgumentException;
 
 class Communications extends BaseModel
 {
@@ -20,7 +19,7 @@ class Communications extends BaseModel
      *
      * @param array $data
      * @return $this
-     * @throws ValidationException If validation fails
+     * 
      */
     protected function populate(array $data): self
     {
@@ -50,70 +49,20 @@ class Communications extends BaseModel
         return $this;
     }
     
-    /**
-     * Validate the model data before saving/sending
-     *
-     * @return bool True if validation passes
-     * @throws ValidationException If validation fails
-     */
-    public function validate(): bool
-    {
-        $errors = [];
-        
-        if ($this->has('email') && $this->get('email') !== null) {
-            try {
-                Validator::email($this->get('email'), 'Email');
-            } catch (ValidationException $e) {
-                $errors = array_merge($errors, $e->getErrors());
-            }
-        }
-        
-        if ($this->has('phone_number') && $this->get('phone_number') !== null) {
-            try {
-                Validator::phoneNumber($this->get('phone_number'), 'Phone number');
-            } catch (ValidationException $e) {
-                $errors = array_merge($errors, $e->getErrors());
-            }
-        }
-        
-        if ($this->has('mobile_phone') && $this->get('mobile_phone') !== null) {
-            try {
-                Validator::phoneNumber($this->get('mobile_phone'), 'Mobile phone');
-            } catch (ValidationException $e) {
-                $errors = array_merge($errors, $e->getErrors());
-            }
-        }
-        
-        if ($this->has('fax') && $this->get('fax') !== null) {
-            try {
-                Validator::phoneNumber($this->get('fax'), 'Fax');
-            } catch (ValidationException $e) {
-                $errors = array_merge($errors, $e->getErrors());
-            }
-        }
-        
-        if (!empty($errors)) {
-            throw new ValidationException($errors);
-        }
-        
-        return true;
-    }
+    
     
     /**
      * Set the phone number
      *
      * @param string|null $phoneNumber The phone number or null to remove
      * @return $this
-     * @throws ValidationException If validation fails
+     * 
      */
     public function setPhoneNumber(?string $phoneNumber): self
     {
         if ($phoneNumber === null) {
             return $this->set('phone_number', null);
         }
-        
-        Validator::string($phoneNumber, 'Phone number');
-        Validator::phoneNumber($phoneNumber, 'Phone number');
         
         return $this->set('phone_number', $phoneNumber);
     }
@@ -123,16 +72,13 @@ class Communications extends BaseModel
      *
      * @param string|null $mobilePhone The mobile phone number or null to remove
      * @return $this
-     * @throws ValidationException If validation fails
+     * 
      */
     public function setMobilePhone(?string $mobilePhone): self
     {
         if ($mobilePhone === null) {
             return $this->set('mobile_phone', null);
         }
-        
-        Validator::string($mobilePhone, 'Mobile phone');
-        Validator::phoneNumber($mobilePhone, 'Mobile phone');
         
         return $this->set('mobile_phone', $mobilePhone);
     }
@@ -142,16 +88,13 @@ class Communications extends BaseModel
      *
      * @param string|null $email The email address or null to remove
      * @return $this
-     * @throws ValidationException If validation fails
+     * 
      */
     public function setEmail(?string $email): self
     {
         if ($email === null) {
             return $this->set('email', null);
         }
-        
-        Validator::string($email, 'Email');
-        Validator::email($email, 'Email');
         
         return $this->set('email', $email);
     }
@@ -161,16 +104,13 @@ class Communications extends BaseModel
      *
      * @param string|null $fax The fax number or null to remove
      * @return $this
-     * @throws ValidationException If validation fails
+     * 
      */
     public function setFax(?string $fax): self
     {
         if ($fax === null) {
             return $this->set('fax', null);
         }
-        
-        Validator::string($fax, 'Fax');
-        Validator::phoneNumber($fax, 'Fax');
         
         return $this->set('fax', $fax);
     }

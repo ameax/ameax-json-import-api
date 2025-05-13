@@ -3,7 +3,6 @@
 namespace Ameax\AmeaxJsonImportApi\Models;
 
 use JsonSerializable;
-use Ameax\AmeaxJsonImportApi\Exceptions\ValidationException;
 
 abstract class BaseModel implements JsonSerializable
 {
@@ -13,18 +12,12 @@ abstract class BaseModel implements JsonSerializable
      * Create a new model instance from an array of data
      *
      * @param array $data The data to populate the model with
-     * @param bool $skipValidation Whether to skip the validation
      * @return static
-     * @throws ValidationException If the data fails validation and $skipValidation is false
      */
-    public static function fromArray(array $data, bool $skipValidation = false): static
+    public static function fromArray(array $data): static
     {
         $instance = new static();
         $instance->populate($data);
-        
-        if (!$skipValidation) {
-            $instance->validate();
-        }
         
         return $instance;
     }
@@ -34,17 +27,8 @@ abstract class BaseModel implements JsonSerializable
      *
      * @param array $data
      * @return $this
-     * @throws ValidationException If the data fails validation
      */
     abstract protected function populate(array $data): self;
-    
-    /**
-     * Validate the model data before saving/sending
-     *
-     * @return bool True if validation passes
-     * @throws ValidationException If validation fails
-     */
-    abstract public function validate(): bool;
     
     /**
      * Convert the model instance to an array
