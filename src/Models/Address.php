@@ -66,6 +66,16 @@ class Address extends BaseModel
     }
 
     /**
+     * Get the postal code
+     *
+     * @return string|null
+     */
+    public function getPostalCode(): ?string
+    {
+        return $this->get('postal_code');
+    }
+
+    /**
      * Set the locality (city/town)
      *
      * @param string $locality The locality
@@ -74,6 +84,16 @@ class Address extends BaseModel
     public function setLocality(string $locality): self
     {
         return $this->set('locality', $locality);
+    }
+
+    /**
+     * Get the locality (city/town)
+     *
+     * @return string|null
+     */
+    public function getLocality(): ?string
+    {
+        return $this->get('locality');
     }
 
     /**
@@ -88,6 +108,16 @@ class Address extends BaseModel
     }
 
     /**
+     * Get the country code
+     *
+     * @return string|null
+     */
+    public function getCountry(): ?string
+    {
+        return $this->get('country');
+    }
+
+    /**
      * Set the route (street)
      *
      * @param string|null $route The route/street or null to remove
@@ -99,6 +129,16 @@ class Address extends BaseModel
     }
 
     /**
+     * Get the route (street)
+     *
+     * @return string|null
+     */
+    public function getRoute(): ?string
+    {
+        return $this->get('route');
+    }
+
+    /**
      * Set the street (alias for setRoute)
      *
      * @param string|null $street The street or null to remove
@@ -107,6 +147,16 @@ class Address extends BaseModel
     public function setStreet(?string $street): self
     {
         return $this->setRoute($street);
+    }
+
+    /**
+     * Get the street (alias for getRoute)
+     *
+     * @return string|null
+     */
+    public function getStreet(): ?string
+    {
+        return $this->getRoute();
     }
 
     /**
@@ -122,6 +172,16 @@ class Address extends BaseModel
         }
 
         return $this->set('house_number', $houseNumber);
+    }
+
+    /**
+     * Get the house number
+     *
+     * @return string|null
+     */
+    public function getHouseNumber(): ?string
+    {
+        return $this->get('house_number');
     }
 
     /**

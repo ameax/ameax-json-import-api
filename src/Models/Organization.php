@@ -875,6 +875,16 @@ class Organization extends BaseModel
             return $this;
         }
 
+        // Type casting for common types
+        if ($value === 'true' || $value === 'TRUE' || $value === '1') {
+            $value = true;
+        } elseif ($value === 'false' || $value === 'FALSE' || $value === '0') {
+            $value = false;
+        } elseif (is_string($value) && is_numeric($value) && strpos($value, '.') === false) {
+            // Convert string integers to actual integers
+            $value = (int)$value;
+        }
+
         $this->customData[$key] = $value;
         $this->data['custom_data'][$key] = $value;
 
@@ -963,6 +973,16 @@ class Organization extends BaseModel
     public function getIdentifiers(): ?Identifiers
     {
         return $this->identifiers;
+    }
+    
+    /**
+     * Get the customer number
+     *
+     * @return string|null
+     */
+    public function getCustomerNumber(): ?string
+    {
+        return $this->identifiers ? $this->identifiers->getCustomerNumber() : null;
     }
 
     /**
