@@ -1,0 +1,216 @@
+parameters:
+	ignoreErrors:
+		-
+			message: "#^Method Ameax\\\\AmeaxJsonImportApi\\\\AmeaxJsonImportApi\\:\\:organizationFromArray\\(\\) has parameter \\$data with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: src/AmeaxJsonImportApi.php
+
+		-
+			message: "#^Method Ameax\\\\AmeaxJsonImportApi\\\\AmeaxJsonImportApi\\:\\:privatePersonFromArray\\(\\) has parameter \\$data with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: src/AmeaxJsonImportApi.php
+
+		-
+			message: "#^Method Ameax\\\\AmeaxJsonImportApi\\\\AmeaxJsonImportApi\\:\\:sendOrganization\\(\\) has parameter \\$organization with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: src/AmeaxJsonImportApi.php
+
+		-
+			message: "#^Method Ameax\\\\AmeaxJsonImportApi\\\\AmeaxJsonImportApi\\:\\:sendOrganization\\(\\) return type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: src/AmeaxJsonImportApi.php
+
+		-
+			message: "#^Method Ameax\\\\AmeaxJsonImportApi\\\\AmeaxJsonImportApi\\:\\:sendPrivatePerson\\(\\) has parameter \\$privatePerson with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: src/AmeaxJsonImportApi.php
+
+		-
+			message: "#^Method Ameax\\\\AmeaxJsonImportApi\\\\AmeaxJsonImportApi\\:\\:sendPrivatePerson\\(\\) return type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: src/AmeaxJsonImportApi.php
+
+		-
+			message: "#^Method Ameax\\\\AmeaxJsonImportApi\\\\Models\\\\Address\\:\\:populate\\(\\) has parameter \\$data with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: src/Models/Address.php
+
+		-
+			message: "#^Method Ameax\\\\AmeaxJsonImportApi\\\\Models\\\\Agent\\:\\:populate\\(\\) has parameter \\$data with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: src/Models/Agent.php
+
+		-
+			message: "#^Method Ameax\\\\AmeaxJsonImportApi\\\\Models\\\\BaseModel\\:\\:fromArray\\(\\) has parameter \\$data with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: src/Models/BaseModel.php
+
+		-
+			message: "#^Method Ameax\\\\AmeaxJsonImportApi\\\\Models\\\\BaseModel\\:\\:jsonSerialize\\(\\) return type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: src/Models/BaseModel.php
+
+		-
+			message: "#^Method Ameax\\\\AmeaxJsonImportApi\\\\Models\\\\BaseModel\\:\\:populate\\(\\) has parameter \\$data with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: src/Models/BaseModel.php
+
+		-
+			message: "#^Method Ameax\\\\AmeaxJsonImportApi\\\\Models\\\\BaseModel\\:\\:toArray\\(\\) return type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: src/Models/BaseModel.php
+
+		-
+			message: "#^Property Ameax\\\\AmeaxJsonImportApi\\\\Models\\\\BaseModel\\:\\:\\$data type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: src/Models/BaseModel.php
+
+		-
+			message: "#^Method Ameax\\\\AmeaxJsonImportApi\\\\Models\\\\BusinessInformation\\:\\:populate\\(\\) has parameter \\$data with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: src/Models/BusinessInformation.php
+
+		-
+			message: "#^Method Ameax\\\\AmeaxJsonImportApi\\\\Models\\\\Communications\\:\\:populate\\(\\) has parameter \\$data with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: src/Models/Communications.php
+
+		-
+			message: "#^Method Ameax\\\\AmeaxJsonImportApi\\\\Models\\\\Contact\\:\\:getCustomData\\(\\) return type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: src/Models/Contact.php
+
+		-
+			message: "#^Method Ameax\\\\AmeaxJsonImportApi\\\\Models\\\\Contact\\:\\:populate\\(\\) has parameter \\$data with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: src/Models/Contact.php
+
+		-
+			message: "#^Method Ameax\\\\AmeaxJsonImportApi\\\\Models\\\\Contact\\:\\:setCustomData\\(\\) has parameter \\$data with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: src/Models/Contact.php
+
+		-
+			message: "#^Property Ameax\\\\AmeaxJsonImportApi\\\\Models\\\\Contact\\:\\:\\$customData type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: src/Models/Contact.php
+
+		-
+			message: "#^Method Ameax\\\\AmeaxJsonImportApi\\\\Models\\\\Employment\\:\\:populate\\(\\) has parameter \\$data with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: src/Models/Employment.php
+
+		-
+			message: "#^Method Ameax\\\\AmeaxJsonImportApi\\\\Models\\\\Identifiers\\:\\:populate\\(\\) has parameter \\$data with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: src/Models/Identifiers.php
+
+		-
+			message: "#^Method Ameax\\\\AmeaxJsonImportApi\\\\Models\\\\Meta\\:\\:getImportStatus\\(\\) return type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: src/Models/Meta.php
+
+		-
+			message: "#^Method Ameax\\\\AmeaxJsonImportApi\\\\Models\\\\Meta\\:\\:populate\\(\\) has parameter \\$data with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: src/Models/Meta.php
+
+		-
+			message: "#^Method Ameax\\\\AmeaxJsonImportApi\\\\Models\\\\Meta\\:\\:setImportStatus\\(\\) has parameter \\$status with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: src/Models/Meta.php
+
+		-
+			message: "#^Method Ameax\\\\AmeaxJsonImportApi\\\\Models\\\\Organization\\:\\:addContact\\(\\) has parameter \\$additionalData with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: src/Models/Organization.php
+
+		-
+			message: "#^Method Ameax\\\\AmeaxJsonImportApi\\\\Models\\\\Organization\\:\\:getContacts\\(\\) return type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: src/Models/Organization.php
+
+		-
+			message: "#^Method Ameax\\\\AmeaxJsonImportApi\\\\Models\\\\Organization\\:\\:getCustomData\\(\\) return type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: src/Models/Organization.php
+
+		-
+			message: "#^Method Ameax\\\\AmeaxJsonImportApi\\\\Models\\\\Organization\\:\\:populate\\(\\) has parameter \\$data with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: src/Models/Organization.php
+
+		-
+			message: "#^Method Ameax\\\\AmeaxJsonImportApi\\\\Models\\\\Organization\\:\\:sendToAmeax\\(\\) return type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: src/Models/Organization.php
+
+		-
+			message: "#^Method Ameax\\\\AmeaxJsonImportApi\\\\Models\\\\Organization\\:\\:setCustomData\\(\\) has parameter \\$data with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: src/Models/Organization.php
+
+		-
+			message: "#^Property Ameax\\\\AmeaxJsonImportApi\\\\Models\\\\Organization\\:\\:\\$contactObjects type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: src/Models/Organization.php
+
+		-
+			message: "#^Property Ameax\\\\AmeaxJsonImportApi\\\\Models\\\\Organization\\:\\:\\$customData type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: src/Models/Organization.php
+
+		-
+			message: "#^Method Ameax\\\\AmeaxJsonImportApi\\\\Models\\\\PrivatePerson\\:\\:getCustomData\\(\\) return type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: src/Models/PrivatePerson.php
+
+		-
+			message: "#^Method Ameax\\\\AmeaxJsonImportApi\\\\Models\\\\PrivatePerson\\:\\:populate\\(\\) has parameter \\$data with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: src/Models/PrivatePerson.php
+
+		-
+			message: "#^Method Ameax\\\\AmeaxJsonImportApi\\\\Models\\\\PrivatePerson\\:\\:sendToAmeax\\(\\) return type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: src/Models/PrivatePerson.php
+
+		-
+			message: "#^Method Ameax\\\\AmeaxJsonImportApi\\\\Models\\\\PrivatePerson\\:\\:setCustomData\\(\\) has parameter \\$data with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: src/Models/PrivatePerson.php
+
+		-
+			message: "#^Parameter \\#1 \\$customerNumber of method Ameax\\\\AmeaxJsonImportApi\\\\Models\\\\PrivatePerson\\:\\:createIdentifiers\\(\\) expects string\\|null, int\\|string given\\.$#"
+			count: 1
+			path: src/Models/PrivatePerson.php
+
+		-
+			message: "#^Property Ameax\\\\AmeaxJsonImportApi\\\\Models\\\\PrivatePerson\\:\\:\\$customData type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: src/Models/PrivatePerson.php
+
+		-
+			message: "#^Method Ameax\\\\AmeaxJsonImportApi\\\\Models\\\\SocialMedia\\:\\:populate\\(\\) has parameter \\$data with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: src/Models/SocialMedia.php
+
+		-
+			message: "#^Method Ameax\\\\AmeaxJsonImportApi\\\\Schema\\\\OrganizationSchema\\:\\:addContact\\(\\) has parameter \\$additionalData with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: src/Schema/OrganizationSchema.php
+
+		-
+			message: "#^Method Ameax\\\\AmeaxJsonImportApi\\\\Schema\\\\OrganizationSchema\\:\\:addContact\\(\\) has parameter \\$organization with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: src/Schema/OrganizationSchema.php
+
+		-
+			message: "#^Method Ameax\\\\AmeaxJsonImportApi\\\\Schema\\\\OrganizationSchema\\:\\:addContact\\(\\) return type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: src/Schema/OrganizationSchema.php
+
+		-
+			message: "#^Method Ameax\\\\AmeaxJsonImportApi\\\\Schema\\\\OrganizationSchema\\:\\:create\\(\\) return type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: src/Schema/OrganizationSchema.php

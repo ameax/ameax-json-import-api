@@ -8,7 +8,8 @@ This is a Laravel package for JSON import API functionality, built using the spa
 ## Commands
 - **Test**: `composer test` (runs all tests with Pest)
 - **Test Single**: `composer test tests/path/to/TestFile.php` or `composer test -- --filter=testName`
-- **Static Analysis**: `composer analyse` (PHPStan level 6 with strict type checking)
+- **Static Analysis**: `composer analyse` (PHPStan level 5)
+  - A PHPStan level 7 baseline is available for future stricter checking
 - **Code Formatting**: `composer format` (Laravel Pint)
 - **Test Coverage**: `composer test-coverage`
 
@@ -25,3 +26,8 @@ This is a Laravel package for JSON import API functionality, built using the spa
 - Imports should be ordered alphabetically and grouped (PHP, Vendor, App)
 - Use PHPDoc blocks for non-trivial methods
 - Follow the package structure in src/ folder
+
+## Future Improvements
+- Improve array type specifications by changing `array` to `array<string, mixed>` or more specific types
+- Work toward passing PHPStan at level 7 to ensure maximum type safety
+- Remove dependencies on mixed types where possible
