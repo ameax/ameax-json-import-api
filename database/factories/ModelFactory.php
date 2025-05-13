@@ -1,6 +1,6 @@
 <?php
 
-namespace Ameax Unternehmenssoftware\AmeaxJsonImportApi\Database\Factories;
+namespace Ameax\AmeaxJsonImportApi\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
 

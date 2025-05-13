@@ -87,7 +87,7 @@ class Organization extends BaseModel
         } else {
             // For backward compatibility
             $metaData = [
-                'document_type' => Meta::DOCUMENT_TYPE,
+                'document_type' => Meta::DOCUMENT_TYPE_ORGANIZATION,
                 'schema_version' => Meta::SCHEMA_VERSION,
             ];
 

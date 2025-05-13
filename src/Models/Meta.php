@@ -2,6 +2,8 @@
 
 namespace Ameax\AmeaxJsonImportApi\Models;
 
+use InvalidArgumentException;
+
 class Meta extends BaseModel
 {
     public const DOCUMENT_TYPE_ORGANIZATION = 'ameax_organization_account';

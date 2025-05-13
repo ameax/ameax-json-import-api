@@ -12,10 +12,12 @@ abstract class BaseModel implements JsonSerializable
      * Create a new model instance from an array of data
      *
      * @param array $data The data to populate the model with
+     * @param bool $ignoreValidation Optional parameter for backward compatibility
      * @return static
      */
-    public static function fromArray(array $data): static
+    public static function fromArray(array $data, bool $ignoreValidation = false): static
     {
+        /** @var static $instance */
         $instance = new static();
         $instance->populate($data);
 

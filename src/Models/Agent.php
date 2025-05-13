@@ -2,6 +2,8 @@
 
 namespace Ameax\AmeaxJsonImportApi\Models;
 
+use InvalidArgumentException;
+
 class Agent extends BaseModel
 {
     /**
