@@ -88,13 +88,18 @@ class Communications extends BaseModel
      *
      * @param string|null $email The email address or null to remove
      * @return $this
-     * 
      */
     public function setEmail(?string $email): self
     {
         if ($email === null) {
             return $this->set('email', null);
         }
+        
+        // Basic sanitization
+        $email = trim($email);
+        
+        // Convert to lowercase (email addresses are case-insensitive)
+        $email = strtolower($email);
         
         return $this->set('email', $email);
     }

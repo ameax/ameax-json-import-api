@@ -868,6 +868,16 @@ class Organization extends BaseModel
             return $this;
         }
         
+        // Type casting for common types
+        if ($value === 'true' || $value === 'TRUE' || $value === '1') {
+            $value = true;
+        } else if ($value === 'false' || $value === 'FALSE' || $value === '0') {
+            $value = false;
+        } else if (is_string($value) && is_numeric($value) && strpos($value, '.') === false) {
+            // Convert string integers to actual integers
+            $value = (int)$value;
+        }
+        
         $this->customData[$key] = $value;
         $this->data['custom_data'][$key] = $value;
         

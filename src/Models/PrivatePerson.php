@@ -216,10 +216,12 @@ class PrivatePerson extends BaseModel
     
     /**
      * Set the salutation
-     *
-     * @param string|null $salutation The salutation (Mr., Ms., Mx.) or null to remove
-     * @return $this
      * 
+     * The API accepts the following salutation values: 'Mr.', 'Ms.', 'Mx.'
+     * Other values are accepted but may not validate on the server.
+     *
+     * @param string|null $salutation The salutation or null to remove
+     * @return $this
      */
     public function setSalutation(?string $salutation): self
     {
@@ -227,9 +229,13 @@ class PrivatePerson extends BaseModel
             return $this->set('salutation', null);
         }
         
-        $validSalutations = ['Mr.', 'Ms.', 'Mx.'];
-        if (!in_array($salutation, $validSalutations)) {
-            throw new InvalidArgumentException("Salutation must be one of: " . implode(', ', $validSalutations));
+        // Convert common variations to standardized format
+        if (in_array(strtolower(trim($salutation)), ['mr', 'mister'])) {
+            $salutation = 'Mr.';
+        } else if (in_array(strtolower(trim($salutation)), ['ms', 'miss', 'mrs'])) {
+            $salutation = 'Ms.';
+        } else if (in_array(strtolower(trim($salutation)), ['mx'])) {
+            $salutation = 'Mx.';
         }
         
         return $this->set('salutation', $salutation);
@@ -280,19 +286,26 @@ class PrivatePerson extends BaseModel
     /**
      * Set the date of birth
      *
-     * @param string|null $dateOfBirth The date of birth (format: YYYY-MM-DD) or null to remove
+     * @param string|\DateTime|mixed|null $dateOfBirth The date of birth (will be converted to YYYY-MM-DD format) or null to remove
      * @return $this
-     * 
      */
-    public function setDateOfBirth(?string $dateOfBirth): self
+    public function setDateOfBirth($dateOfBirth): self
     {
         if ($dateOfBirth === null) {
             return $this->set('date_of_birth', null);
         }
         
-        // Validate date format (YYYY-MM-DD)
-        if (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $dateOfBirth)) {
-            throw new InvalidArgumentException("Date of birth must be in format YYYY-MM-DD");
+        // If DateTime object provided, convert to string
+        if ($dateOfBirth instanceof \DateTime) {
+            $dateOfBirth = $dateOfBirth->format('Y-m-d');
+        } else if (is_string($dateOfBirth) && !preg_match('/^\d{4}-\d{2}-\d{2}$/', $dateOfBirth)) {
+            // Try to parse the date string if it's not in ISO format
+            try {
+                $date = new \DateTime($dateOfBirth);
+                $dateOfBirth = $date->format('Y-m-d');
+            } catch (\Exception $e) {
+                // If we can't parse it, just pass it through - API will validate it
+            }
         }
         
         return $this->set('date_of_birth', $dateOfBirth);
@@ -672,6 +685,13 @@ class PrivatePerson extends BaseModel
      * @param mixed $value The field value or null to remove
      * @return $this
      */
+    /**
+     * Set a custom data field
+     *
+     * @param string $key The field key
+     * @param mixed $value The field value or null to remove
+     * @return $this
+     */
     public function setCustomField(string $key, $value = null): self
     {
         if (!isset($this->data['custom_data'])) {
@@ -687,6 +707,16 @@ class PrivatePerson extends BaseModel
             }
             
             return $this;
+        }
+        
+        // Type casting for common types
+        if ($value === 'true' || $value === 'TRUE' || $value === '1') {
+            $value = true;
+        } else if ($value === 'false' || $value === 'FALSE' || $value === '0') {
+            $value = false;
+        } else if (is_string($value) && is_numeric($value) && strpos($value, '.') === false) {
+            // Convert string integers to actual integers
+            $value = (int)$value;
         }
         
         $this->customData[$key] = $value;

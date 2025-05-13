@@ -47,19 +47,13 @@ class Identifiers extends BaseModel
     /**
      * Set the customer number
      *
-     * @param string|int $customerNumber The customer number
+     * @param string|int|mixed $customerNumber The customer number
      * @return $this
-     * 
      */
     public function setCustomerNumber($customerNumber): self
     {
-        if (is_int($customerNumber)) {
-            $customerNumber = (string) $customerNumber;
-        }
-        
-        if (!is_string($customerNumber) && !is_int($customerNumber)) {
-            throw new InvalidArgumentException("Customer number must be a string or integer");
-        }
+        // Convert to string regardless of input type
+        $customerNumber = (string) $customerNumber;
         
         return $this->set('customer_number', $customerNumber);
     }
@@ -67,9 +61,8 @@ class Identifiers extends BaseModel
     /**
      * Set the external ID
      *
-     * @param string|int|null $externalId The external ID or null to remove
+     * @param string|int|null|mixed $externalId The external ID or null to remove
      * @return $this
-     * 
      */
     public function setExternalId($externalId): self
     {
@@ -77,13 +70,8 @@ class Identifiers extends BaseModel
             return $this->remove('external_id');
         }
         
-        if (is_int($externalId)) {
-            $externalId = (string) $externalId;
-        }
-        
-        if (!is_string($externalId) && !is_int($externalId)) {
-            throw new InvalidArgumentException("External ID must be a string, integer, or null");
-        }
+        // Convert to string regardless of input type
+        $externalId = (string) $externalId;
         
         return $this->set('external_id', $externalId);
     }
