@@ -1,6 +1,6 @@
 <?php
 
-require_once __DIR__ . '/../vendor/autoload.php';
+require_once __DIR__.'/../vendor/autoload.php';
 
 use Ameax\AmeaxJsonImportApi\AmeaxJsonImportApi;
 
@@ -26,20 +26,20 @@ $organization->addContact('John', 'Doe', [
     'email' => 'john.doe@example.com',
     'phone' => '+49 30 1234567',
     'job_title' => 'CEO',
-    'department' => 'Management'
+    'department' => 'Management',
 ]);
 
 try {
     // Get the organization data as an array
     $data = $organization->toArray();
-    
+
     // Print the organization data in pretty JSON format
-    echo json_encode($data, JSON_PRETTY_PRINT) . "\n";
-    
+    echo json_encode($data, JSON_PRETTY_PRINT)."\n";
+
     // Send to Ameax API (commented out to prevent actual API calls)
     // $response = $organization->sendToAmeax();
     // echo "Organization sent successfully!\n";
     // echo json_encode($response, JSON_PRETTY_PRINT) . "\n";
 } catch (\Exception $e) {
-    echo "Error: " . $e->getMessage() . "\n";
+    echo 'Error: '.$e->getMessage()."\n";
 }

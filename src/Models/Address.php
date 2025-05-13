@@ -15,7 +15,6 @@ class Address extends BaseModel
     /**
      * Populate the model with data using setters
      *
-     * @param array $data
      * @return $this
      */
     protected function populate(array $data): self
@@ -45,7 +44,7 @@ class Address extends BaseModel
 
         // Handle any other fields
         foreach ($data as $key => $value) {
-            if (!in_array($key, ['postal_code', 'locality', 'country', 'route', 'street', 'house_number'])) {
+            if (! in_array($key, ['postal_code', 'locality', 'country', 'route', 'street', 'house_number'])) {
                 $this->set($key, $value);
             }
         }
@@ -53,11 +52,10 @@ class Address extends BaseModel
         return $this;
     }
 
-
     /**
      * Set the postal code
      *
-     * @param string $postalCode The postal code
+     * @param  string  $postalCode  The postal code
      * @return $this
      */
     public function setPostalCode(string $postalCode): self
@@ -67,8 +65,6 @@ class Address extends BaseModel
 
     /**
      * Get the postal code
-     *
-     * @return string|null
      */
     public function getPostalCode(): ?string
     {
@@ -78,7 +74,7 @@ class Address extends BaseModel
     /**
      * Set the locality (city/town)
      *
-     * @param string $locality The locality
+     * @param  string  $locality  The locality
      * @return $this
      */
     public function setLocality(string $locality): self
@@ -88,8 +84,6 @@ class Address extends BaseModel
 
     /**
      * Get the locality (city/town)
-     *
-     * @return string|null
      */
     public function getLocality(): ?string
     {
@@ -99,7 +93,7 @@ class Address extends BaseModel
     /**
      * Set the country code
      *
-     * @param string $country The country code (ISO 3166-1 alpha-2)
+     * @param  string  $country  The country code (ISO 3166-1 alpha-2)
      * @return $this
      */
     public function setCountry(string $country): self
@@ -109,8 +103,6 @@ class Address extends BaseModel
 
     /**
      * Get the country code
-     *
-     * @return string|null
      */
     public function getCountry(): ?string
     {
@@ -120,7 +112,7 @@ class Address extends BaseModel
     /**
      * Set the route (street)
      *
-     * @param string|null $route The route/street or null to remove
+     * @param  string|null  $route  The route/street or null to remove
      * @return $this
      */
     public function setRoute(?string $route): self
@@ -130,8 +122,6 @@ class Address extends BaseModel
 
     /**
      * Get the route (street)
-     *
-     * @return string|null
      */
     public function getRoute(): ?string
     {
@@ -141,7 +131,7 @@ class Address extends BaseModel
     /**
      * Set the street (alias for setRoute)
      *
-     * @param string|null $street The street or null to remove
+     * @param  string|null  $street  The street or null to remove
      * @return $this
      */
     public function setStreet(?string $street): self
@@ -151,8 +141,6 @@ class Address extends BaseModel
 
     /**
      * Get the street (alias for getRoute)
-     *
-     * @return string|null
      */
     public function getStreet(): ?string
     {
@@ -162,7 +150,7 @@ class Address extends BaseModel
     /**
      * Set the house number
      *
-     * @param string|null $houseNumber The house number or null to remove
+     * @param  string|null  $houseNumber  The house number or null to remove
      * @return $this
      */
     public function setHouseNumber(?string $houseNumber): self
@@ -176,8 +164,6 @@ class Address extends BaseModel
 
     /**
      * Get the house number
-     *
-     * @return string|null
      */
     public function getHouseNumber(): ?string
     {
@@ -187,8 +173,8 @@ class Address extends BaseModel
     /**
      * Set a custom field
      *
-     * @param string $key The field key
-     * @param mixed $value The field value
+     * @param  string  $key  The field key
+     * @param  mixed  $value  The field value
      * @return $this
      */
     public function setCustomField(string $key, mixed $value): self

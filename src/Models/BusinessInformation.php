@@ -15,9 +15,7 @@ class BusinessInformation extends BaseModel
     /**
      * Populate the model with data using setters
      *
-     * @param array $data
      * @return $this
-     *
      */
     protected function populate(array $data): self
     {
@@ -31,7 +29,7 @@ class BusinessInformation extends BaseModel
 
         // Handle any other fields
         foreach ($data as $key => $value) {
-            if (!in_array($key, ['vat_id', 'iban'])) {
+            if (! in_array($key, ['vat_id', 'iban'])) {
                 $this->set($key, $value);
             }
         }
@@ -39,14 +37,11 @@ class BusinessInformation extends BaseModel
         return $this;
     }
 
-
-
     /**
      * Set the VAT ID
      *
-     * @param string|null $vatId The VAT ID or null to remove
+     * @param  string|null  $vatId  The VAT ID or null to remove
      * @return $this
-     *
      */
     public function setVatId(?string $vatId): self
     {
@@ -60,9 +55,8 @@ class BusinessInformation extends BaseModel
     /**
      * Set the IBAN
      *
-     * @param string|null $iban The IBAN or null to remove
+     * @param  string|null  $iban  The IBAN or null to remove
      * @return $this
-     *
      */
     public function setIban(?string $iban): self
     {
@@ -75,8 +69,6 @@ class BusinessInformation extends BaseModel
 
     /**
      * Get the VAT ID
-     *
-     * @return string|null
      */
     public function getVatId(): ?string
     {
@@ -85,8 +77,6 @@ class BusinessInformation extends BaseModel
 
     /**
      * Get the IBAN
-     *
-     * @return string|null
      */
     public function getIban(): ?string
     {

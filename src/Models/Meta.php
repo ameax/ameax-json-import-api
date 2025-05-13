@@ -7,7 +7,9 @@ use InvalidArgumentException;
 class Meta extends BaseModel
 {
     public const DOCUMENT_TYPE_ORGANIZATION = 'ameax_organization_account';
+
     public const DOCUMENT_TYPE_PRIVATE_PERSON = 'ameax_private_person_account';
+
     public const SCHEMA_VERSION = '1.0';
 
     /**
@@ -24,9 +26,7 @@ class Meta extends BaseModel
     /**
      * Populate the model with data using setters
      *
-     * @param array $data
      * @return $this
-     *
      */
     protected function populate(array $data): self
     {
@@ -49,7 +49,7 @@ class Meta extends BaseModel
 
         // Handle any other fields
         foreach ($data as $key => $value) {
-            if (!in_array($key, ['document_type', 'schema_version', 'import_status'])) {
+            if (! in_array($key, ['document_type', 'schema_version', 'import_status'])) {
                 $this->set($key, $value);
             }
         }
@@ -57,14 +57,11 @@ class Meta extends BaseModel
         return $this;
     }
 
-
-
     /**
      * Set the schema version
      *
-     * @param string $version The schema version
+     * @param  string  $version  The schema version
      * @return $this
-     *
      */
     public function setSchemaVersion(string $version): self
     {
@@ -75,7 +72,7 @@ class Meta extends BaseModel
     /**
      * Set the import status
      *
-     * @param array $status The import status data
+     * @param  array  $status  The import status data
      * @return $this
      */
     public function setImportStatus(array $status): self
@@ -85,8 +82,6 @@ class Meta extends BaseModel
 
     /**
      * Get the document type
-     *
-     * @return string
      */
     public function getDocumentType(): string
     {
@@ -95,8 +90,6 @@ class Meta extends BaseModel
 
     /**
      * Get the schema version
-     *
-     * @return string
      */
     public function getSchemaVersion(): string
     {
@@ -105,8 +98,6 @@ class Meta extends BaseModel
 
     /**
      * Get the import status
-     *
-     * @return array|null
      */
     public function getImportStatus(): ?array
     {
@@ -116,16 +107,15 @@ class Meta extends BaseModel
     /**
      * Set the document type
      *
-     * @param string $type The document type
+     * @param  string  $type  The document type
      * @return $this
-     *
      */
     public function setDocumentType(string $type): self
     {
 
         $validDocumentTypes = [self::DOCUMENT_TYPE_ORGANIZATION, self::DOCUMENT_TYPE_PRIVATE_PERSON];
-        if (!in_array($type, $validDocumentTypes)) {
-            throw new InvalidArgumentException("Document type must be one of: " . implode(', ', $validDocumentTypes));
+        if (! in_array($type, $validDocumentTypes)) {
+            throw new InvalidArgumentException('Document type must be one of: '.implode(', ', $validDocumentTypes));
         }
 
         return $this->set('document_type', $type);

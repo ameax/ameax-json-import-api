@@ -1,17 +1,16 @@
 <?php
 
-use Ameax\AmeaxJsonImportApi\Models\Organization;
 use Ameax\AmeaxJsonImportApi\Models\Address;
+use Ameax\AmeaxJsonImportApi\Models\Agent;
+use Ameax\AmeaxJsonImportApi\Models\BusinessInformation;
 use Ameax\AmeaxJsonImportApi\Models\Communications;
 use Ameax\AmeaxJsonImportApi\Models\Contact;
-use Ameax\AmeaxJsonImportApi\Models\Identifiers;
-use Ameax\AmeaxJsonImportApi\Models\BusinessInformation;
+use Ameax\AmeaxJsonImportApi\Models\Organization;
 use Ameax\AmeaxJsonImportApi\Models\SocialMedia;
-use Ameax\AmeaxJsonImportApi\Models\Agent;
 
 test('organization provides fluent interface', function () {
-    $organization = new Organization();
-    
+    $organization = new Organization;
+
     $result = $organization->setName('Acme Inc.')
         ->setAdditionalName('Acme Corporation')
         ->setCustomerNumber('CUST12345')
@@ -27,7 +26,7 @@ test('organization provides fluent interface', function () {
         ->setIban('DE89 3704 0044 0532 0130 00')
         ->setAgentExternalId('AGENT123')
         ->setCustomField('industry', 'Technology');
-    
+
     expect($result)->toBeInstanceOf(Organization::class)
         ->and($organization->getName())->toBe('Acme Inc.')
         ->and($organization->getAdditionalName())->toBe('Acme Corporation')
@@ -49,52 +48,52 @@ test('organization provides fluent interface', function () {
 });
 
 test('organization objects can be created and set', function () {
-    $organization = new Organization();
-    
+    $organization = new Organization;
+
     // Create and set address
-    $address = new Address();
+    $address = new Address;
     $address->setPostalCode('12345')
         ->setLocality('New York')
         ->setCountry('US')
         ->setRoute('Broadway')
         ->setHouseNumber('42');
     $organization->setAddress($address);
-    
+
     // Create and set communications
-    $communications = new Communications();
+    $communications = new Communications;
     $communications->setEmail('info@acme.com')
         ->setPhoneNumber('+1 555-123-4567')
         ->setMobilePhone('+1 555-987-6543')
         ->setFax('+1 555-123-9876');
     $organization->setCommunications($communications);
-    
+
     // Create and set social media
-    $socialMedia = new SocialMedia();
+    $socialMedia = new SocialMedia;
     $socialMedia->setWeb('https://acme.com');
     $organization->setSocialMedia($socialMedia);
-    
+
     // Create and set business information
-    $businessInfo = new BusinessInformation();
+    $businessInfo = new BusinessInformation;
     $businessInfo->setVatId('DE123456789')
         ->setIban('DE89 3704 0044 0532 0130 00');
     $organization->setBusinessInformation($businessInfo);
-    
+
     // Create and set agent
-    $agent = new Agent();
+    $agent = new Agent;
     $agent->setExternalId('AGENT123');
     $organization->setAgent($agent);
-    
+
     // Create and add contact
-    $contact = new Contact();
+    $contact = new Contact;
     $contact->setFirstName('John')
         ->setLastName('Doe')
         ->setEmail('john.doe@acme.com')
         ->setPhone('+1 555-123-4567')
         ->setJobTitle('CEO');
     $organization->addContactObject($contact);
-    
+
     $data = $organization->toArray();
-    
+
     expect($data)->toHaveKey('address')
         ->and($data)->toHaveKey('communications')
         ->and($data)->toHaveKey('social_media')
@@ -110,8 +109,8 @@ test('organization objects can be created and set', function () {
 });
 
 test('organization supports type conversion for custom fields', function () {
-    $organization = new Organization();
-    
+    $organization = new Organization;
+
     // Test boolean conversion
     $organization->setCustomField('active_true_string', 'true');
     $organization->setCustomField('active_false_string', 'false');
@@ -119,12 +118,12 @@ test('organization supports type conversion for custom fields', function () {
     $organization->setCustomField('active_false_uppercase', 'FALSE');
     $organization->setCustomField('active_one', '1');
     $organization->setCustomField('active_zero', '0');
-    
+
     // Test integer conversion
     $organization->setCustomField('count_string', '42');
-    
+
     $data = $organization->toArray();
-    
+
     expect($data['custom_data']['active_true_string'])->toBeTrue()
         ->and($data['custom_data']['active_false_string'])->toBeFalse()
         ->and($data['custom_data']['active_true_uppercase'])->toBeTrue()
@@ -136,36 +135,36 @@ test('organization supports type conversion for custom fields', function () {
 });
 
 test('organization supports bulk setting of custom fields', function () {
-    $organization = new Organization();
-    
+    $organization = new Organization;
+
     $customData = [
         'industry' => 'Technology',
         'founded' => 1985,
         'is_active' => true,
-        'revenue' => '10000000'
+        'revenue' => '10000000',
     ];
-    
+
     $organization->setCustomData($customData);
-    
+
     $data = $organization->toArray();
-    
+
     expect($data)->toHaveKey('custom_data')
         ->and($data['custom_data'])->toHaveCount(4)
         ->and($data['custom_data'])->toBe($customData);
 });
 
 test('organization allows removing custom fields', function () {
-    $organization = new Organization();
-    
+    $organization = new Organization;
+
     $organization->setCustomField('industry', 'Technology');
     $organization->setCustomField('founded', 1985);
     $organization->setCustomField('is_active', true);
-    
+
     // Remove a field by setting it to null
     $organization->setCustomField('founded', null);
-    
+
     $data = $organization->toArray();
-    
+
     expect($data['custom_data'])->toHaveKey('industry')
         ->and($data['custom_data'])->toHaveKey('is_active')
         ->and($data['custom_data'])->not->toHaveKey('founded');

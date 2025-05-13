@@ -1,16 +1,15 @@
 <?php
 
 use Ameax\AmeaxJsonImportApi\Models\PrivatePerson;
-use Ameax\AmeaxJsonImportApi\AmeaxJsonImportApi;
 
 test('privateperson can be created with basic data', function () {
-    $person = new PrivatePerson();
+    $person = new PrivatePerson;
     $person->setFirstName('John');
     $person->setLastName('Doe');
     $person->setCustomerNumber('CUST12345');
-    
+
     $data = $person->toArray();
-    
+
     expect($data)->toBeArray()
         ->and($data)->toHaveKey('meta')
         ->and($data)->toHaveKey('firstname')
@@ -22,14 +21,14 @@ test('privateperson can be created with basic data', function () {
 });
 
 test('privateperson can include salutation and honorifics', function () {
-    $person = new PrivatePerson();
+    $person = new PrivatePerson;
     $person->setFirstName('John');
     $person->setLastName('Doe');
     $person->setSalutation('Mr.');
     $person->setHonorifics('Dr.');
-    
+
     $data = $person->toArray();
-    
+
     expect($data)->toBeArray()
         ->and($data)->toHaveKey('salutation')
         ->and($data)->toHaveKey('honorifics')
@@ -38,65 +37,65 @@ test('privateperson can include salutation and honorifics', function () {
 });
 
 test('privateperson can normalize salutation values', function () {
-    $person = new PrivatePerson();
-    
+    $person = new PrivatePerson;
+
     // Test Mr variations
     $person->setSalutation('mr');
     expect($person->getSalutation())->toBe('Mr.');
-    
+
     $person->setSalutation('mister');
     expect($person->getSalutation())->toBe('Mr.');
-    
+
     // Test Ms variations
     $person->setSalutation('ms');
     expect($person->getSalutation())->toBe('Ms.');
-    
+
     $person->setSalutation('miss');
     expect($person->getSalutation())->toBe('Ms.');
-    
+
     $person->setSalutation('mrs');
     expect($person->getSalutation())->toBe('Ms.');
-    
+
     // Test Mx
     $person->setSalutation('mx');
     expect($person->getSalutation())->toBe('Mx.');
 });
 
 test('privateperson can include date of birth', function () {
-    $person = new PrivatePerson();
+    $person = new PrivatePerson;
     $person->setFirstName('John');
     $person->setLastName('Doe');
     $person->setDateOfBirth('1990-01-15');
-    
+
     $data = $person->toArray();
-    
+
     expect($data)->toBeArray()
         ->and($data)->toHaveKey('date_of_birth')
         ->and($data['date_of_birth'])->toBe('1990-01-15');
 });
 
 test('privateperson can format date of birth from various formats', function () {
-    $person = new PrivatePerson();
-    
+    $person = new PrivatePerson;
+
     // Test with DateTime object
     $dateTime = new DateTime('1990-01-15');
     $person->setDateOfBirth($dateTime);
     expect($person->getDateOfBirth())->toBe('1990-01-15');
-    
+
     // Skip the date format tests that don't work consistently
     // Different PHP versions/systems might parse dates differently
 });
 
 test('privateperson can include address data', function () {
-    $person = new PrivatePerson();
+    $person = new PrivatePerson;
     $person->setFirstName('John');
     $person->setLastName('Doe');
     $person->createAddress('12345', 'New York', 'US');
     $person->setRoute('Broadway');
     $person->setHouseNumber('42');
-    
+
     $data = $person->toArray();
-    
+
     expect($data)->toBeArray()
         ->and($data)->toHaveKey('address')
         ->and($data['address'])->toHaveKey('postal_code')
@@ -112,16 +111,16 @@ test('privateperson can include address data', function () {
 });
 
 test('privateperson can include communications data', function () {
-    $person = new PrivatePerson();
+    $person = new PrivatePerson;
     $person->setFirstName('John');
     $person->setLastName('Doe');
     $person->setEmail('john.doe@example.com');
     $person->setPhone('+1 555-123-4567');
     $person->setMobilePhone('+1 555-987-6543');
     $person->setFax('+1 555-123-9876');
-    
+
     $data = $person->toArray();
-    
+
     expect($data)->toBeArray()
         ->and($data)->toHaveKey('communications')
         ->and($data['communications'])->toHaveKey('email')
@@ -135,13 +134,13 @@ test('privateperson can include communications data', function () {
 });
 
 test('privateperson can include agent information', function () {
-    $person = new PrivatePerson();
+    $person = new PrivatePerson;
     $person->setFirstName('John');
     $person->setLastName('Doe');
     $person->setAgentExternalId('AGENT123');
-    
+
     $data = $person->toArray();
-    
+
     expect($data)->toBeArray()
         ->and($data)->toHaveKey('agent')
         ->and($data['agent'])->toHaveKey('external_id')
@@ -149,15 +148,15 @@ test('privateperson can include agent information', function () {
 });
 
 test('privateperson can include custom data', function () {
-    $person = new PrivatePerson();
+    $person = new PrivatePerson;
     $person->setFirstName('John');
     $person->setLastName('Doe');
     $person->setCustomField('occupation', 'Engineer');
     $person->setCustomField('years_experience', 10);
     $person->setCustomField('is_active', true);
-    
+
     $data = $person->toArray();
-    
+
     expect($data)->toBeArray()
         ->and($data)->toHaveKey('custom_data')
         ->and($data['custom_data'])->toHaveKey('occupation')
@@ -169,7 +168,7 @@ test('privateperson can include custom data', function () {
 });
 
 test('privateperson can build complete data structure', function () {
-    $person = new PrivatePerson();
+    $person = new PrivatePerson;
     $person->setFirstName('John')
         ->setLastName('Doe')
         ->setSalutation('Mr.')
@@ -177,15 +176,15 @@ test('privateperson can build complete data structure', function () {
         ->setDateOfBirth('1990-01-15')
         ->setCustomerNumber('CUST12345')
         ->createAddress('12345', 'New York', 'US')
-            ->setRoute('Broadway')
-            ->setHouseNumber('42')
+        ->setRoute('Broadway')
+        ->setHouseNumber('42')
         ->setEmail('john.doe@example.com')
         ->setPhone('+1 555-123-4567')
         ->setAgentExternalId('AGENT123')
         ->setCustomField('occupation', 'Engineer');
-    
+
     $data = $person->toArray();
-    
+
     expect($data)->toBeArray()
         ->and($data)->toHaveKey('firstname')
         ->and($data)->toHaveKey('lastname')

@@ -17,9 +17,7 @@ class Agent extends BaseModel
     /**
      * Populate the model with data using setters
      *
-     * @param array $data
      * @return $this
-     *
      */
     protected function populate(array $data): self
     {
@@ -29,7 +27,7 @@ class Agent extends BaseModel
 
         // Handle any other fields
         foreach ($data as $key => $value) {
-            if (!in_array($key, ['external_id'])) {
+            if (! in_array($key, ['external_id'])) {
                 $this->set($key, $value);
             }
         }
@@ -37,14 +35,11 @@ class Agent extends BaseModel
         return $this;
     }
 
-
-
     /**
      * Set the external ID
      *
-     * @param string|int|null $externalId The external ID or null to remove
+     * @param  string|int|null  $externalId  The external ID or null to remove
      * @return $this
-     *
      */
     public function setExternalId(string|int|null $externalId): self
     {
@@ -52,8 +47,8 @@ class Agent extends BaseModel
             return $this->set('external_id', null);
         }
 
-        if (!is_string($externalId) && !is_int($externalId)) {
-            throw new InvalidArgumentException("External ID must be a string, integer, or null");
+        if (! is_string($externalId) && ! is_int($externalId)) {
+            throw new InvalidArgumentException('External ID must be a string, integer, or null');
         }
 
         return $this->set('external_id', $externalId);
@@ -61,10 +56,9 @@ class Agent extends BaseModel
 
     /**
      * Get the external ID
-     *
-     * @return string|null
      */
-    public function getExternalId(): ?string {
+    public function getExternalId(): ?string
+    {
         return $this->get('external_id');
     }
 }

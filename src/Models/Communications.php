@@ -2,8 +2,6 @@
 
 namespace Ameax\AmeaxJsonImportApi\Models;
 
-use InvalidArgumentException;
-
 class Communications extends BaseModel
 {
     /**
@@ -17,9 +15,7 @@ class Communications extends BaseModel
     /**
      * Populate the model with data using setters
      *
-     * @param array $data
      * @return $this
-     *
      */
     protected function populate(array $data): self
     {
@@ -41,7 +37,7 @@ class Communications extends BaseModel
 
         // Handle any other fields
         foreach ($data as $key => $value) {
-            if (!in_array($key, ['phone_number', 'mobile_phone', 'email', 'fax'])) {
+            if (! in_array($key, ['phone_number', 'mobile_phone', 'email', 'fax'])) {
                 $this->set($key, $value);
             }
         }
@@ -49,14 +45,11 @@ class Communications extends BaseModel
         return $this;
     }
 
-
-
     /**
      * Set the phone number
      *
-     * @param string|null $phoneNumber The phone number or null to remove
+     * @param  string|null  $phoneNumber  The phone number or null to remove
      * @return $this
-     *
      */
     public function setPhoneNumber(?string $phoneNumber): self
     {
@@ -70,9 +63,8 @@ class Communications extends BaseModel
     /**
      * Set the mobile phone number
      *
-     * @param string|null $mobilePhone The mobile phone number or null to remove
+     * @param  string|null  $mobilePhone  The mobile phone number or null to remove
      * @return $this
-     *
      */
     public function setMobilePhone(?string $mobilePhone): self
     {
@@ -86,7 +78,7 @@ class Communications extends BaseModel
     /**
      * Set the email address
      *
-     * @param string|null $email The email address or null to remove
+     * @param  string|null  $email  The email address or null to remove
      * @return $this
      */
     public function setEmail(?string $email): self
@@ -107,9 +99,8 @@ class Communications extends BaseModel
     /**
      * Set the fax number
      *
-     * @param string|null $fax The fax number or null to remove
+     * @param  string|null  $fax  The fax number or null to remove
      * @return $this
-     *
      */
     public function setFax(?string $fax): self
     {
@@ -122,8 +113,6 @@ class Communications extends BaseModel
 
     /**
      * Get the phone number
-     *
-     * @return string|null
      */
     public function getPhoneNumber(): ?string
     {
@@ -132,8 +121,6 @@ class Communications extends BaseModel
 
     /**
      * Get the mobile phone number
-     *
-     * @return string|null
      */
     public function getMobilePhone(): ?string
     {
@@ -142,8 +129,6 @@ class Communications extends BaseModel
 
     /**
      * Get the email address
-     *
-     * @return string|null
      */
     public function getEmail(): ?string
     {
@@ -152,8 +137,6 @@ class Communications extends BaseModel
 
     /**
      * Get the fax number
-     *
-     * @return string|null
      */
     public function getFax(): ?string
     {

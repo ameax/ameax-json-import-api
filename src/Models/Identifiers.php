@@ -15,9 +15,7 @@ class Identifiers extends BaseModel
     /**
      * Populate the model with data using setters
      *
-     * @param array $data
      * @return $this
-     *
      */
     protected function populate(array $data): self
     {
@@ -31,7 +29,7 @@ class Identifiers extends BaseModel
 
         // Handle any other fields
         foreach ($data as $key => $value) {
-            if (!in_array($key, ['customer_number', 'external_id'])) {
+            if (! in_array($key, ['customer_number', 'external_id'])) {
                 $this->set($key, $value);
             }
         }
@@ -39,12 +37,10 @@ class Identifiers extends BaseModel
         return $this;
     }
 
-
-
     /**
      * Set the customer number
      *
-     * @param string|int|null $customerNumber The customer number
+     * @param  string|int|null  $customerNumber  The customer number
      * @return $this
      */
     public function setCustomerNumber(string|int|null $customerNumber): self
@@ -58,7 +54,7 @@ class Identifiers extends BaseModel
     /**
      * Set the external ID
      *
-     * @param string|int|null $externalId The external ID or null to remove
+     * @param  string|int|null  $externalId  The external ID or null to remove
      * @return $this
      */
     public function setExternalId(string|int|null $externalId): self
@@ -75,8 +71,6 @@ class Identifiers extends BaseModel
 
     /**
      * Get the customer number
-     *
-     * @return string|null
      */
     public function getCustomerNumber(): ?string
     {
@@ -85,8 +79,6 @@ class Identifiers extends BaseModel
 
     /**
      * Get the external ID
-     *
-     * @return string|null
      */
     public function getExternalId(): ?string
     {

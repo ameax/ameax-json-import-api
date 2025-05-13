@@ -1,15 +1,14 @@
 <?php
 
 use Ameax\AmeaxJsonImportApi\Models\Organization;
-use Ameax\AmeaxJsonImportApi\AmeaxJsonImportApi;
 
 test('organization can be created with basic data', function () {
-    $organization = new Organization();
+    $organization = new Organization;
     $organization->setName('Acme Inc.');
     $organization->setCustomerNumber('CUST12345');
-    
+
     $data = $organization->toArray();
-    
+
     expect($data)->toBeArray()
         ->and($data)->toHaveKey('meta')
         ->and($data)->toHaveKey('name')
@@ -19,14 +18,14 @@ test('organization can be created with basic data', function () {
 });
 
 test('organization can include address data', function () {
-    $organization = new Organization();
+    $organization = new Organization;
     $organization->setName('Acme Inc.');
     $organization->createAddress('12345', 'New York', 'US');
     $organization->setRoute('Broadway');
     $organization->setHouseNumber('42');
-    
+
     $data = $organization->toArray();
-    
+
     expect($data)->toBeArray()
         ->and($data)->toHaveKey('address')
         ->and($data['address'])->toHaveKey('postal_code')
@@ -42,15 +41,15 @@ test('organization can include address data', function () {
 });
 
 test('organization can include communications data', function () {
-    $organization = new Organization();
+    $organization = new Organization;
     $organization->setName('Acme Inc.');
     $organization->setEmail('info@acme.com');
     $organization->setPhone('+1 555-123-4567');
     $organization->setMobilePhone('+1 555-987-6543');
     $organization->setFax('+1 555-123-9876');
-    
+
     $data = $organization->toArray();
-    
+
     expect($data)->toBeArray()
         ->and($data)->toHaveKey('communications')
         ->and($data['communications'])->toHaveKey('email')
@@ -64,12 +63,12 @@ test('organization can include communications data', function () {
 });
 
 test('organization can include website data', function () {
-    $organization = new Organization();
+    $organization = new Organization;
     $organization->setName('Acme Inc.');
     $organization->setWebsite('https://acme.com');
-    
+
     $data = $organization->toArray();
-    
+
     expect($data)->toBeArray()
         ->and($data)->toHaveKey('social_media')
         ->and($data['social_media'])->toHaveKey('web')
@@ -77,13 +76,13 @@ test('organization can include website data', function () {
 });
 
 test('organization can include business information', function () {
-    $organization = new Organization();
+    $organization = new Organization;
     $organization->setName('Acme Inc.');
     $organization->setVatId('DE123456789');
     $organization->setIban('DE89 3704 0044 0532 0130 00');
-    
+
     $data = $organization->toArray();
-    
+
     expect($data)->toBeArray()
         ->and($data)->toHaveKey('business_information')
         ->and($data['business_information'])->toHaveKey('vat_id')
@@ -93,12 +92,12 @@ test('organization can include business information', function () {
 });
 
 test('organization can include agent information', function () {
-    $organization = new Organization();
+    $organization = new Organization;
     $organization->setName('Acme Inc.');
     $organization->setAgentExternalId('AGENT123');
-    
+
     $data = $organization->toArray();
-    
+
     expect($data)->toBeArray()
         ->and($data)->toHaveKey('agent')
         ->and($data['agent'])->toHaveKey('external_id')
@@ -106,16 +105,16 @@ test('organization can include agent information', function () {
 });
 
 test('organization can include contacts', function () {
-    $organization = new Organization();
+    $organization = new Organization;
     $organization->setName('Acme Inc.');
     $organization->addContact('John', 'Doe', [
         'email' => 'john.doe@acme.com',
         'phone' => '+1 555-123-4567',
-        'job_title' => 'CEO'
+        'job_title' => 'CEO',
     ]);
-    
+
     $data = $organization->toArray();
-    
+
     expect($data)->toBeArray()
         ->and($data)->toHaveKey('contacts')
         ->and($data['contacts'])->toBeArray()
@@ -130,14 +129,14 @@ test('organization can include contacts', function () {
 });
 
 test('organization can include custom data', function () {
-    $organization = new Organization();
+    $organization = new Organization;
     $organization->setName('Acme Inc.');
     $organization->setCustomField('industry', 'Technology');
     $organization->setCustomField('founded', 1985);
     $organization->setCustomField('is_active', true);
-    
+
     $data = $organization->toArray();
-    
+
     expect($data)->toBeArray()
         ->and($data)->toHaveKey('custom_data')
         ->and($data['custom_data'])->toHaveKey('industry')
@@ -149,13 +148,13 @@ test('organization can include custom data', function () {
 });
 
 test('organization can build complete data structure', function () {
-    $organization = new Organization();
+    $organization = new Organization;
     $organization->setName('Acme Inc.')
         ->setAdditionalName('Acme Corporation')
         ->setCustomerNumber('CUST12345')
         ->createAddress('12345', 'New York', 'US')
-            ->setRoute('Broadway')
-            ->setHouseNumber('42')
+        ->setRoute('Broadway')
+        ->setHouseNumber('42')
         ->setEmail('info@acme.com')
         ->setPhone('+1 555-123-4567')
         ->setWebsite('https://acme.com')
@@ -165,12 +164,12 @@ test('organization can build complete data structure', function () {
         ->addContact('John', 'Doe', [
             'email' => 'john.doe@acme.com',
             'phone' => '+1 555-123-4567',
-            'job_title' => 'CEO'
+            'job_title' => 'CEO',
         ])
         ->setCustomField('industry', 'Technology');
-    
+
     $data = $organization->toArray();
-    
+
     expect($data)->toBeArray()
         ->and($data)->toHaveKey('name')
         ->and($data)->toHaveKey('additional_name')

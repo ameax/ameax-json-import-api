@@ -1,6 +1,6 @@
 <?php
 
-require_once __DIR__ . '/../vendor/autoload.php';
+require_once __DIR__.'/../vendor/autoload.php';
 
 use Ameax\AmeaxJsonImportApi\AmeaxJsonImportApi;
 use Ameax\AmeaxJsonImportApi\Models\Meta;
@@ -23,15 +23,15 @@ try {
         ->setEmail('john.doe@example.com')
         ->setPhone('+49 123 4567890')
         ->setCustomerNumber('CUST12345');
-    
+
     // You would typically call sendToAmeax() to send the data to Ameax
     // $response = $privatePerson->sendToAmeax();
     // var_dump($response);
-    
+
     // For this example, just print the data
-    echo json_encode($privatePerson->toArray(), JSON_PRETTY_PRINT) . PHP_EOL;
+    echo json_encode($privatePerson->toArray(), JSON_PRETTY_PRINT).PHP_EOL;
 } catch (Exception $e) {
-    echo "Error: " . $e->getMessage() . PHP_EOL;
+    echo 'Error: '.$e->getMessage().PHP_EOL;
 }
 
 // Option 2: Create a private person from an array of data
@@ -39,7 +39,7 @@ try {
     $data = [
         'meta' => [
             'document_type' => Meta::DOCUMENT_TYPE_PRIVATE_PERSON,
-            'schema_version' => '1.0'
+            'schema_version' => '1.0',
         ],
         'firstname' => 'Jane',
         'lastname' => 'Doe',
@@ -50,32 +50,32 @@ try {
             'house_number' => '456',
             'postal_code' => '54321',
             'locality' => 'Munich',
-            'country' => 'DE'
+            'country' => 'DE',
         ],
         'communications' => [
             'email' => 'jane.doe@example.com',
             'phone_number' => '+49 987 6543210',
-            'mobile_phone' => '+49 123 9876543'
+            'mobile_phone' => '+49 123 9876543',
         ],
         'identifiers' => [
-            'customer_number' => 'CUST67890'
+            'customer_number' => 'CUST67890',
         ],
         'custom_data' => [
             'preferred_language' => 'en',
-            'newsletter_subscription' => true
-        ]
+            'newsletter_subscription' => true,
+        ],
     ];
-    
+
     $privatePerson = $api->privatePersonFromArray($data);
-    
+
     // You would typically call sendToAmeax() to send the data to Ameax
     // $response = $privatePerson->sendToAmeax();
     // var_dump($response);
-    
+
     // For this example, just print the data
-    echo json_encode($privatePerson->toArray(), JSON_PRETTY_PRINT) . PHP_EOL;
+    echo json_encode($privatePerson->toArray(), JSON_PRETTY_PRINT).PHP_EOL;
 } catch (Exception $e) {
-    echo "Error: " . $e->getMessage() . PHP_EOL;
+    echo 'Error: '.$e->getMessage().PHP_EOL;
 }
 
 // Example of adding data to an existing private person
@@ -83,11 +83,11 @@ try {
     $privatePerson = $api->createPrivatePerson()
         ->setFirstName('Alice')
         ->setLastName('Smith');
-    
+
     // Add required address information
     $privatePerson->createAddress('67890', 'Hamburg', 'DE');
-    
-    echo "Private person created with required address." . PHP_EOL;
+
+    echo 'Private person created with required address.'.PHP_EOL;
 } catch (Exception $e) {
-    echo "Error: " . $e->getMessage() . PHP_EOL;
+    echo 'Error: '.$e->getMessage().PHP_EOL;
 }

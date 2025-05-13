@@ -75,7 +75,6 @@ class Organization extends BaseModel
     /**
      * Populate the model with data using setters
      *
-     * @param array $data
      * @return $this
      */
     protected function populate(array $data): self
@@ -210,48 +209,48 @@ class Organization extends BaseModel
         return $this;
     }
 
-
     /**
      * Set the API client for this organization (required for sending)
      *
-     * @param AmeaxJsonImportApi $apiClient
      * @return $this
      */
     public function setApiClient(AmeaxJsonImportApi $apiClient): self
     {
         $this->apiClient = $apiClient;
+
         return $this;
     }
 
     /**
      * Set the meta object
      *
-     * @param Meta $meta The meta data
+     * @param  Meta  $meta  The meta data
      * @return $this
      */
     public function setMeta(Meta $meta): self
     {
         $this->meta = $meta;
+
         return $this->set('meta', $meta->toArray());
     }
 
     /**
      * Set the schema version
      *
-     * @param string $version The schema version
+     * @param  string  $version  The schema version
      * @return $this
-     *
      */
     public function setSchemaVersion(string $version): self
     {
         $this->meta->setSchemaVersion($version);
+
         return $this->set('meta', $this->meta->toArray());
     }
 
     /**
      * Set the organization name
      *
-     * @param string $name The organization name
+     * @param  string  $name  The organization name
      * @return $this
      */
     public function setName(string $name): self
@@ -262,7 +261,7 @@ class Organization extends BaseModel
     /**
      * Set the additional name
      *
-     * @param string|null $additionalName The additional name or null to remove
+     * @param  string|null  $additionalName  The additional name or null to remove
      * @return $this
      */
     public function setAdditionalName(?string $additionalName): self
@@ -273,14 +272,13 @@ class Organization extends BaseModel
     /**
      * Create and set identifiers
      *
-     * @param string|int $customerNumber The customer number
-     * @param string|int|null $externalId The external ID
+     * @param  string|int  $customerNumber  The customer number
+     * @param  string|int|null  $externalId  The external ID
      * @return $this
-     *
      */
     public function createIdentifiers(string|int|null $customerNumber, $externalId = null): self
     {
-        $identifiers = new Identifiers();
+        $identifiers = new Identifiers;
         $identifiers->setCustomerNumber($customerNumber);
 
         if ($externalId !== null) {
@@ -288,25 +286,27 @@ class Organization extends BaseModel
         }
 
         $this->identifiers = $identifiers;
+
         return $this->set('identifiers', $identifiers->toArray());
     }
 
     /**
      * Set the identifiers
      *
-     * @param Identifiers $identifiers The identifiers
+     * @param  Identifiers  $identifiers  The identifiers
      * @return $this
      */
     public function setIdentifiers(Identifiers $identifiers): self
     {
         $this->identifiers = $identifiers;
+
         return $this->set('identifiers', $identifiers->toArray());
     }
 
     /**
      * Set the customer number
      *
-     * @param string|int|null $customerNumber The customer number
+     * @param  string|int|null  $customerNumber  The customer number
      * @return $this
      */
     public function setCustomerNumber(string|int|null $customerNumber): self
@@ -316,136 +316,137 @@ class Organization extends BaseModel
         }
 
         $this->identifiers->setCustomerNumber($customerNumber);
+
         return $this->set('identifiers', $this->identifiers->toArray());
     }
 
     /**
      * Set the external ID
      *
-     * @param string|int|null $externalId The external ID or null to remove
+     * @param  string|int|null  $externalId  The external ID or null to remove
      * @return $this
-     *
      */
     public function setExternalId(string|int|null $externalId): self
     {
         if ($this->identifiers === null) {
             if ($externalId === null) {
-                throw new InvalidArgumentException("Cannot set external_id to null when identifiers is not set. You must provide a customer_number.");
+                throw new InvalidArgumentException('Cannot set external_id to null when identifiers is not set. You must provide a customer_number.');
             }
 
             return $this->createIdentifiers($externalId, $externalId);
         }
 
         $this->identifiers->setExternalId($externalId);
+
         return $this->set('identifiers', $this->identifiers->toArray());
     }
 
     /**
      * Create and set a new address from components
      *
-     * @param string $postalCode The postal code
-     * @param string $locality The city/town
-     * @param string $country The country code (ISO 3166-1 alpha-2)
+     * @param  string  $postalCode  The postal code
+     * @param  string  $locality  The city/town
+     * @param  string  $country  The country code (ISO 3166-1 alpha-2)
      * @return $this
-     *
      */
     public function createAddress(string $postalCode, string $locality, string $country): self
     {
-        $address = new Address();
+        $address = new Address;
         $address->setPostalCode($postalCode)
-                ->setLocality($locality)
-                ->setCountry($country);
+            ->setLocality($locality)
+            ->setCountry($country);
 
         $this->address = $address;
+
         return $this->set('address', $address->toArray());
     }
 
     /**
      * Set the address
      *
-     * @param Address $address The address
+     * @param  Address  $address  The address
      * @return $this
      */
     public function setAddress(Address $address): self
     {
         $this->address = $address;
+
         return $this->set('address', $address->toArray());
     }
 
     /**
      * Set the postal code
      *
-     * @param string $postalCode The postal code
+     * @param  string  $postalCode  The postal code
      * @return $this
-     *
      */
     public function setPostalCode(string $postalCode): self
     {
-        if (!$this->address) {
-            throw new InvalidArgumentException("Cannot set postal code on organization without an address. Create an address first.");
+        if (! $this->address) {
+            throw new InvalidArgumentException('Cannot set postal code on organization without an address. Create an address first.');
         }
 
         $this->address->setPostalCode($postalCode);
+
         return $this->set('address', $this->address->toArray());
     }
 
     /**
      * Set the locality (city/town)
      *
-     * @param string $locality The locality
+     * @param  string  $locality  The locality
      * @return $this
-     *
      */
     public function setLocality(string $locality): self
     {
-        if (!$this->address) {
-            throw new InvalidArgumentException("Cannot set locality on organization without an address. Create an address first.");
+        if (! $this->address) {
+            throw new InvalidArgumentException('Cannot set locality on organization without an address. Create an address first.');
         }
 
         $this->address->setLocality($locality);
+
         return $this->set('address', $this->address->toArray());
     }
 
     /**
      * Set the country code
      *
-     * @param string $country The country code (ISO 3166-1 alpha-2)
+     * @param  string  $country  The country code (ISO 3166-1 alpha-2)
      * @return $this
-     *
      */
     public function setCountry(string $country): self
     {
-        if (!$this->address) {
-            throw new InvalidArgumentException("Cannot set country on organization without an address. Create an address first.");
+        if (! $this->address) {
+            throw new InvalidArgumentException('Cannot set country on organization without an address. Create an address first.');
         }
 
         $this->address->setCountry($country);
+
         return $this->set('address', $this->address->toArray());
     }
 
     /**
      * Set the route (street)
      *
-     * @param string|null $route The route/street or null to remove
+     * @param  string|null  $route  The route/street or null to remove
      * @return $this
-     *
      */
     public function setRoute(?string $route): self
     {
-        if (!$this->address) {
-            throw new InvalidArgumentException("Cannot set route on organization without an address. Create an address first.");
+        if (! $this->address) {
+            throw new InvalidArgumentException('Cannot set route on organization without an address. Create an address first.');
         }
 
         $this->address->setRoute($route);
+
         return $this->set('address', $this->address->toArray());
     }
 
     /**
      * Set the street (alias for setRoute)
      *
-     * @param string|null $street The street or null to remove
+     * @param  string|null  $street  The street or null to remove
      * @return $this
-     *
      */
     public function setStreet(?string $street): self
     {
@@ -455,57 +456,57 @@ class Organization extends BaseModel
     /**
      * Set the house number
      *
-     * @param string|null $houseNumber The house number or null to remove
+     * @param  string|null  $houseNumber  The house number or null to remove
      * @return $this
-     *
      */
     public function setHouseNumber(?string $houseNumber): self
     {
-        if (!$this->address) {
-            throw new InvalidArgumentException("Cannot set house number on organization without an address. Create an address first.");
+        if (! $this->address) {
+            throw new InvalidArgumentException('Cannot set house number on organization without an address. Create an address first.');
         }
 
         $this->address->setHouseNumber($houseNumber);
+
         return $this->set('address', $this->address->toArray());
     }
 
     /**
      * Create and set social media
      *
-     * @param string|null $web The website URL
+     * @param  string|null  $web  The website URL
      * @return $this
-     *
      */
     public function createSocialMedia(?string $web = null): self
     {
-        $socialMedia = new SocialMedia();
+        $socialMedia = new SocialMedia;
 
         if ($web !== null) {
             $socialMedia->setWeb($web);
         }
 
         $this->socialMedia = $socialMedia;
+
         return $this->set('social_media', $socialMedia->toArray());
     }
 
     /**
      * Set the social media
      *
-     * @param SocialMedia $socialMedia The social media
+     * @param  SocialMedia  $socialMedia  The social media
      * @return $this
      */
     public function setSocialMedia(SocialMedia $socialMedia): self
     {
         $this->socialMedia = $socialMedia;
+
         return $this->set('social_media', $socialMedia->toArray());
     }
 
     /**
      * Set the website (creates social media if needed)
      *
-     * @param string|null $website The website URL or null to remove
+     * @param  string|null  $website  The website URL or null to remove
      * @return $this
-     *
      */
     public function setWebsite(?string $website): self
     {
@@ -518,18 +519,18 @@ class Organization extends BaseModel
         }
 
         $this->socialMedia->setWeb($website);
+
         return $this->set('social_media', $this->socialMedia->toArray());
     }
 
     /**
      * Create and set communications
      *
-     * @param string|null $email The email address
-     * @param string|null $phoneNumber The phone number
-     * @param string|null $mobilePhone The mobile phone number
-     * @param string|null $fax The fax number
+     * @param  string|null  $email  The email address
+     * @param  string|null  $phoneNumber  The phone number
+     * @param  string|null  $mobilePhone  The mobile phone number
+     * @param  string|null  $fax  The fax number
      * @return $this
-     *
      */
     public function createCommunications(
         ?string $email = null,
@@ -537,7 +538,7 @@ class Organization extends BaseModel
         ?string $mobilePhone = null,
         ?string $fax = null
     ): self {
-        $communications = new Communications();
+        $communications = new Communications;
 
         if ($email !== null) {
             $communications->setEmail($email);
@@ -556,27 +557,28 @@ class Organization extends BaseModel
         }
 
         $this->communications = $communications;
+
         return $this->set('communications', $communications->toArray());
     }
 
     /**
      * Set the communications
      *
-     * @param Communications $communications The communications
+     * @param  Communications  $communications  The communications
      * @return $this
      */
     public function setCommunications(Communications $communications): self
     {
         $this->communications = $communications;
+
         return $this->set('communications', $communications->toArray());
     }
 
     /**
      * Set the email (creates communications if needed)
      *
-     * @param string|null $email The email address or null to remove
+     * @param  string|null  $email  The email address or null to remove
      * @return $this
-     *
      */
     public function setEmail(?string $email): self
     {
@@ -589,15 +591,15 @@ class Organization extends BaseModel
         }
 
         $this->communications->setEmail($email);
+
         return $this->set('communications', $this->communications->toArray());
     }
 
     /**
      * Set the phone number (creates communications if needed)
      *
-     * @param string|null $phoneNumber The phone number or null to remove
+     * @param  string|null  $phoneNumber  The phone number or null to remove
      * @return $this
-     *
      */
     public function setPhone(?string $phoneNumber): self
     {
@@ -610,15 +612,15 @@ class Organization extends BaseModel
         }
 
         $this->communications->setPhoneNumber($phoneNumber);
+
         return $this->set('communications', $this->communications->toArray());
     }
 
     /**
      * Set the mobile phone number (creates communications if needed)
      *
-     * @param string|null $mobilePhone The mobile phone number or null to remove
+     * @param  string|null  $mobilePhone  The mobile phone number or null to remove
      * @return $this
-     *
      */
     public function setMobilePhone(?string $mobilePhone): self
     {
@@ -631,13 +633,14 @@ class Organization extends BaseModel
         }
 
         $this->communications->setMobilePhone($mobilePhone);
+
         return $this->set('communications', $this->communications->toArray());
     }
-    
+
     /**
      * Set the mobile phone number (alias for setMobilePhone)
      *
-     * @param string|null $mobilePhone The mobile phone number or null to remove
+     * @param  string|null  $mobilePhone  The mobile phone number or null to remove
      * @return $this
      */
     public function setMobile(?string $mobilePhone): self
@@ -648,9 +651,8 @@ class Organization extends BaseModel
     /**
      * Set the fax number (creates communications if needed)
      *
-     * @param string|null $fax The fax number or null to remove
+     * @param  string|null  $fax  The fax number or null to remove
      * @return $this
-     *
      */
     public function setFax(?string $fax): self
     {
@@ -663,20 +665,20 @@ class Organization extends BaseModel
         }
 
         $this->communications->setFax($fax);
+
         return $this->set('communications', $this->communications->toArray());
     }
 
     /**
      * Create and set business information
      *
-     * @param string|null $vatId The VAT ID
-     * @param string|null $iban The IBAN
+     * @param  string|null  $vatId  The VAT ID
+     * @param  string|null  $iban  The IBAN
      * @return $this
-     *
      */
     public function createBusinessInformation(?string $vatId = null, ?string $iban = null): self
     {
-        $businessInfo = new BusinessInformation();
+        $businessInfo = new BusinessInformation;
 
         if ($vatId !== null) {
             $businessInfo->setVatId($vatId);
@@ -687,27 +689,28 @@ class Organization extends BaseModel
         }
 
         $this->businessInformation = $businessInfo;
+
         return $this->set('business_information', $businessInfo->toArray());
     }
 
     /**
      * Set the business information
      *
-     * @param BusinessInformation $businessInfo The business information
+     * @param  BusinessInformation  $businessInfo  The business information
      * @return $this
      */
     public function setBusinessInformation(BusinessInformation $businessInfo): self
     {
         $this->businessInformation = $businessInfo;
+
         return $this->set('business_information', $businessInfo->toArray());
     }
 
     /**
      * Set the VAT ID (creates business information if needed)
      *
-     * @param string|null $vatId The VAT ID or null to remove
+     * @param  string|null  $vatId  The VAT ID or null to remove
      * @return $this
-     *
      */
     public function setVatId(?string $vatId): self
     {
@@ -720,15 +723,15 @@ class Organization extends BaseModel
         }
 
         $this->businessInformation->setVatId($vatId);
+
         return $this->set('business_information', $this->businessInformation->toArray());
     }
 
     /**
      * Set the IBAN (creates business information if needed)
      *
-     * @param string|null $iban The IBAN or null to remove
+     * @param  string|null  $iban  The IBAN or null to remove
      * @return $this
-     *
      */
     public function setIban(?string $iban): self
     {
@@ -741,44 +744,46 @@ class Organization extends BaseModel
         }
 
         $this->businessInformation->setIban($iban);
+
         return $this->set('business_information', $this->businessInformation->toArray());
     }
 
     /**
      * Create and set agent
      *
-     * @param string|int|null $externalId The external ID
+     * @param  string|int|null  $externalId  The external ID
      * @return $this
-     *
      */
     public function createAgent($externalId = null): self
     {
-        $agent = new Agent();
+        $agent = new Agent;
 
         if ($externalId !== null) {
             $agent->setExternalId($externalId);
         }
 
         $this->agent = $agent;
+
         return $this->set('agent', $agent->toArray());
     }
 
     /**
      * Set the agent
      *
-     * @param Agent $agent The agent
+     * @param  Agent  $agent  The agent
      * @return $this
      */
     public function setAgent(Agent $agent): self
     {
         $this->agent = $agent;
+
         return $this->set('agent', $agent->toArray());
     }
 
     /**
      * Set the agent's external ID (creates agent if needed)
      *
-     * @param string|int|null $externalId The external ID or null to remove
+     * @param  string|int|null  $externalId  The external ID or null to remove
      * @return $this
      */
     public function setAgentExternalId(string|int|null $externalId): self
@@ -792,26 +797,27 @@ class Organization extends BaseModel
         }
 
         $this->agent->setExternalId($externalId);
+
         return $this->set('agent', $this->agent->toArray());
     }
 
     /**
      * Create and add a contact to the organization
      *
-     * @param string $firstName First name
-     * @param string $lastName Last name
-     * @param array $additionalData Additional contact data
+     * @param  string  $firstName  First name
+     * @param  string  $lastName  Last name
+     * @param  array  $additionalData  Additional contact data
      * @return $this
      */
     public function addContact(string $firstName, string $lastName, array $additionalData = []): self
     {
-        $contact = new Contact();
+        $contact = new Contact;
         $contact->setFirstName($firstName)
-                ->setLastName($lastName);
+            ->setLastName($lastName);
 
         // Set additional data using setters when available
         foreach ($additionalData as $key => $value) {
-            $method = 'set' . str_replace('_', '', ucwords($key, '_'));
+            $method = 'set'.str_replace('_', '', ucwords($key, '_'));
             if (method_exists($contact, $method)) {
                 $contact->$method($value);
             } else {
@@ -820,7 +826,7 @@ class Organization extends BaseModel
         }
 
         // Add the contact to the organization
-        if (!isset($this->data['contacts'])) {
+        if (! isset($this->data['contacts'])) {
             $this->data['contacts'] = [];
             $this->contactObjects = [];
         }
@@ -834,13 +840,13 @@ class Organization extends BaseModel
     /**
      * Add a pre-configured contact object to the organization
      *
-     * @param Contact $contact The contact to add
+     * @param  Contact  $contact  The contact to add
      * @return $this
      */
     public function addContactObject(Contact $contact): self
     {
         // Add the contact to the organization
-        if (!isset($this->data['contacts'])) {
+        if (! isset($this->data['contacts'])) {
             $this->data['contacts'] = [];
             $this->contactObjects = [];
         }
@@ -854,13 +860,13 @@ class Organization extends BaseModel
     /**
      * Set a custom data field
      *
-     * @param string $key The field key
-     * @param mixed $value The field value or null to remove
+     * @param  string  $key  The field key
+     * @param  mixed  $value  The field value or null to remove
      * @return $this
      */
     public function setCustomField(string $key, $value = null): self
     {
-        if (!isset($this->data['custom_data'])) {
+        if (! isset($this->data['custom_data'])) {
             $this->data['custom_data'] = [];
         }
 
@@ -882,7 +888,7 @@ class Organization extends BaseModel
             $value = false;
         } elseif (is_string($value) && is_numeric($value) && strpos($value, '.') === false) {
             // Convert string integers to actual integers
-            $value = (int)$value;
+            $value = (int) $value;
         }
 
         $this->customData[$key] = $value;
@@ -894,7 +900,7 @@ class Organization extends BaseModel
     /**
      * Set custom data fields in bulk
      *
-     * @param array $data The custom data fields
+     * @param  array  $data  The custom data fields
      * @return $this
      */
     public function setCustomData(array $data): self
@@ -907,8 +913,6 @@ class Organization extends BaseModel
 
     /**
      * Get custom data fields
-     *
-     * @return array
      */
     public function getCustomData(): array
     {
@@ -917,8 +921,6 @@ class Organization extends BaseModel
 
     /**
      * Get the document type
-     *
-     * @return string
      */
     public function getDocumentType(): string
     {
@@ -927,8 +929,6 @@ class Organization extends BaseModel
 
     /**
      * Get the schema version
-     *
-     * @return string
      */
     public function getSchemaVersion(): string
     {
@@ -937,8 +937,6 @@ class Organization extends BaseModel
 
     /**
      * Get the meta data
-     *
-     * @return Meta
      */
     public function getMeta(): Meta
     {
@@ -947,8 +945,6 @@ class Organization extends BaseModel
 
     /**
      * Get the organization name
-     *
-     * @return string|null
      */
     public function getName(): ?string
     {
@@ -957,8 +953,6 @@ class Organization extends BaseModel
 
     /**
      * Get the additional name
-     *
-     * @return string|null
      */
     public function getAdditionalName(): ?string
     {
@@ -967,18 +961,14 @@ class Organization extends BaseModel
 
     /**
      * Get the identifiers
-     *
-     * @return Identifiers|null
      */
     public function getIdentifiers(): ?Identifiers
     {
         return $this->identifiers;
     }
-    
+
     /**
      * Get the customer number
-     *
-     * @return string|null
      */
     public function getCustomerNumber(): ?string
     {
@@ -987,8 +977,6 @@ class Organization extends BaseModel
 
     /**
      * Get the address
-     *
-     * @return Address|null
      */
     public function getAddress(): ?Address
     {
@@ -997,8 +985,6 @@ class Organization extends BaseModel
 
     /**
      * Get the social media
-     *
-     * @return SocialMedia|null
      */
     public function getSocialMedia(): ?SocialMedia
     {
@@ -1007,8 +993,6 @@ class Organization extends BaseModel
 
     /**
      * Get the website URL
-     *
-     * @return string|null
      */
     public function getWebsite(): ?string
     {
@@ -1017,8 +1001,6 @@ class Organization extends BaseModel
 
     /**
      * Get the communications
-     *
-     * @return Communications|null
      */
     public function getCommunications(): ?Communications
     {
@@ -1027,8 +1009,6 @@ class Organization extends BaseModel
 
     /**
      * Get the email
-     *
-     * @return string|null
      */
     public function getEmail(): ?string
     {
@@ -1037,8 +1017,6 @@ class Organization extends BaseModel
 
     /**
      * Get the phone number
-     *
-     * @return string|null
      */
     public function getPhone(): ?string
     {
@@ -1047,8 +1025,6 @@ class Organization extends BaseModel
 
     /**
      * Get the mobile phone number
-     *
-     * @return string|null
      */
     public function getMobilePhone(): ?string
     {
@@ -1057,8 +1033,6 @@ class Organization extends BaseModel
 
     /**
      * Get the fax number
-     *
-     * @return string|null
      */
     public function getFax(): ?string
     {
@@ -1067,8 +1041,6 @@ class Organization extends BaseModel
 
     /**
      * Get the business information
-     *
-     * @return BusinessInformation|null
      */
     public function getBusinessInformation(): ?BusinessInformation
     {
@@ -1077,8 +1049,6 @@ class Organization extends BaseModel
 
     /**
      * Get the VAT ID
-     *
-     * @return string|null
      */
     public function getVatId(): ?string
     {
@@ -1087,8 +1057,6 @@ class Organization extends BaseModel
 
     /**
      * Get the IBAN
-     *
-     * @return string|null
      */
     public function getIban(): ?string
     {
@@ -1097,8 +1065,6 @@ class Organization extends BaseModel
 
     /**
      * Get the agent
-     *
-     * @return Agent|null
      */
     public function getAgent(): ?Agent
     {
@@ -1107,8 +1073,6 @@ class Organization extends BaseModel
 
     /**
      * Get the contacts
-     *
-     * @return array
      */
     public function getContacts(): array
     {
@@ -1119,11 +1083,12 @@ class Organization extends BaseModel
      * Send the organization to the Ameax API
      *
      * @return array The API response
+     *
      * @throws InvalidArgumentException If no API client is set
      */
     public function sendToAmeax(): array
     {
-        if (!$this->apiClient) {
+        if (! $this->apiClient) {
             throw new InvalidArgumentException(
                 'No API client set. Use setApiClient() before calling sendToAmeax().'
             );

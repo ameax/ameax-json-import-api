@@ -8,6 +8,7 @@ use InvalidArgumentException;
 class PrivatePerson extends BaseModel
 {
     public const DOCUMENT_TYPE = 'ameax_private_person_account';
+
     public const SCHEMA_VERSION = '1.0';
 
     /**
@@ -50,7 +51,7 @@ class PrivatePerson extends BaseModel
      */
     public function __construct()
     {
-        $this->meta = new Meta();
+        $this->meta = new Meta;
         $this->meta->setDocumentType(self::DOCUMENT_TYPE);
         $this->meta->setSchemaVersion(self::SCHEMA_VERSION);
 
@@ -64,9 +65,7 @@ class PrivatePerson extends BaseModel
     /**
      * Populate the model with data using setters
      *
-     * @param array $data
      * @return $this
-     *
      */
     protected function populate(array $data): self
     {
@@ -125,7 +124,7 @@ class PrivatePerson extends BaseModel
         } elseif (isset($data['customer_number'])) {
             // For backward compatibility
             $identifiersData = [
-                'customer_number' => $data['customer_number']
+                'customer_number' => $data['customer_number'],
             ];
             $this->identifiers = Identifiers::fromArray($identifiersData);
             $this->data['identifiers'] = $this->identifiers->toArray();
@@ -172,24 +171,22 @@ class PrivatePerson extends BaseModel
         return $this;
     }
 
-
-
     /**
      * Set the API client for this private person (required for sending)
      *
-     * @param AmeaxJsonImportApi $apiClient
      * @return $this
      */
     public function setApiClient(AmeaxJsonImportApi $apiClient): self
     {
         $this->apiClient = $apiClient;
+
         return $this;
     }
 
     /**
      * Set the meta object
      *
-     * @param Meta $meta The meta data
+     * @param  Meta  $meta  The meta data
      * @return $this
      */
     public function setMeta(Meta $meta): self
@@ -198,19 +195,20 @@ class PrivatePerson extends BaseModel
         $meta->setDocumentType(self::DOCUMENT_TYPE);
 
         $this->meta = $meta;
+
         return $this->set('meta', $meta->toArray());
     }
 
     /**
      * Set the schema version
      *
-     * @param string $version The schema version
+     * @param  string  $version  The schema version
      * @return $this
-     *
      */
     public function setSchemaVersion(string $version): self
     {
         $this->meta->setSchemaVersion($version);
+
         return $this->set('meta', $this->meta->toArray());
     }
 
@@ -220,7 +218,7 @@ class PrivatePerson extends BaseModel
      * The API accepts the following salutation values: 'Mr.', 'Ms.', 'Mx.'
      * Common values: 'Mr.', 'Ms.', 'Mx.'
      *
-     * @param string|null $salutation The salutation or null to remove
+     * @param  string|null  $salutation  The salutation or null to remove
      * @return $this
      */
     public function setSalutation(?string $salutation): self
@@ -244,9 +242,8 @@ class PrivatePerson extends BaseModel
     /**
      * Set the honorifics
      *
-     * @param string|null $honorifics The honorifics (e.g., Dr., Prof.) or null to remove
+     * @param  string|null  $honorifics  The honorifics (e.g., Dr., Prof.) or null to remove
      * @return $this
-     *
      */
     public function setHonorifics(?string $honorifics): self
     {
@@ -260,9 +257,8 @@ class PrivatePerson extends BaseModel
     /**
      * Set the first name
      *
-     * @param string $firstName The first name
+     * @param  string  $firstName  The first name
      * @return $this
-     *
      */
     public function setFirstName(string $firstName): self
     {
@@ -273,9 +269,8 @@ class PrivatePerson extends BaseModel
     /**
      * Set the last name
      *
-     * @param string $lastName The last name
+     * @param  string  $lastName  The last name
      * @return $this
-     *
      */
     public function setLastName(string $lastName): self
     {
@@ -286,7 +281,7 @@ class PrivatePerson extends BaseModel
     /**
      * Set the date of birth
      *
-     * @param string|\DateTime|mixed|null $dateOfBirth The date of birth (will be converted to YYYY-MM-DD format) or null to remove
+     * @param  string|\DateTime|mixed|null  $dateOfBirth  The date of birth (will be converted to YYYY-MM-DD format) or null to remove
      * @return $this
      */
     public function setDateOfBirth($dateOfBirth): self
@@ -298,7 +293,7 @@ class PrivatePerson extends BaseModel
         // If DateTime object provided, convert to string
         if ($dateOfBirth instanceof \DateTime) {
             $dateOfBirth = $dateOfBirth->format('Y-m-d');
-        } elseif (is_string($dateOfBirth) && !preg_match('/^\d{4}-\d{2}-\d{2}$/', $dateOfBirth)) {
+        } elseif (is_string($dateOfBirth) && ! preg_match('/^\d{4}-\d{2}-\d{2}$/', $dateOfBirth)) {
             // Try to parse the date string if it's not in ISO format
             try {
                 $date = new \DateTime($dateOfBirth);
@@ -314,40 +309,40 @@ class PrivatePerson extends BaseModel
     /**
      * Create and set identifiers
      *
-     * @param string|null $customerNumber The customer number
+     * @param  string|null  $customerNumber  The customer number
      * @return $this
-     *
      */
     public function createIdentifiers(?string $customerNumber = null): self
     {
-        $identifiers = new Identifiers();
+        $identifiers = new Identifiers;
 
         if ($customerNumber !== null) {
             $identifiers->setCustomerNumber($customerNumber);
         }
 
         $this->identifiers = $identifiers;
+
         return $this->set('identifiers', $identifiers->toArray());
     }
 
     /**
      * Set the identifiers
      *
-     * @param Identifiers $identifiers The identifiers
+     * @param  Identifiers  $identifiers  The identifiers
      * @return $this
      */
     public function setIdentifiers(Identifiers $identifiers): self
     {
         $this->identifiers = $identifiers;
+
         return $this->set('identifiers', $identifiers->toArray());
     }
 
     /**
      * Set the customer number
      *
-     * @param string|int|null $customerNumber The customer number or null to remove
+     * @param  string|int|null  $customerNumber  The customer number or null to remove
      * @return $this
-     *
      */
     public function setCustomerNumber(string|int|null $customerNumber): self
     {
@@ -360,115 +355,116 @@ class PrivatePerson extends BaseModel
         }
 
         $this->identifiers->setCustomerNumber($customerNumber);
+
         return $this->set('identifiers', $this->identifiers->toArray());
     }
 
     /**
      * Create and set a new address from components
      *
-     * @param string $postalCode The postal code
-     * @param string $locality The city/town
-     * @param string $country The country code (ISO 3166-1 alpha-2)
+     * @param  string  $postalCode  The postal code
+     * @param  string  $locality  The city/town
+     * @param  string  $country  The country code (ISO 3166-1 alpha-2)
      * @return $this
-     *
      */
     public function createAddress(string $postalCode, string $locality, string $country): self
     {
-        $address = new Address();
+        $address = new Address;
         $address->setPostalCode($postalCode)
-                ->setLocality($locality)
-                ->setCountry($country);
+            ->setLocality($locality)
+            ->setCountry($country);
 
         $this->address = $address;
+
         return $this->set('address', $address->toArray());
     }
 
     /**
      * Set the address
      *
-     * @param Address $address The address
+     * @param  Address  $address  The address
      * @return $this
      */
     public function setAddress(Address $address): self
     {
         $this->address = $address;
+
         return $this->set('address', $address->toArray());
     }
 
     /**
      * Set the postal code
      *
-     * @param string $postalCode The postal code
+     * @param  string  $postalCode  The postal code
      * @return $this
-     *
      */
     public function setPostalCode(string $postalCode): self
     {
-        if (!$this->address) {
-            throw new InvalidArgumentException("Cannot set postal code without an address. Create an address first.");
+        if (! $this->address) {
+            throw new InvalidArgumentException('Cannot set postal code without an address. Create an address first.');
         }
 
         $this->address->setPostalCode($postalCode);
+
         return $this->set('address', $this->address->toArray());
     }
 
     /**
      * Set the locality (city/town)
      *
-     * @param string $locality The locality
+     * @param  string  $locality  The locality
      * @return $this
-     *
      */
     public function setLocality(string $locality): self
     {
-        if (!$this->address) {
-            throw new InvalidArgumentException("Cannot set locality without an address. Create an address first.");
+        if (! $this->address) {
+            throw new InvalidArgumentException('Cannot set locality without an address. Create an address first.');
         }
 
         $this->address->setLocality($locality);
+
         return $this->set('address', $this->address->toArray());
     }
 
     /**
      * Set the country code
      *
-     * @param string $country The country code (ISO 3166-1 alpha-2)
+     * @param  string  $country  The country code (ISO 3166-1 alpha-2)
      * @return $this
-     *
      */
     public function setCountry(string $country): self
     {
-        if (!$this->address) {
-            throw new InvalidArgumentException("Cannot set country without an address. Create an address first.");
+        if (! $this->address) {
+            throw new InvalidArgumentException('Cannot set country without an address. Create an address first.');
         }
 
         $this->address->setCountry($country);
+
         return $this->set('address', $this->address->toArray());
     }
 
     /**
      * Set the route (street)
      *
-     * @param string|null $route The route/street or null to remove
+     * @param  string|null  $route  The route/street or null to remove
      * @return $this
-     *
      */
     public function setRoute(?string $route): self
     {
-        if (!$this->address) {
-            throw new InvalidArgumentException("Cannot set route without an address. Create an address first.");
+        if (! $this->address) {
+            throw new InvalidArgumentException('Cannot set route without an address. Create an address first.');
         }
 
         $this->address->setRoute($route);
+
         return $this->set('address', $this->address->toArray());
     }
 
     /**
      * Set the street (alias for setRoute)
      *
-     * @param string|null $street The street or null to remove
+     * @param  string|null  $street  The street or null to remove
      * @return $this
-     *
      */
     public function setStreet(?string $street): self
     {
@@ -478,29 +474,28 @@ class PrivatePerson extends BaseModel
     /**
      * Set the house number
      *
-     * @param string|null $houseNumber The house number or null to remove
+     * @param  string|null  $houseNumber  The house number or null to remove
      * @return $this
-     *
      */
     public function setHouseNumber(?string $houseNumber): self
     {
-        if (!$this->address) {
-            throw new InvalidArgumentException("Cannot set house number without an address. Create an address first.");
+        if (! $this->address) {
+            throw new InvalidArgumentException('Cannot set house number without an address. Create an address first.');
         }
 
         $this->address->setHouseNumber($houseNumber);
+
         return $this->set('address', $this->address->toArray());
     }
 
     /**
      * Create and set communications
      *
-     * @param string|null $email The email address
-     * @param string|null $phoneNumber The phone number
-     * @param string|null $mobilePhone The mobile phone number
-     * @param string|null $fax The fax number
+     * @param  string|null  $email  The email address
+     * @param  string|null  $phoneNumber  The phone number
+     * @param  string|null  $mobilePhone  The mobile phone number
+     * @param  string|null  $fax  The fax number
      * @return $this
-     *
      */
     public function createCommunications(
         ?string $email = null,
@@ -508,7 +503,7 @@ class PrivatePerson extends BaseModel
         ?string $mobilePhone = null,
         ?string $fax = null
     ): self {
-        $communications = new Communications();
+        $communications = new Communications;
 
         if ($email !== null) {
             $communications->setEmail($email);
@@ -527,27 +522,28 @@ class PrivatePerson extends BaseModel
         }
 
         $this->communications = $communications;
+
         return $this->set('communications', $communications->toArray());
     }
 
     /**
      * Set the communications
      *
-     * @param Communications $communications The communications
+     * @param  Communications  $communications  The communications
      * @return $this
      */
     public function setCommunications(Communications $communications): self
     {
         $this->communications = $communications;
+
         return $this->set('communications', $communications->toArray());
     }
 
     /**
      * Set the email (creates communications if needed)
      *
-     * @param string|null $email The email address or null to remove
+     * @param  string|null  $email  The email address or null to remove
      * @return $this
-     *
      */
     public function setEmail(?string $email): self
     {
@@ -560,15 +556,15 @@ class PrivatePerson extends BaseModel
         }
 
         $this->communications->setEmail($email);
+
         return $this->set('communications', $this->communications->toArray());
     }
 
     /**
      * Set the phone number (creates communications if needed)
      *
-     * @param string|null $phoneNumber The phone number or null to remove
+     * @param  string|null  $phoneNumber  The phone number or null to remove
      * @return $this
-     *
      */
     public function setPhone(?string $phoneNumber): self
     {
@@ -581,15 +577,15 @@ class PrivatePerson extends BaseModel
         }
 
         $this->communications->setPhoneNumber($phoneNumber);
+
         return $this->set('communications', $this->communications->toArray());
     }
 
     /**
      * Set the mobile phone number (creates communications if needed)
      *
-     * @param string|null $mobilePhone The mobile phone number or null to remove
+     * @param  string|null  $mobilePhone  The mobile phone number or null to remove
      * @return $this
-     *
      */
     public function setMobilePhone(?string $mobilePhone): self
     {
@@ -602,15 +598,15 @@ class PrivatePerson extends BaseModel
         }
 
         $this->communications->setMobilePhone($mobilePhone);
+
         return $this->set('communications', $this->communications->toArray());
     }
 
     /**
      * Set the fax number (creates communications if needed)
      *
-     * @param string|null $fax The fax number or null to remove
+     * @param  string|null  $fax  The fax number or null to remove
      * @return $this
-     *
      */
     public function setFax(?string $fax): self
     {
@@ -623,46 +619,47 @@ class PrivatePerson extends BaseModel
         }
 
         $this->communications->setFax($fax);
+
         return $this->set('communications', $this->communications->toArray());
     }
 
     /**
      * Create and set agent
      *
-     * @param string|int|null $externalId The external ID
+     * @param  string|int|null  $externalId  The external ID
      * @return $this
-     *
      */
     public function createAgent($externalId = null): self
     {
-        $agent = new Agent();
+        $agent = new Agent;
 
         if ($externalId !== null) {
             $agent->setExternalId($externalId);
         }
 
         $this->agent = $agent;
+
         return $this->set('agent', $agent->toArray());
     }
 
     /**
      * Set the agent
      *
-     * @param Agent $agent The agent
+     * @param  Agent  $agent  The agent
      * @return $this
      */
     public function setAgent(Agent $agent): self
     {
         $this->agent = $agent;
+
         return $this->set('agent', $agent->toArray());
     }
 
     /**
      * Set the agent's external ID (creates agent if needed)
      *
-     * @param string|int|null $externalId The external ID or null to remove
+     * @param  string|int|null  $externalId  The external ID or null to remove
      * @return $this
-     *
      */
     public function setAgentExternalId(string|int|null $externalId): self
     {
@@ -675,19 +672,20 @@ class PrivatePerson extends BaseModel
         }
 
         $this->agent->setExternalId($externalId);
+
         return $this->set('agent', $this->agent->toArray());
     }
 
     /**
      * Set a custom data field
      *
-     * @param string $key The field key
-     * @param mixed $value The field value or null to remove
+     * @param  string  $key  The field key
+     * @param  mixed  $value  The field value or null to remove
      * @return $this
      */
     public function setCustomField(string $key, $value = null): self
     {
-        if (!isset($this->data['custom_data'])) {
+        if (! isset($this->data['custom_data'])) {
             $this->data['custom_data'] = [];
         }
 
@@ -709,7 +707,7 @@ class PrivatePerson extends BaseModel
             $value = false;
         } elseif (is_string($value) && is_numeric($value) && strpos($value, '.') === false) {
             // Convert string integers to actual integers
-            $value = (int)$value;
+            $value = (int) $value;
         }
 
         $this->customData[$key] = $value;
@@ -721,7 +719,7 @@ class PrivatePerson extends BaseModel
     /**
      * Set custom data fields in bulk
      *
-     * @param array $data The custom data fields
+     * @param  array  $data  The custom data fields
      * @return $this
      */
     public function setCustomData(array $data): self
@@ -734,8 +732,6 @@ class PrivatePerson extends BaseModel
 
     /**
      * Get custom data fields
-     *
-     * @return array
      */
     public function getCustomData(): array
     {
@@ -744,8 +740,6 @@ class PrivatePerson extends BaseModel
 
     /**
      * Get the document type
-     *
-     * @return string
      */
     public function getDocumentType(): string
     {
@@ -754,8 +748,6 @@ class PrivatePerson extends BaseModel
 
     /**
      * Get the schema version
-     *
-     * @return string
      */
     public function getSchemaVersion(): string
     {
@@ -764,8 +756,6 @@ class PrivatePerson extends BaseModel
 
     /**
      * Get the meta data
-     *
-     * @return Meta
      */
     public function getMeta(): Meta
     {
@@ -774,8 +764,6 @@ class PrivatePerson extends BaseModel
 
     /**
      * Get the salutation
-     *
-     * @return string|null
      */
     public function getSalutation(): ?string
     {
@@ -784,8 +772,6 @@ class PrivatePerson extends BaseModel
 
     /**
      * Get the honorifics
-     *
-     * @return string|null
      */
     public function getHonorifics(): ?string
     {
@@ -794,8 +780,6 @@ class PrivatePerson extends BaseModel
 
     /**
      * Get the first name
-     *
-     * @return string|null
      */
     public function getFirstName(): ?string
     {
@@ -804,8 +788,6 @@ class PrivatePerson extends BaseModel
 
     /**
      * Get the last name
-     *
-     * @return string|null
      */
     public function getLastName(): ?string
     {
@@ -814,8 +796,6 @@ class PrivatePerson extends BaseModel
 
     /**
      * Get the date of birth
-     *
-     * @return string|null
      */
     public function getDateOfBirth(): ?string
     {
@@ -824,8 +804,6 @@ class PrivatePerson extends BaseModel
 
     /**
      * Get the identifiers
-     *
-     * @return Identifiers|null
      */
     public function getIdentifiers(): ?Identifiers
     {
@@ -834,17 +812,14 @@ class PrivatePerson extends BaseModel
 
     /**
      * Get the customer number
-     *
-     * @return string|null
      */
-    public function getCustomerNumber(): ?string {
+    public function getCustomerNumber(): ?string
+    {
         return $this->identifiers ? $this->identifiers->getCustomerNumber() : null;
     }
 
     /**
      * Get the address
-     *
-     * @return Address|null
      */
     public function getAddress(): ?Address
     {
@@ -853,8 +828,6 @@ class PrivatePerson extends BaseModel
 
     /**
      * Get the communications
-     *
-     * @return Communications|null
      */
     public function getCommunications(): ?Communications
     {
@@ -863,8 +836,6 @@ class PrivatePerson extends BaseModel
 
     /**
      * Get the email
-     *
-     * @return string|null
      */
     public function getEmail(): ?string
     {
@@ -873,8 +844,6 @@ class PrivatePerson extends BaseModel
 
     /**
      * Get the phone number
-     *
-     * @return string|null
      */
     public function getPhone(): ?string
     {
@@ -883,8 +852,6 @@ class PrivatePerson extends BaseModel
 
     /**
      * Get the mobile phone number
-     *
-     * @return string|null
      */
     public function getMobilePhone(): ?string
     {
@@ -893,8 +860,6 @@ class PrivatePerson extends BaseModel
 
     /**
      * Get the fax number
-     *
-     * @return string|null
      */
     public function getFax(): ?string
     {
@@ -903,8 +868,6 @@ class PrivatePerson extends BaseModel
 
     /**
      * Get the agent
-     *
-     * @return Agent|null
      */
     public function getAgent(): ?Agent
     {
@@ -920,7 +883,7 @@ class PrivatePerson extends BaseModel
      */
     public function sendToAmeax(): array
     {
-        if (!$this->apiClient) {
+        if (! $this->apiClient) {
             throw new InvalidArgumentException(
                 'No API client set. Use setApiClient() before calling sendToAmeax().'
             );

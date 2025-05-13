@@ -2,8 +2,8 @@
 
 // This script adds type declarations to method parameters that are missing them
 
-$modelDir = __DIR__ . '/src/Models';
-$files = glob($modelDir . '/*.php');
+$modelDir = __DIR__.'/src/Models';
+$files = glob($modelDir.'/*.php');
 
 $typeMapping = [
     '$customerNumber' => 'string|int|null',
@@ -57,7 +57,7 @@ $typeMapping = [
     '$businessInfoData' => 'array',
     '$socialMediaData' => 'array',
     '$employmentData' => 'array',
-    '$additionalData' => 'array'
+    '$additionalData' => 'array',
 ];
 
 $methodReturnTypes = [
@@ -94,36 +94,36 @@ $methodReturnTypes = [
     'getCustomData' => 'array',
     'get' => 'mixed',
     'toArray' => 'array',
-    'sendToAmeax' => 'array'
+    'sendToAmeax' => 'array',
 ];
 
 foreach ($files as $file) {
     echo "Processing $file...\n";
-    
+
     $content = file_get_contents($file);
     $modified = false;
-    
+
     // Add missing parameter type declarations
     foreach ($typeMapping as $paramName => $paramType) {
-        $pattern = '/function\s+(\w+)\s*\([^)]*' . preg_quote($paramName) . '\s*[,\)]/';
+        $pattern = '/function\s+(\w+)\s*\([^)]*'.preg_quote($paramName).'\s*[,\)]/';
         preg_match_all($pattern, $content, $matches, PREG_OFFSET_CAPTURE);
-        
-        if (!empty($matches[0])) {
+
+        if (! empty($matches[0])) {
             foreach ($matches[0] as $key => $match) {
                 $methodName = $matches[1][$key][0];
                 $matchPos = $match[1];
                 $matchStr = $match[0];
-                
+
                 // Skip if parameter already has a type declaration
-                if (preg_match('/function\s+\w+\s*\([^)]*' . $paramType . '\s+' . preg_quote($paramName) . '\s*[,\)]/', $matchStr)) {
+                if (preg_match('/function\s+\w+\s*\([^)]*'.$paramType.'\s+'.preg_quote($paramName).'\s*[,\)]/', $matchStr)) {
                     continue;
                 }
-                
+
                 // Add the type declaration
-                $newMatchStr = str_replace($paramName, $paramType . ' ' . $paramName, $matchStr);
+                $newMatchStr = str_replace($paramName, $paramType.' '.$paramName, $matchStr);
                 $content = substr_replace($content, $newMatchStr, $matchPos, strlen($matchStr));
                 $modified = true;
-                
+
                 // Adjust future match positions (if any)
                 $offset = strlen($newMatchStr) - strlen($matchStr);
                 for ($i = $key + 1; $i < count($matches[0]); $i++) {
@@ -132,17 +132,17 @@ foreach ($files as $file) {
             }
         }
     }
-    
+
     // Add missing return type declarations
     foreach ($methodReturnTypes as $methodName => $returnType) {
-        $pattern = '/function\s+' . $methodName . '\s*\([^)]*\)\s*(?!:)/';
-        $replacement = 'function ' . $methodName . '($1): ' . $returnType . ' ';
+        $pattern = '/function\s+'.$methodName.'\s*\([^)]*\)\s*(?!:)/';
+        $replacement = 'function '.$methodName.'($1): '.$returnType.' ';
         $content = preg_replace($pattern, $replacement, $content, -1, $count);
         if ($count > 0) {
             $modified = true;
         }
     }
-    
+
     if ($modified) {
         file_put_contents($file, $content);
         echo "Updated $file\n";

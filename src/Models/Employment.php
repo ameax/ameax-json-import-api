@@ -15,9 +15,7 @@ class Employment extends BaseModel
     /**
      * Populate the model with data using setters
      *
-     * @param array $data
      * @return $this
-     *
      */
     protected function populate(array $data): self
     {
@@ -31,7 +29,7 @@ class Employment extends BaseModel
 
         // Handle any other fields
         foreach ($data as $key => $value) {
-            if (!in_array($key, ['job_title', 'department'])) {
+            if (! in_array($key, ['job_title', 'department'])) {
                 $this->set($key, $value);
             }
         }
@@ -39,14 +37,11 @@ class Employment extends BaseModel
         return $this;
     }
 
-
-
     /**
      * Set the job title
      *
-     * @param string|null $jobTitle The job title or null to remove
+     * @param  string|null  $jobTitle  The job title or null to remove
      * @return $this
-     *
      */
     public function setJobTitle(?string $jobTitle): self
     {
@@ -60,9 +55,8 @@ class Employment extends BaseModel
     /**
      * Set the department
      *
-     * @param string|null $department The department or null to remove
+     * @param  string|null  $department  The department or null to remove
      * @return $this
-     *
      */
     public function setDepartment(?string $department): self
     {
@@ -75,8 +69,6 @@ class Employment extends BaseModel
 
     /**
      * Get the job title
-     *
-     * @return string|null
      */
     public function getJobTitle(): ?string
     {
@@ -85,8 +77,6 @@ class Employment extends BaseModel
 
     /**
      * Get the department
-     *
-     * @return string|null
      */
     public function getDepartment(): ?string
     {

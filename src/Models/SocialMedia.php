@@ -15,9 +15,7 @@ class SocialMedia extends BaseModel
     /**
      * Populate the model with data using setters
      *
-     * @param array $data
      * @return $this
-     *
      */
     protected function populate(array $data): self
     {
@@ -27,7 +25,7 @@ class SocialMedia extends BaseModel
 
         // Handle any other fields
         foreach ($data as $key => $value) {
-            if (!in_array($key, ['web'])) {
+            if (! in_array($key, ['web'])) {
                 $this->set($key, $value);
             }
         }
@@ -35,14 +33,11 @@ class SocialMedia extends BaseModel
         return $this;
     }
 
-
-
     /**
      * Set the web URL
      *
-     * @param string|null $url The website URL or null to remove
+     * @param  string|null  $url  The website URL or null to remove
      * @return $this
-     *
      */
     public function setWeb(?string $url): self
     {
@@ -55,8 +50,6 @@ class SocialMedia extends BaseModel
 
     /**
      * Get the web URL
-     *
-     * @return string|null
      */
     public function getWeb(): ?string
     {

@@ -5,16 +5,16 @@ namespace Ameax\AmeaxJsonImportApi\Schema;
 class OrganizationSchema
 {
     public const DOCUMENT_TYPE = 'ameax_organization_account';
+
     public const SCHEMA_VERSION = '1.0';
 
     /**
      * Create a new organization schema with required fields
      *
-     * @param string $name Organization name
-     * @param string $postalCode Postal code
-     * @param string $locality City/town
-     * @param string $country Country code (ISO 3166-1 alpha-2)
-     * @return array
+     * @param  string  $name  Organization name
+     * @param  string  $postalCode  Postal code
+     * @param  string  $locality  City/town
+     * @param  string  $country  Country code (ISO 3166-1 alpha-2)
      */
     public static function create(string $name, string $postalCode, string $locality, string $country): array
     {
@@ -33,15 +33,14 @@ class OrganizationSchema
     /**
      * Add contact to organization
      *
-     * @param array $organization Organization data
-     * @param string $firstName First name
-     * @param string $lastName Last name
-     * @param array $additionalData Additional contact data
-     * @return array
+     * @param  array  $organization  Organization data
+     * @param  string  $firstName  First name
+     * @param  string  $lastName  Last name
+     * @param  array  $additionalData  Additional contact data
      */
     public static function addContact(array $organization, string $firstName, string $lastName, array $additionalData = []): array
     {
-        if (!isset($organization['contacts'])) {
+        if (! isset($organization['contacts'])) {
             $organization['contacts'] = [];
         }
 
