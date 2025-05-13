@@ -554,6 +554,22 @@ For more detailed documentation, see the [docs](docs) directory:
 composer test
 ```
 
+## Versioning
+
+This package follows [Semantic Versioning](https://semver.org/). The version numbers follow the `MAJOR.MINOR.PATCH` format:
+
+- **MAJOR** version increases when incompatible API changes are made
+- **MINOR** version increases when functionality is added in a backward-compatible manner
+- **PATCH** version increases when backward-compatible bug fixes are implemented
+
+Use the appropriate version constraint in your composer.json:
+
+```json
+"require": {
+    "ameax/ameax-json-import-api": "^1.0"
+}
+```
+
 ## Changelog
 
 Please see [CHANGELOG](CHANGELOG.md) for more information on what has changed recently.
