@@ -121,26 +121,67 @@ class Contact extends BaseModel
      *
      * The API accepts the following salutation values: 'Mr.', 'Ms.', 'Mx.'
      * Common values: 'Mr.', 'Ms.', 'Mx.'
+     * Supports English and German variations and extraction from combined strings
      *
      * @param  string|null  $salutation  The salutation or null to remove
      * @return $this
      */
     public function setSalutation(?string $salutation): self
     {
-        if ($salutation === null) {
+        if ($salutation === null || trim($salutation) === '') {
             return $this->set('salutation', null);
         }
 
-        // Convert common variations to standardized format
-        if (in_array(strtolower(trim($salutation)), ['mr', 'mister'])) {
-            $salutation = 'Mr.';
-        } elseif (in_array(strtolower(trim($salutation)), ['ms', 'miss', 'mrs'])) {
-            $salutation = 'Ms.';
-        } elseif (in_array(strtolower(trim($salutation)), ['mx'])) {
-            $salutation = 'Mx.';
+        $trimmedInput = trim($salutation);
+        $lowerInput = strtolower($trimmedInput);
+        
+        // Direct mapping of salutations
+        $mrVariations = ['mr', 'mr.', 'mister', 'sir', 'herr', 'herrn', 'hr', 'hr.'];
+        $msVariations = ['ms', 'ms.', 'miss', 'mrs', 'mrs.', 'madam', 'frau', 'fr', 'fr.', 'fräulein'];
+        $mxVariations = ['mx', 'mx.'];
+        
+        // Special handling for cases like "Mr. Dr." where we need to extract honorifics
+        $patternMr = '/^(mr\.|mr|herr|herrn|hr\.?)\s+(.+)/i';
+        $patternMs = '/^(ms\.|ms|miss|mrs\.?|frau|fr\.?|fräulein)\s+(.+)/i';
+        $patternMx = '/^(mx\.?)\s+(.+)/i';
+        
+        // Test for combined strings first (salutation + honorific)
+        if (preg_match($patternMr, $trimmedInput, $matches)) {
+            if (!empty($matches[2])) {
+                $this->setHonorifics($matches[2]);
+            }
+            return $this->set('salutation', 'Mr.');
         }
-
-        return $this->set('salutation', $salutation);
+        
+        if (preg_match($patternMs, $trimmedInput, $matches)) {
+            if (!empty($matches[2])) {
+                $this->setHonorifics($matches[2]);
+            }
+            return $this->set('salutation', 'Ms.');
+        }
+        
+        if (preg_match($patternMx, $trimmedInput, $matches)) {
+            if (!empty($matches[2])) {
+                $this->setHonorifics($matches[2]);
+            }
+            return $this->set('salutation', 'Mx.');
+        }
+        
+        // If no combined string, check for exact matches
+        if (in_array($lowerInput, $mrVariations)) {
+            return $this->set('salutation', 'Mr.');
+        }
+        
+        if (in_array($lowerInput, $msVariations)) {
+            return $this->set('salutation', 'Ms.');
+        }
+        
+        if (in_array($lowerInput, $mxVariations)) {
+            return $this->set('salutation', 'Mx.');
+        }
+        
+        // If we couldn't map to a standard value, use the original input
+        return $this->set('salutation', $trimmedInput);
     }
 
     /**
