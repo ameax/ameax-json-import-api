@@ -18,14 +18,14 @@ try {
 
     // Set required fields
     $sale->setExternalId('S001')
-         ->setSubject('New Software Implementation')
-         ->setSaleStatus('active')
-         ->setSellingStatus('qualification')
-         ->setUserExternalId('JD123')
-         ->setDate('2025-06-01')
-         ->setAmount(15000.00)
-         ->setProbability(70)
-         ->setCloseDate('2025-09-30');
+        ->setSubject('New Software Implementation')
+        ->setSaleStatus('active')
+        ->setSellingStatus('qualification')
+        ->setUserExternalId('JD123')
+        ->setDate('2025-06-01')
+        ->setAmount(15000.00)
+        ->setProbability(70)
+        ->setCloseDate('2025-09-30');
 
     // Set customer information - using external_id
     $sale->setCustomerExternalId('ORG123');
@@ -36,27 +36,27 @@ try {
 
     // Add ratings (all required)
     $sale->setRating('relationship', 5, 'known')
-         ->setRating('proposition', 6, 'known')
-         ->setRating('trust', 5, 'assumed')
-         ->setRating('competition', 3, 'known')
-         ->setRating('need_for_action', 4, 'assumed')
-         ->setRating('buying_process', 5, 'known')
-         ->setRating('price', 4, 'assumed');
+        ->setRating('proposition', 6, 'known')
+        ->setRating('trust', 5, 'assumed')
+        ->setRating('competition', 3, 'known')
+        ->setRating('need_for_action', 4, 'assumed')
+        ->setRating('buying_process', 5, 'known')
+        ->setRating('price', 4, 'assumed');
 
     // Set custom data fields
     $sale->setCustomData([
         'opportunity_source' => 'referral',
         'industry_sector' => 'healthcare',
-        'expected_roi' => '25%'
+        'expected_roi' => '25%',
     ]);
 
     // Method 2: Create from an existing array
     $data = [
         'identifiers' => [
-            'external_id' => 'S002'
+            'external_id' => 'S002',
         ],
         'customer' => [
-            'external_id' => 'ORG456'
+            'external_id' => 'ORG456',
         ],
         'subject' => 'Hardware Upgrade Project',
         'sale_status' => 'active',
@@ -65,19 +65,19 @@ try {
         'date' => '2025-07-15',
         'amount' => 25000.00,
         'probability' => 85,
-        'close_date' => '2025-10-31'
+        'close_date' => '2025-10-31',
     ];
 
     $sale2 = $client->saleFromArray($data);
-    
+
     // Add missing required ratings to the second sale
     $sale2->setRating('relationship', 6, 'known')
-          ->setRating('proposition', 5, 'known')
-          ->setRating('trust', 6, 'known')
-          ->setRating('competition', 4, 'assumed')
-          ->setRating('need_for_action', 5, 'known')
-          ->setRating('buying_process', 4, 'assumed')
-          ->setRating('price', 5, 'known');
+        ->setRating('proposition', 5, 'known')
+        ->setRating('trust', 6, 'known')
+        ->setRating('competition', 4, 'assumed')
+        ->setRating('need_for_action', 5, 'known')
+        ->setRating('buying_process', 4, 'assumed')
+        ->setRating('price', 5, 'known');
 
     // Sale data is ready to send
     echo "Sale data is ready to send!\n";

@@ -9,7 +9,7 @@ class Meta extends BaseModel
     public const DOCUMENT_TYPE_ORGANIZATION = 'ameax_organization_account';
 
     public const DOCUMENT_TYPE_PRIVATE_PERSON = 'ameax_private_person_account';
-    
+
     public const DOCUMENT_TYPE_SALE = 'ameax_sale';
 
     public const SCHEMA_VERSION = '1.0';

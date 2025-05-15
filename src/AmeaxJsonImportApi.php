@@ -108,7 +108,7 @@ class AmeaxJsonImportApi
 
         return $privatePerson;
     }
-    
+
     /**
      * Create a new empty sale
      *
@@ -117,10 +117,10 @@ class AmeaxJsonImportApi
     public function createSale(): Sale
     {
         $sale = new Sale;
-        
+
         return $sale->setApiClient($this);
     }
-    
+
     /**
      * Create a sale from an existing array of data
      *
@@ -130,7 +130,7 @@ class AmeaxJsonImportApi
     {
         $sale = Sale::fromArray($data);
         $sale->setApiClient($this);
-        
+
         return $sale;
     }
 
@@ -205,7 +205,7 @@ class AmeaxJsonImportApi
             throw new \Exception('Error sending private person data to Ameax: '.$e->getMessage(), $e->getCode(), $e);
         }
     }
-    
+
     /**
      * Send sale data to Ameax API
      *
