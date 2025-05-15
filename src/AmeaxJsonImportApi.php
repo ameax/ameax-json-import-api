@@ -7,6 +7,7 @@ use Ameax\AmeaxJsonImportApi\Models\Contact;
 use Ameax\AmeaxJsonImportApi\Models\Meta;
 use Ameax\AmeaxJsonImportApi\Models\Organization;
 use Ameax\AmeaxJsonImportApi\Models\PrivatePerson;
+use Ameax\AmeaxJsonImportApi\Models\Sale;
 use GuzzleHttp\Client as HttpClient;
 use GuzzleHttp\Exception\GuzzleException;
 
@@ -107,6 +108,31 @@ class AmeaxJsonImportApi
 
         return $privatePerson;
     }
+    
+    /**
+     * Create a new empty sale
+     *
+     * @return Sale A new sale instance
+     */
+    public function createSale(): Sale
+    {
+        $sale = new Sale;
+        
+        return $sale->setApiClient($this);
+    }
+    
+    /**
+     * Create a sale from an existing array of data
+     *
+     * @param  array  $data  The sale data
+     */
+    public function saleFromArray(array $data): Sale
+    {
+        $sale = Sale::fromArray($data);
+        $sale->setApiClient($this);
+        
+        return $sale;
+    }
 
     /**
      * Send organization data to Ameax API
@@ -177,6 +203,42 @@ class AmeaxJsonImportApi
             return json_decode($response->getBody()->getContents(), true);
         } catch (GuzzleException $e) {
             throw new \Exception('Error sending private person data to Ameax: '.$e->getMessage(), $e->getCode(), $e);
+        }
+    }
+    
+    /**
+     * Send sale data to Ameax API
+     *
+     * @param  array  $sale  The sale data
+     * @return array The API response
+     *
+     * @throws \Exception If request fails
+     *
+     * @internal This is used by the Sale class and generally should not be called directly
+     */
+    public function sendSale(array $sale): array
+    {
+        // Ensure meta.document_type and meta.schema_version are set correctly
+        if (! isset($sale['meta'])) {
+            $sale['meta'] = [
+                'document_type' => Meta::DOCUMENT_TYPE_SALE,
+                'schema_version' => Meta::SCHEMA_VERSION,
+            ];
+        } else {
+            $sale['meta']['document_type'] = Meta::DOCUMENT_TYPE_SALE;
+            if (! isset($sale['meta']['schema_version'])) {
+                $sale['meta']['schema_version'] = Meta::SCHEMA_VERSION;
+            }
+        }
+
+        try {
+            $response = $this->client->post("{$this->baseUrl}/imports", [
+                'json' => $sale,
+            ]);
+
+            return json_decode($response->getBody()->getContents(), true);
+        } catch (GuzzleException $e) {
+            throw new \Exception('Error sending sale data to Ameax: '.$e->getMessage(), $e->getCode(), $e);
         }
     }
 }
