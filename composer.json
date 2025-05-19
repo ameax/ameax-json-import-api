@@ -20,7 +20,7 @@
     "require": {
         "php": "^8.2",
         "guzzlehttp/guzzle": "^7.0",
-        "justinrainbow/json-schema": "^5.2"
+        "justinrainbow/json-schema": "^6.4"
     },
     "require-dev": {
         "pestphp/pest": "^3.0",
