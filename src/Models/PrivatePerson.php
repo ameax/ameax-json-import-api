@@ -121,11 +121,15 @@ class PrivatePerson extends BaseModel
         if (isset($data['identifiers']) && is_array($data['identifiers'])) {
             $this->identifiers = Identifiers::fromArray($data['identifiers']);
             $this->data['identifiers'] = $this->identifiers->toArray();
-        } elseif (isset($data['customer_number'])) {
+        } elseif (isset($data['customer_number']) || isset($data['external_id'])) {
             // For backward compatibility
-            $identifiersData = [
-                'customer_number' => $data['customer_number'],
-            ];
+            $identifiersData = [];
+            if (isset($data['customer_number'])) {
+                $identifiersData['customer_number'] = $data['customer_number'];
+            }
+            if (isset($data['external_id'])) {
+                $identifiersData['external_id'] = $data['external_id'];
+            }
             $this->identifiers = Identifiers::fromArray($identifiersData);
             $this->data['identifiers'] = $this->identifiers->toArray();
         }
@@ -408,6 +412,48 @@ class PrivatePerson extends BaseModel
         }
 
         $this->identifiers->setCustomerNumber($customerNumber);
+
+        return $this->set('identifiers', $this->identifiers->toArray());
+    }
+
+    /**
+     * Set the external ID
+     *
+     * @param  string|int|null  $externalId  The external ID or null to remove
+     * @return $this
+     */
+    public function setExternalId(string|int|null $externalId): self
+    {
+        if ($this->identifiers === null) {
+            if ($externalId === null) {
+                return $this;
+            }
+
+            $this->createIdentifiers();
+        }
+
+        $this->identifiers->setExternalId($externalId);
+
+        return $this->set('identifiers', $this->identifiers->toArray());
+    }
+
+    /**
+     * Set the Ameax internal ID
+     *
+     * @param  int|null  $ameaxInternalId  The Ameax internal ID or null to remove
+     * @return $this
+     */
+    public function setAmeaxInternalId(?int $ameaxInternalId): self
+    {
+        if ($this->identifiers === null) {
+            if ($ameaxInternalId === null) {
+                return $this;
+            }
+
+            $this->createIdentifiers();
+        }
+
+        $this->identifiers->setAmeaxInternalId($ameaxInternalId);
 
         return $this->set('identifiers', $this->identifiers->toArray());
     }
@@ -869,6 +915,22 @@ class PrivatePerson extends BaseModel
     public function getCustomerNumber(): ?string
     {
         return $this->identifiers ? $this->identifiers->getCustomerNumber() : null;
+    }
+
+    /**
+     * Get the external ID
+     */
+    public function getExternalId(): ?string
+    {
+        return $this->identifiers ? $this->identifiers->getExternalId() : null;
+    }
+
+    /**
+     * Get the Ameax internal ID
+     */
+    public function getAmeaxInternalId(): ?int
+    {
+        return $this->identifiers ? $this->identifiers->getAmeaxInternalId() : null;
     }
 
     /**
