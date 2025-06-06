@@ -27,9 +27,13 @@ class Identifiers extends BaseModel
             $this->setExternalId($data['external_id']);
         }
 
+        if (isset($data['ameax_internal_id'])) {
+            $this->setAmeaxInternalId($data['ameax_internal_id']);
+        }
+
         // Handle any other fields
         foreach ($data as $key => $value) {
-            if (! in_array($key, ['customer_number', 'external_id'])) {
+            if (! in_array($key, ['customer_number', 'external_id', 'ameax_internal_id'])) {
                 $this->set($key, $value);
             }
         }
@@ -81,6 +85,21 @@ class Identifiers extends BaseModel
     }
 
     /**
+     * Set the Ameax internal ID
+     *
+     * @param  int|null  $ameaxInternalId  The Ameax internal ID or null to remove
+     * @return $this
+     */
+    public function setAmeaxInternalId(?int $ameaxInternalId): self
+    {
+        if ($ameaxInternalId === null) {
+            return $this->remove('ameax_internal_id');
+        }
+
+        return $this->set('ameax_internal_id', $ameaxInternalId);
+    }
+
+    /**
      * Get the customer number
      */
     public function getCustomerNumber(): ?string
@@ -94,5 +113,13 @@ class Identifiers extends BaseModel
     public function getExternalId(): ?string
     {
         return $this->get('external_id');
+    }
+
+    /**
+     * Get the Ameax internal ID
+     */
+    public function getAmeaxInternalId(): ?int
+    {
+        return $this->get('ameax_internal_id');
     }
 }
