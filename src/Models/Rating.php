@@ -32,6 +32,7 @@ class Rating extends BaseModel
     /**
      * Populate the model with data using setters
      *
+     * @param array<string, mixed> $data
      * @return $this
      */
     protected function populate(array $data): self
@@ -183,7 +184,7 @@ class Rating extends BaseModel
      * Get a rating item
      *
      * @param  string  $category  The rating category
-     * @return array|null The rating data or null if not set
+     * @return array{rating: int, source: string}|null The rating data or null if not set
      */
     public function getRatingItem(string $category): ?array
     {
@@ -193,7 +194,7 @@ class Rating extends BaseModel
     /**
      * Get the relationship rating
      *
-     * @return array|null
+     * @return array{rating: int, source: string}|null
      */
     public function getRelationship(): ?array
     {
@@ -203,7 +204,7 @@ class Rating extends BaseModel
     /**
      * Get the proposition rating
      *
-     * @return array|null
+     * @return array{rating: int, source: string}|null
      */
     public function getProposition(): ?array
     {
@@ -213,7 +214,7 @@ class Rating extends BaseModel
     /**
      * Get the trust rating
      *
-     * @return array|null
+     * @return array{rating: int, source: string}|null
      */
     public function getTrust(): ?array
     {
@@ -223,7 +224,7 @@ class Rating extends BaseModel
     /**
      * Get the competition rating
      *
-     * @return array|null
+     * @return array{rating: int, source: string}|null
      */
     public function getCompetition(): ?array
     {
@@ -233,7 +234,7 @@ class Rating extends BaseModel
     /**
      * Get the need for action rating
      *
-     * @return array|null
+     * @return array{rating: int, source: string}|null
      */
     public function getNeedForAction(): ?array
     {
@@ -243,7 +244,7 @@ class Rating extends BaseModel
     /**
      * Get the buying process rating
      *
-     * @return array|null
+     * @return array{rating: int, source: string}|null
      */
     public function getBuyingProcess(): ?array
     {
@@ -253,7 +254,7 @@ class Rating extends BaseModel
     /**
      * Get the price rating
      *
-     * @return array|null
+     * @return array{rating: int, source: string}|null
      */
     public function getPrice(): ?array
     {

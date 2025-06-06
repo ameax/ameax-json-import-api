@@ -24,6 +24,7 @@ class LineItem extends BaseModel
     /**
      * Populate the model with data using setters
      *
+     * @param array<string, mixed> $data
      * @return $this
      */
     protected function populate(array $data): self

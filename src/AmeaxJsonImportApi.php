@@ -7,6 +7,8 @@ use Ameax\AmeaxJsonImportApi\Models\Contact;
 use Ameax\AmeaxJsonImportApi\Models\Meta;
 use Ameax\AmeaxJsonImportApi\Models\Organization;
 use Ameax\AmeaxJsonImportApi\Models\PrivatePerson;
+use Ameax\AmeaxJsonImportApi\Models\Receipt;
+use Ameax\AmeaxJsonImportApi\Models\Sale;
 use GuzzleHttp\Client as HttpClient;
 use GuzzleHttp\Exception\GuzzleException;
 
@@ -53,7 +55,7 @@ class AmeaxJsonImportApi
     /**
      * Create an organization from an existing array of data
      *
-     * @param  array  $data  The organization data
+     * @param  array<string, mixed>  $data  The organization data
      */
     public function organizationFromArray(array $data): Organization
     {
@@ -98,7 +100,7 @@ class AmeaxJsonImportApi
     /**
      * Create a private person from an existing array of data
      *
-     * @param  array  $data  The private person data
+     * @param  array<string, mixed>  $data  The private person data
      */
     public function privatePersonFromArray(array $data): PrivatePerson
     {
@@ -111,8 +113,8 @@ class AmeaxJsonImportApi
     /**
      * Send organization data to Ameax API
      *
-     * @param  array  $organization  The organization data
-     * @return array The API response
+     * @param  array<string, mixed>  $organization  The organization data
+     * @return array<string, mixed> The API response
      *
      * @throws \Exception If request fails
      *
@@ -147,8 +149,8 @@ class AmeaxJsonImportApi
     /**
      * Send private person data to Ameax API
      *
-     * @param  array  $privatePerson  The private person data
-     * @return array The API response
+     * @param  array<string, mixed>  $privatePerson  The private person data
+     * @return array<string, mixed> The API response
      *
      * @throws \Exception If request fails
      *
@@ -177,6 +179,102 @@ class AmeaxJsonImportApi
             return json_decode($response->getBody()->getContents(), true);
         } catch (GuzzleException $e) {
             throw new \Exception('Error sending private person data to Ameax: '.$e->getMessage(), $e->getCode(), $e);
+        }
+    }
+
+    /**
+     * Create a new empty receipt
+     *
+     * @return Receipt A new receipt instance
+     */
+    public function createReceipt(): Receipt
+    {
+        $receipt = new Receipt;
+
+        return $receipt->setApiClient($this);
+    }
+
+    /**
+     * Create a receipt from an existing array of data
+     *
+     * @param  array<string, mixed>  $data  The receipt data
+     */
+    public function receiptFromArray(array $data): Receipt
+    {
+        $receipt = Receipt::fromArray($data);
+        $receipt->setApiClient($this);
+
+        return $receipt;
+    }
+
+    /**
+     * Send receipt data to Ameax API
+     *
+     * @param  array<string, mixed>  $receipt  The receipt data
+     * @return array<string, mixed> The API response
+     *
+     * @throws \Exception If request fails
+     *
+     * @internal This is used by the Receipt class and generally should not be called directly
+     */
+    public function sendReceipt(array $receipt): array
+    {
+        try {
+            $response = $this->client->post("{$this->baseUrl}/imports", [
+                'json' => $receipt,
+            ]);
+
+            return json_decode($response->getBody()->getContents(), true);
+        } catch (GuzzleException $e) {
+            throw new \Exception('Error sending receipt data to Ameax: '.$e->getMessage(), $e->getCode(), $e);
+        }
+    }
+
+    /**
+     * Create a new empty sale
+     *
+     * @return Sale A new sale instance
+     */
+    public function createSale(): Sale
+    {
+        $sale = new Sale;
+
+        return $sale->setApiClient($this);
+    }
+
+    /**
+     * Create a sale from an existing array of data
+     *
+     * @param  array<string, mixed>  $data  The sale data
+     */
+    public function saleFromArray(array $data): Sale
+    {
+        $sale = Sale::fromArray($data);
+        $sale->setApiClient($this);
+
+        return $sale;
+    }
+
+    /**
+     * Send sale data to Ameax API
+     *
+     * @param  array<string, mixed>  $sale  The sale data
+     * @return array<string, mixed> The API response
+     *
+     * @throws \Exception If request fails
+     *
+     * @internal This is used by the Sale class and generally should not be called directly
+     */
+    public function sendSale(array $sale): array
+    {
+        try {
+            $response = $this->client->post("{$this->baseUrl}/imports", [
+                'json' => $sale,
+            ]);
+
+            return json_decode($response->getBody()->getContents(), true);
+        } catch (GuzzleException $e) {
+            throw new \Exception('Error sending sale data to Ameax: '.$e->getMessage(), $e->getCode(), $e);
         }
     }
 }

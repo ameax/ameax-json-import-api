@@ -43,7 +43,7 @@ class Sale extends BaseModel
     protected ?Rating $rating = null;
 
     /**
-     * @var array Custom data fields
+     * @var array<string, mixed> Custom data fields
      */
     protected array $customData = [];
 
@@ -68,6 +68,7 @@ class Sale extends BaseModel
     /**
      * Populate the model with data using setters
      *
+     * @param array<string, mixed> $data
      * @return $this
      */
     protected function populate(array $data): self
@@ -189,7 +190,7 @@ class Sale extends BaseModel
     /**
      * Set the customer reference
      *
-     * @param  array  $customer  The customer data with either customer_number or external_id
+     * @param  array{customer_number?: string, external_id?: string}  $customer  The customer data with either customer_number or external_id
      * @return $this
      */
     public function setCustomer(array $customer): self
@@ -445,7 +446,7 @@ class Sale extends BaseModel
     /**
      * Set custom data fields in bulk
      *
-     * @param  array  $data  The custom data fields
+     * @param  array<string, mixed>  $data  The custom data fields
      * @return $this
      */
     public function setCustomData(array $data): self
@@ -474,6 +475,7 @@ class Sale extends BaseModel
 
     /**
      * Get the customer
+     * @return array{customer_number?: string, external_id?: string}|null
      */
     public function getCustomer(): ?array
     {
@@ -562,6 +564,7 @@ class Sale extends BaseModel
 
     /**
      * Get custom data fields
+     * @return array<string, mixed>
      */
     public function getCustomData(): array
     {
@@ -571,7 +574,7 @@ class Sale extends BaseModel
     /**
      * Send the sale to the Ameax API
      *
-     * @return array The API response
+     * @return array<string, mixed> The API response
      *
      * @throws InvalidArgumentException If no API client is set
      */
@@ -583,6 +586,6 @@ class Sale extends BaseModel
             );
         }
 
-        return $this->apiClient->send($this->data);
+        return $this->apiClient->sendSale($this->data);
     }
 }

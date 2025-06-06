@@ -52,7 +52,7 @@ class Receipt extends BaseModel
     protected array $lineItems = [];
 
     /**
-     * @var array Custom data fields
+     * @var array<string, mixed> Custom data fields
      */
     protected array $customData = [];
 
@@ -78,6 +78,7 @@ class Receipt extends BaseModel
     /**
      * Populate the model with data using setters
      *
+     * @param array<string, mixed> $data
      * @return $this
      */
     protected function populate(array $data): self
@@ -438,7 +439,7 @@ class Receipt extends BaseModel
     /**
      * Set related receipts
      *
-     * @param  array|null  $relatedReceipts  Array of related receipt data or null to remove
+     * @param  array<int, array<string, mixed>>|null  $relatedReceipts  Array of related receipt data or null to remove
      * @return $this
      */
     public function setRelatedReceipts(?array $relatedReceipts): self
@@ -453,7 +454,7 @@ class Receipt extends BaseModel
     /**
      * Set pursued from receipt
      *
-     * @param  array|null  $pursuedFrom  Pursued from receipt data or null to remove
+     * @param  array<string, mixed>|null  $pursuedFrom  Pursued from receipt data or null to remove
      * @return $this
      */
     public function setPursuedFrom(?array $pursuedFrom): self
@@ -529,7 +530,7 @@ class Receipt extends BaseModel
     /**
      * Set custom data fields in bulk
      *
-     * @param  array  $data  The custom data fields
+     * @param  array<string, mixed>  $data  The custom data fields
      * @return $this
      */
     public function setCustomData(array $data): self
@@ -608,6 +609,7 @@ class Receipt extends BaseModel
 
     /**
      * Get custom data fields
+     * @return array<string, mixed>
      */
     public function getCustomData(): array
     {
@@ -617,7 +619,7 @@ class Receipt extends BaseModel
     /**
      * Send the receipt to the Ameax API
      *
-     * @return array The API response
+     * @return array<string, mixed> The API response
      *
      * @throws InvalidArgumentException If no API client is set
      */
@@ -629,6 +631,6 @@ class Receipt extends BaseModel
             );
         }
 
-        return $this->apiClient->send($this->data);
+        return $this->apiClient->sendReceipt($this->data);
     }
 }
