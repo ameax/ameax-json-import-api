@@ -5,7 +5,7 @@
 [![GitHub Code Style Action Status](https://img.shields.io/github/actions/workflow/status/ameax/ameax-json-import-api/fix-php-code-style-issues.yml?branch=main&label=code%20style&style=flat-square)](https://github.com/ameax/ameax-json-import-api/actions?query=workflow%3A"Fix+PHP+code+style+issues"+branch%3Amain)
 [![Total Downloads](https://img.shields.io/packagist/dt/ameax/ameax-json-import-api.svg?style=flat-square)](https://packagist.org/packages/ameax/ameax-json-import-api)
 
-A framework-agnostic PHP package for sending data to Ameax via their JSON API. This package provides an easy way to create and send organization and private person data to the Ameax API, with built-in validation according to the JSON schema.
+A framework-agnostic PHP package for sending data to Ameax via their JSON API. This package provides an easy way to create and send organization, private person, receipt, and sales opportunity data to the Ameax API, with built-in validation according to the JSON schema v1.0.
 
 ## Installation
 
@@ -93,6 +93,99 @@ try {
 }
 ```
 
+### Working with Receipts (Invoices, Orders, etc.)
+
+```php
+use Ameax\AmeaxJsonImportApi\AmeaxJsonImportApi;
+use Ameax\AmeaxJsonImportApi\Models\Receipt;
+use Ameax\AmeaxJsonImportApi\Models\LineItem;
+
+// Initialize the client
+$client = new AmeaxJsonImportApi(
+    'your-api-key',
+    'https://your-database.ameax.de'
+);
+
+// Create a receipt (invoice)
+$receipt = $client->createReceipt();
+
+$receipt
+    ->setType(Receipt::TYPE_INVOICE)
+    ->setReceiptNumber('INV-2025-001')
+    ->setCustomerNumber('CUST12345')
+    ->setDate('2025-06-01')
+    ->setStatus(Receipt::STATUS_PENDING)
+    ->setTaxMode(Receipt::TAX_MODE_NET)
+    ->setTaxType(Receipt::TAX_TYPE_REGULAR);
+
+// Add line items
+$lineItem = new LineItem();
+$lineItem
+    ->setDescription('Product A')
+    ->setQuantity(2)
+    ->setPrice(100.00)
+    ->setTaxRate(19)
+    ->setTaxType(LineItem::TAX_TYPE_REGULAR);
+
+$receipt->addLineItem($lineItem);
+
+// Send to Ameax API
+try {
+    $response = $receipt->sendToAmeax();
+    echo "Receipt created successfully!";
+} catch (\Exception $e) {
+    echo "Error: " . $e->getMessage();
+}
+```
+
+### Working with Sales Opportunities
+
+```php
+use Ameax\AmeaxJsonImportApi\AmeaxJsonImportApi;
+use Ameax\AmeaxJsonImportApi\Models\Sale;
+use Ameax\AmeaxJsonImportApi\Models\Rating;
+
+// Initialize the client
+$client = new AmeaxJsonImportApi(
+    'your-api-key',
+    'https://your-database.ameax.de'
+);
+
+// Create a sales opportunity
+$sale = $client->createSale();
+
+$sale
+    ->setExternalId('OPP-2025-001')
+    ->setCustomerNumber('CUST12345')
+    ->setSubject('New Software Implementation')
+    ->setSaleStatus(Sale::STATUS_ACTIVE)
+    ->setSellingStatus(Sale::SELLING_STATUS_QUALIFICATION)
+    ->setUserExternalId('USER123')
+    ->setDate('2025-06-01')
+    ->setAmount(50000.00)
+    ->setProbability(75)
+    ->setCloseDate('2025-07-01');
+
+// Add rating (optional)
+$rating = $sale->createRating();
+$rating
+    ->setRelationship(6, Rating::SOURCE_KNOWN)
+    ->setProposition(5, Rating::SOURCE_ASSUMED)
+    ->setTrust(7, Rating::SOURCE_KNOWN)
+    ->setCompetition(4, Rating::SOURCE_GUESSED)
+    ->setNeedForAction(6, Rating::SOURCE_KNOWN)
+    ->setBuyingProcess(5, Rating::SOURCE_ASSUMED)
+    ->setPrice(5, Rating::SOURCE_KNOWN);
+
+// Send to Ameax API
+try {
+    $response = $sale->sendToAmeax();
+    echo "Sales opportunity created successfully!";
+} catch (\Exception $e) {
+    echo "Error: " . $e->getMessage();
+}
+```
+
 ## Data Structure
 
 This package follows the Ameax JSON schema structure:
@@ -111,7 +204,8 @@ The organization structure includes multiple nested objects:
     'additional_name' => 'ACME Corp.',
     'identifiers' => [
         'customer_number' => 'CUST12345',
-        'external_id' => 'EXT98765'
+        'external_id' => 'EXT98765',
+        'ameax_internal_id' => 123456  // Set by API, read-only
     ],
     'address' => [
         'route' => 'Main Street',
@@ -160,7 +254,9 @@ The private person structure is similar to the organization but without contacts
     'lastname' => 'Doe',
     'date_of_birth' => '1980-01-01',
     'identifiers' => [
-        'customer_number' => 'CUST12345'
+        'customer_number' => 'CUST12345',
+        'external_id' => 'EXT-PP-001',
+        'ameax_internal_id' => 654321  // Set by API, read-only
     ],
     'address' => [
         'route' => 'Main Street',
@@ -212,6 +308,89 @@ Contacts have a similar nested structure:
     'custom_data' => [
         'language' => 'en',
         'timezone' => 'Europe/Berlin'
+    ]
+]
+```
+
+### Receipt
+
+Receipts represent invoices, orders, offers, credit notes, and cancellation documents:
+
+```php
+[
+    'meta' => [
+        'document_type' => 'ameax_receipt',
+        'schema_version' => '1.0'
+    ],
+    'type' => 'invoice',
+    'identifiers' => [
+        'receipt_number' => 'INV-2025-001',
+        'external_id' => 'EXT-INV-001',
+        'ameax_internal_id' => 12345
+    ],
+    'business_id' => 1,
+    'user_external_id' => 'USER123',
+    'sale_external_id' => 'OPP-2025-001',
+    'date' => '2025-06-01',
+    'customer_number' => 'CUST12345',
+    'status' => 'pending',
+    'tax_mode' => 'net',
+    'tax_type' => 'regular',
+    'subject' => 'Invoice for Services',
+    'line_items' => [
+        [
+            'article_number' => 'ART001',
+            'description' => 'Consulting Services',
+            'quantity' => 10,
+            'price' => 150.00,
+            'tax_rate' => 19,
+            'tax_type' => 'regular'
+        ]
+    ],
+    'custom_data' => [
+        'payment_terms' => '30 days net'
+    ]
+]
+```
+
+### Sale
+
+Sales represent opportunities in the sales pipeline:
+
+```php
+[
+    'meta' => [
+        'document_type' => 'ameax_sale',
+        'schema_version' => '1.0'
+    ],
+    'identifiers' => [
+        'external_id' => 'OPP-2025-001',
+        'ameax_internal_id' => 54321
+    ],
+    'customer' => [
+        'customer_number' => 'CUST12345'
+    ],
+    'subject' => 'New Software Implementation',
+    'description' => 'Implementation of ERP system',
+    'sale_status' => 'active',
+    'selling_status' => 'qualification',
+    'user_external_id' => 'USER123',
+    'date' => '2025-06-01',
+    'amount' => 50000.00,
+    'probability' => 75,
+    'close_date' => '2025-07-01',
+    'rating' => [
+        'relationship' => ['rating' => 6, 'source' => 'known'],
+        'proposition' => ['rating' => 5, 'source' => 'assumed'],
+        'trust' => ['rating' => 7, 'source' => 'known'],
+        'competition' => ['rating' => 4, 'source' => 'guessed'],
+        'need_for_action' => ['rating' => 6, 'source' => 'known'],
+        'buying_process' => ['rating' => 5, 'source' => 'assumed'],
+        'price' => ['rating' => 5, 'source' => 'known']
+    ],
+    'custom_data' => [
+        'lead_source' => 'website',
+        'campaign' => 'Q2-2025'
     ]
 ]
 ```
