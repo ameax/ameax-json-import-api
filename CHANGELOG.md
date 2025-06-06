@@ -2,6 +2,17 @@
 
 All notable changes to `ameax-json-import-api` will be documented in this file.
 
+## 1.1.1 - 2025-06-01
+
+### Added
+- Complete documentation for Receipt and Sale models
+- Examples for all new document types in README
+
+### Fixed
+- PHPStan level 6 compliance with proper array type annotations
+- Added missing sendReceipt and sendSale methods to API client
+- Improved type safety with array shape specifications
+
 ## 1.1.0 - 2025-06-01
 
 ### Added
