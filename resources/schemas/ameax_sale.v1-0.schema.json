@@ -1,0 +1,204 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "type": "object",
+    "required": ["meta", "identifiers", "customer", "subject", "sale_status", "selling_status", "user_external_id", "date", "amount", "probability", "close_date"],
+    "properties": {
+      "meta": {
+        "type": "object",
+        "required": ["document_type", "schema_version"],
+        "properties": {
+          "document_type": {
+            "type": "string",
+            "enum": ["ameax_sale"]
+          },
+          "schema_version": {
+            "type": "string",
+            "pattern": "^\\d+\\.\\d+$"
+          }
+        }
+      },
+      "identifiers": {
+        "type": "object",
+        "required": ["external_id"],
+        "properties": {
+          "external_id": {
+            "type": "string"
+          },
+          "ameax_internal_id": {
+            "type": ["integer", "null"]
+          }
+        }
+      },
+      "customer": {
+        "type": "object",
+        "oneOf": [
+          {
+            "required": ["customer_number"]
+          },
+          {
+            "required": ["external_id"]
+          }
+        ],
+        "properties": {
+          "customer_number": {
+            "type": "string"
+          },
+          "external_id": {
+            "type": "string"
+          }
+        }
+      },
+      "subject": {
+        "type": "string"
+      },
+      "description": {
+        "type": ["string", "null"]
+      },
+      "sale_status": {
+        "type": "string",
+        "enum": ["active", "inactive", "completed", "cancelled"]
+      },
+      "selling_status": {
+        "type": "string",
+        "enum": ["identification", "acquisition", "qualification", "proposal", "sale"]
+      },
+      "user_external_id": {
+        "type": "string"
+      },
+      "date": {
+        "type": "string",
+        "format": "date"
+      },
+      "amount": {
+        "type": "number",
+        "minimum": 0,
+        "multipleOf": 0.01,
+        "pattern": "^\\d+\\.\\d{2}$"
+      },
+      "probability": {
+        "type": "integer",
+        "minimum": 0,
+        "maximum": 100
+      },
+      "close_date": {
+        "type": "string",
+        "format": "date",
+        "pattern": "^\\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12]\\d|3[01])$"
+      },
+      "rating": {
+        "type": "object",
+        "required": ["relationship", "proposition", "trust", "competition", "need_for_action", "buying_process", "price"],
+        "properties": {
+          "relationship": {
+            "type": "object",
+            "required": ["rating", "source"],
+            "properties": {
+              "rating": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 7
+              },
+              "source": {
+                "type": "string",
+                "enum": ["known", "assumed", "guessed"]
+              }
+            }
+          },
+          "proposition": {
+            "type": "object",
+            "required": ["rating", "source"],
+            "properties": {
+              "rating": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 7
+              },
+              "source": {
+                "type": "string",
+                "enum": ["known", "assumed", "guessed"]
+              }
+            }
+          },
+          "trust": {
+            "type": "object",
+            "required": ["rating", "source"],
+            "properties": {
+              "rating": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 7
+              },
+              "source": {
+                "type": "string",
+                "enum": ["known", "assumed", "guessed"]
+              }
+            }
+          },
+          "competition": {
+            "type": "object",
+            "required": ["rating", "source"],
+            "properties": {
+              "rating": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 7
+              },
+              "source": {
+                "type": "string",
+                "enum": ["known", "assumed", "guessed"]
+              }
+            }
+          },
+          "need_for_action": {
+            "type": "object",
+            "required": ["rating", "source"],
+            "properties": {
+              "rating": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 7
+              },
+              "source": {
+                "type": "string",
+                "enum": ["known", "assumed", "guessed"]
+              }
+            }
+          },
+          "buying_process": {
+            "type": "object",
+            "required": ["rating", "source"],
+            "properties": {
+              "rating": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 7
+              },
+              "source": {
+                "type": "string",
+                "enum": ["known", "assumed", "guessed"]
+              }
+            }
+          },
+          "price": {
+            "type": "object",
+            "required": ["rating", "source"],
+            "properties": {
+              "rating": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 7
+              },
+              "source": {
+                "type": "string",
+                "enum": ["known", "assumed", "guessed"]
+              }
+            }
+          }
+        }
+      },
+      "custom_data": {
+        "type": ["object", "null"],
+        "additionalProperties": true
+      }
+    }
+  } 

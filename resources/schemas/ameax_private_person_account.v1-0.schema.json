@@ -22,7 +22,9 @@
     "identifiers": {
       "type": "object",
       "properties": {
-        "customer_number": { "type": ["string", "null"] }
+        "customer_number": { "type": ["string", "null"] },
+        "external_id": { "type": ["string", "integer", "null"] },
+        "ameax_internal_id": { "type": ["integer", "null"] }
       }
     },
     "address": {

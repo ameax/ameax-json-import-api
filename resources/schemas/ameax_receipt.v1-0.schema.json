@@ -1,0 +1,91 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "properties": {
+    "meta": {
+      "type": "object",
+      "properties": {
+        "document_type": { "type": "string", "enum": ["ameax_receipt"] },
+        "schema_version": { "type": "string" },
+        "import_status": {
+          "type": "object",
+          "additionalProperties": true
+        }
+      },
+      "required": ["document_type", "schema_version"]
+    },
+    "type": { "type": "string", "enum": ["offer", "order", "invoice", "credit_note", "cancellation_document"] },
+    "identifiers": {
+      "type": "object",
+      "properties": {
+        "receipt_number": { "type": "string" },
+        "external_id": { "type": ["string", "null"] },
+        "ameax_internal_id": { "type": ["integer", "null"] }
+      },
+      "required": ["receipt_number"]
+    },
+    "business_id": { "type": ["integer", "null"] },
+    "user_external_id": { "type": ["string", "null"] },
+    "sale_external_id": { "type": ["string", "null"] },
+    "date": { "type": "string", "format": "date" },
+    "customer_number": { "type": "string" },
+    "status": { "type": "string", "enum": ["draft", "pending", "completed", "cancelled"] },
+    "tax_mode": { "type": "string", "enum": ["net", "gross"] },
+    "tax_type": { "type": "string", "enum": ["regular", "reduced", "exempt_eu", "exempt_third", "exempt_other"] },
+    "subject": { "type": ["string", "null"] },
+    "closure": { "type": ["string", "null"] },
+    "notice": { "type": ["string", "null"] },
+    "related_receipts": {
+      "type": ["array", "null"],
+      "items": {
+        "type": "object",
+        "properties": {
+          "type": { "type": "string" },
+          "receipt_number": { "type": ["string", "null"] },
+          "external_id": { "type": ["string", "null"] }
+        },
+        "required": ["type"],
+        "anyOf": [
+          { "required": ["receipt_number"]},
+          { "required": ["external_id"]}
+        ]
+      }
+    },
+    "pursued_from": {
+      "type": ["object", "null"],
+      "properties": {
+        "type": { "type": "string" },
+        "receipt_number": { "type": ["string", "null"] },
+        "external_id": { "type": ["string", "null"] }
+      },
+      "required": ["type", "receipt_number"],
+      "anyOf": [
+        { "required": ["receipt_number"]},
+        { "required": ["external_id"]}
+      ]
+    },
+    "line_items": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "article_number": { "type": ["string", "null"] },
+          "category": { "type": ["string", "null"] },
+          "description": { "type": "string" },
+          "quantity": { "type": "number" },
+          "price": { "type": "number" },
+          "discount": { "type": ["number", "null"] },
+          "discount_type": { "type": ["string", "null"], "enum": ["percent", "amount", null] },
+          "tax_rate": { "type": "number" },
+          "tax_type": { "type": "string", "enum": ["regular", "reduced", "exempt"] }
+        },
+        "required": ["description", "quantity", "price", "tax_rate", "tax_type"]
+      }
+    },
+    "custom_data": {
+      "type": ["object", "null"],
+      "additionalProperties": true
+    }
+  },
+  "required": ["meta", "type", "identifiers", "date", "customer_number", "status", "tax_mode", "tax_type", "line_items"]
+}
