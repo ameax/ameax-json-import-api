@@ -7,18 +7,26 @@ use InvalidArgumentException;
 class Rating extends BaseModel
 {
     public const SOURCE_KNOWN = 'known';
+
     public const SOURCE_ASSUMED = 'assumed';
+
     public const SOURCE_GUESSED = 'guessed';
 
     /**
      * Rating categories
      */
     public const CATEGORY_RELATIONSHIP = 'relationship';
+
     public const CATEGORY_PROPOSITION = 'proposition';
+
     public const CATEGORY_TRUST = 'trust';
+
     public const CATEGORY_COMPETITION = 'competition';
+
     public const CATEGORY_NEED_FOR_ACTION = 'need_for_action';
+
     public const CATEGORY_BUYING_PROCESS = 'buying_process';
+
     public const CATEGORY_PRICE = 'price';
 
     /**
@@ -32,7 +40,7 @@ class Rating extends BaseModel
     /**
      * Populate the model with data using setters
      *
-     * @param array<string, mixed> $data
+     * @param  array<string, mixed>  $data
      * @return $this
      */
     protected function populate(array $data): self
@@ -76,8 +84,8 @@ class Rating extends BaseModel
             self::CATEGORY_PRICE,
         ];
 
-        if (!in_array($category, $validCategories)) {
-            throw new InvalidArgumentException('Invalid rating category. Valid categories are: ' . implode(', ', $validCategories));
+        if (! in_array($category, $validCategories)) {
+            throw new InvalidArgumentException('Invalid rating category. Valid categories are: '.implode(', ', $validCategories));
         }
 
         if ($rating < 1 || $rating > 7) {
@@ -86,8 +94,8 @@ class Rating extends BaseModel
 
         $validSources = [self::SOURCE_KNOWN, self::SOURCE_ASSUMED, self::SOURCE_GUESSED];
 
-        if (!in_array($source, $validSources)) {
-            throw new InvalidArgumentException('Invalid rating source. Valid sources are: ' . implode(', ', $validSources));
+        if (! in_array($source, $validSources)) {
+            throw new InvalidArgumentException('Invalid rating source. Valid sources are: '.implode(', ', $validSources));
         }
 
         return $this->set($category, [
@@ -298,8 +306,6 @@ class Rating extends BaseModel
 
     /**
      * Check if all required ratings are set
-     *
-     * @return bool
      */
     public function isComplete(): bool
     {

@@ -7,10 +7,13 @@ use InvalidArgumentException;
 class LineItem extends BaseModel
 {
     public const DISCOUNT_TYPE_PERCENT = 'percent';
+
     public const DISCOUNT_TYPE_AMOUNT = 'amount';
 
     public const TAX_TYPE_REGULAR = 'regular';
+
     public const TAX_TYPE_REDUCED = 'reduced';
+
     public const TAX_TYPE_EXEMPT = 'exempt';
 
     /**
@@ -24,7 +27,7 @@ class LineItem extends BaseModel
     /**
      * Populate the model with data using setters
      *
-     * @param array<string, mixed> $data
+     * @param  array<string, mixed>  $data
      * @return $this
      */
     protected function populate(array $data): self
@@ -117,7 +120,7 @@ class LineItem extends BaseModel
      */
     public function setQuantity($quantity): self
     {
-        if (!is_numeric($quantity)) {
+        if (! is_numeric($quantity)) {
             throw new InvalidArgumentException('Quantity must be numeric.');
         }
 
@@ -132,7 +135,7 @@ class LineItem extends BaseModel
      */
     public function setPrice($price): self
     {
-        if (!is_numeric($price)) {
+        if (! is_numeric($price)) {
             throw new InvalidArgumentException('Price must be numeric.');
         }
 
@@ -151,7 +154,7 @@ class LineItem extends BaseModel
             return $this->remove('discount');
         }
 
-        if (!is_numeric($discount)) {
+        if (! is_numeric($discount)) {
             throw new InvalidArgumentException('Discount must be numeric.');
         }
 
@@ -172,8 +175,8 @@ class LineItem extends BaseModel
 
         $validTypes = [self::DISCOUNT_TYPE_PERCENT, self::DISCOUNT_TYPE_AMOUNT];
 
-        if (!in_array($discountType, $validTypes)) {
-            throw new InvalidArgumentException('Invalid discount type. Valid types are: ' . implode(', ', $validTypes));
+        if (! in_array($discountType, $validTypes)) {
+            throw new InvalidArgumentException('Invalid discount type. Valid types are: '.implode(', ', $validTypes));
         }
 
         return $this->set('discount_type', $discountType);
@@ -187,7 +190,7 @@ class LineItem extends BaseModel
      */
     public function setTaxRate($taxRate): self
     {
-        if (!is_numeric($taxRate)) {
+        if (! is_numeric($taxRate)) {
             throw new InvalidArgumentException('Tax rate must be numeric.');
         }
 
@@ -208,8 +211,8 @@ class LineItem extends BaseModel
             self::TAX_TYPE_EXEMPT,
         ];
 
-        if (!in_array($taxType, $validTypes)) {
-            throw new InvalidArgumentException('Invalid tax type. Valid types are: ' . implode(', ', $validTypes));
+        if (! in_array($taxType, $validTypes)) {
+            throw new InvalidArgumentException('Invalid tax type. Valid types are: '.implode(', ', $validTypes));
         }
 
         return $this->set('tax_type', $taxType);

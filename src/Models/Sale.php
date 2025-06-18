@@ -12,14 +12,21 @@ class Sale extends BaseModel
     public const SCHEMA_VERSION = '1.0';
 
     public const STATUS_ACTIVE = 'active';
+
     public const STATUS_INACTIVE = 'inactive';
+
     public const STATUS_COMPLETED = 'completed';
+
     public const STATUS_CANCELLED = 'cancelled';
 
     public const SELLING_STATUS_IDENTIFICATION = 'identification';
+
     public const SELLING_STATUS_ACQUISITION = 'acquisition';
+
     public const SELLING_STATUS_QUALIFICATION = 'qualification';
+
     public const SELLING_STATUS_PROPOSAL = 'proposal';
+
     public const SELLING_STATUS_SALE = 'sale';
 
     /**
@@ -68,7 +75,7 @@ class Sale extends BaseModel
     /**
      * Populate the model with data using setters
      *
-     * @param array<string, mixed> $data
+     * @param  array<string, mixed>  $data
      * @return $this
      */
     protected function populate(array $data): self
@@ -195,7 +202,7 @@ class Sale extends BaseModel
      */
     public function setCustomer(array $customer): self
     {
-        if (!isset($customer['customer_number']) && !isset($customer['external_id'])) {
+        if (! isset($customer['customer_number']) && ! isset($customer['external_id'])) {
             throw new InvalidArgumentException('Customer must have either customer_number or external_id');
         }
 
@@ -265,8 +272,8 @@ class Sale extends BaseModel
             self::STATUS_CANCELLED,
         ];
 
-        if (!in_array($status, $validStatuses)) {
-            throw new InvalidArgumentException('Invalid sale status. Valid statuses are: ' . implode(', ', $validStatuses));
+        if (! in_array($status, $validStatuses)) {
+            throw new InvalidArgumentException('Invalid sale status. Valid statuses are: '.implode(', ', $validStatuses));
         }
 
         return $this->set('sale_status', $status);
@@ -288,8 +295,8 @@ class Sale extends BaseModel
             self::SELLING_STATUS_SALE,
         ];
 
-        if (!in_array($status, $validStatuses)) {
-            throw new InvalidArgumentException('Invalid selling status. Valid statuses are: ' . implode(', ', $validStatuses));
+        if (! in_array($status, $validStatuses)) {
+            throw new InvalidArgumentException('Invalid selling status. Valid statuses are: '.implode(', ', $validStatuses));
         }
 
         return $this->set('selling_status', $status);
@@ -317,7 +324,7 @@ class Sale extends BaseModel
         // If DateTime object provided, convert to string
         if ($date instanceof \DateTime) {
             $date = $date->format('Y-m-d');
-        } elseif (is_string($date) && !preg_match('/^\d{4}-\d{2}-\d{2}$/', $date)) {
+        } elseif (is_string($date) && ! preg_match('/^\d{4}-\d{2}-\d{2}$/', $date)) {
             // Try to parse the date string if it's not in ISO format
             try {
                 $dateObj = new \DateTime($date);
@@ -338,7 +345,7 @@ class Sale extends BaseModel
      */
     public function setAmount($amount): self
     {
-        if (!is_numeric($amount)) {
+        if (! is_numeric($amount)) {
             throw new InvalidArgumentException('Amount must be numeric.');
         }
 
@@ -374,7 +381,7 @@ class Sale extends BaseModel
         // If DateTime object provided, convert to string
         if ($closeDate instanceof \DateTime) {
             $closeDate = $closeDate->format('Y-m-d');
-        } elseif (is_string($closeDate) && !preg_match('/^\d{4}-\d{2}-\d{2}$/', $closeDate)) {
+        } elseif (is_string($closeDate) && ! preg_match('/^\d{4}-\d{2}-\d{2}$/', $closeDate)) {
             // Try to parse the date string if it's not in ISO format
             try {
                 $dateObj = new \DateTime($closeDate);
@@ -389,8 +396,6 @@ class Sale extends BaseModel
 
     /**
      * Create and set rating
-     *
-     * @return Rating
      */
     public function createRating(): Rating
     {
@@ -422,7 +427,7 @@ class Sale extends BaseModel
      */
     public function setCustomField(string $key, $value = null): self
     {
-        if (!isset($this->data['custom_data'])) {
+        if (! isset($this->data['custom_data'])) {
             $this->data['custom_data'] = [];
         }
 
@@ -475,6 +480,7 @@ class Sale extends BaseModel
 
     /**
      * Get the customer
+     *
      * @return array{customer_number?: string, external_id?: string}|null
      */
     public function getCustomer(): ?array
@@ -564,6 +570,7 @@ class Sale extends BaseModel
 
     /**
      * Get custom data fields
+     *
      * @return array<string, mixed>
      */
     public function getCustomData(): array
@@ -580,7 +587,7 @@ class Sale extends BaseModel
      */
     public function sendToAmeax(): array
     {
-        if (!$this->apiClient) {
+        if (! $this->apiClient) {
             throw new InvalidArgumentException(
                 'No API client set. Use setApiClient() before calling sendToAmeax().'
             );

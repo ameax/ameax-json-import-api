@@ -12,23 +12,35 @@ class Receipt extends BaseModel
     public const SCHEMA_VERSION = '1.0';
 
     public const TYPE_OFFER = 'offer';
+
     public const TYPE_ORDER = 'order';
+
     public const TYPE_INVOICE = 'invoice';
+
     public const TYPE_CREDIT_NOTE = 'credit_note';
+
     public const TYPE_CANCELLATION = 'cancellation_document';
 
     public const STATUS_DRAFT = 'draft';
+
     public const STATUS_PENDING = 'pending';
+
     public const STATUS_COMPLETED = 'completed';
+
     public const STATUS_CANCELLED = 'cancelled';
 
     public const TAX_MODE_NET = 'net';
+
     public const TAX_MODE_GROSS = 'gross';
 
     public const TAX_TYPE_REGULAR = 'regular';
+
     public const TAX_TYPE_REDUCED = 'reduced';
+
     public const TAX_TYPE_EXEMPT_EU = 'exempt_eu';
+
     public const TAX_TYPE_EXEMPT_THIRD = 'exempt_third';
+
     public const TAX_TYPE_EXEMPT_OTHER = 'exempt_other';
 
     /**
@@ -78,7 +90,7 @@ class Receipt extends BaseModel
     /**
      * Populate the model with data using setters
      *
-     * @param array<string, mixed> $data
+     * @param  array<string, mixed>  $data
      * @return $this
      */
     protected function populate(array $data): self
@@ -203,8 +215,8 @@ class Receipt extends BaseModel
             self::TYPE_CANCELLATION,
         ];
 
-        if (!in_array($type, $validTypes)) {
-            throw new InvalidArgumentException('Invalid receipt type. Valid types are: ' . implode(', ', $validTypes));
+        if (! in_array($type, $validTypes)) {
+            throw new InvalidArgumentException('Invalid receipt type. Valid types are: '.implode(', ', $validTypes));
         }
 
         return $this->set('type', $type);
@@ -305,7 +317,7 @@ class Receipt extends BaseModel
         // If DateTime object provided, convert to string
         if ($date instanceof \DateTime) {
             $date = $date->format('Y-m-d');
-        } elseif (is_string($date) && !preg_match('/^\d{4}-\d{2}-\d{2}$/', $date)) {
+        } elseif (is_string($date) && ! preg_match('/^\d{4}-\d{2}-\d{2}$/', $date)) {
             // Try to parse the date string if it's not in ISO format
             try {
                 $dateObj = new \DateTime($date);
@@ -344,8 +356,8 @@ class Receipt extends BaseModel
             self::STATUS_CANCELLED,
         ];
 
-        if (!in_array($status, $validStatuses)) {
-            throw new InvalidArgumentException('Invalid status. Valid statuses are: ' . implode(', ', $validStatuses));
+        if (! in_array($status, $validStatuses)) {
+            throw new InvalidArgumentException('Invalid status. Valid statuses are: '.implode(', ', $validStatuses));
         }
 
         return $this->set('status', $status);
@@ -361,8 +373,8 @@ class Receipt extends BaseModel
     {
         $validModes = [self::TAX_MODE_NET, self::TAX_MODE_GROSS];
 
-        if (!in_array($taxMode, $validModes)) {
-            throw new InvalidArgumentException('Invalid tax mode. Valid modes are: ' . implode(', ', $validModes));
+        if (! in_array($taxMode, $validModes)) {
+            throw new InvalidArgumentException('Invalid tax mode. Valid modes are: '.implode(', ', $validModes));
         }
 
         return $this->set('tax_mode', $taxMode);
@@ -384,8 +396,8 @@ class Receipt extends BaseModel
             self::TAX_TYPE_EXEMPT_OTHER,
         ];
 
-        if (!in_array($taxType, $validTypes)) {
-            throw new InvalidArgumentException('Invalid tax type. Valid types are: ' . implode(', ', $validTypes));
+        if (! in_array($taxType, $validTypes)) {
+            throw new InvalidArgumentException('Invalid tax type. Valid types are: '.implode(', ', $validTypes));
         }
 
         return $this->set('tax_type', $taxType);
@@ -506,7 +518,7 @@ class Receipt extends BaseModel
      */
     public function setCustomField(string $key, $value = null): self
     {
-        if (!isset($this->data['custom_data'])) {
+        if (! isset($this->data['custom_data'])) {
             $this->data['custom_data'] = [];
         }
 
@@ -609,6 +621,7 @@ class Receipt extends BaseModel
 
     /**
      * Get custom data fields
+     *
      * @return array<string, mixed>
      */
     public function getCustomData(): array
@@ -625,7 +638,7 @@ class Receipt extends BaseModel
      */
     public function sendToAmeax(): array
     {
-        if (!$this->apiClient) {
+        if (! $this->apiClient) {
             throw new InvalidArgumentException(
                 'No API client set. Use setApiClient() before calling sendToAmeax().'
             );
