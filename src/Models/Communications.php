@@ -23,7 +23,7 @@ class Communications extends BaseModel
             $this->setPhoneNumber($data['phone_number']);
         }
 
-        //Should maybe be called "second_phone_number" instead of "phone_number2"
+        // Should maybe be called "second_phone_number" instead of "phone_number2"
         if (isset($data['phone_number2'])) {
             $this->setPhoneNumberTwo($data['phone_number2']);
         }
@@ -73,7 +73,7 @@ class Communications extends BaseModel
      */
     public function setPhoneNumberTwo(?string $phoneNumberTwo): self
     {
-        //Should maybe be called "second_phone_number" instead of "phone_number2"
+        // Should maybe be called "second_phone_number" instead of "phone_number2"
         if ($phoneNumberTwo === null) {
             return $this->set('phone_number2', null);
         }
@@ -145,7 +145,7 @@ class Communications extends BaseModel
      */
     public function getPhoneNumberTwo(): ?string
     {
-        //Should maybe be called "second_phone_number" instead of "phone_number2"
+        // Should maybe be called "second_phone_number" instead of "phone_number2"
         return $this->get('phone_number2');
     }
 

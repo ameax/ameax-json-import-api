@@ -16,7 +16,7 @@ abstract class BaseModel implements JsonSerializable
     public static function fromArray(array $data): static
     {
         /** @var static $instance */
-        $instance = new static();
+        $instance = new static;
         $instance->populate($data);
 
         return $instance;

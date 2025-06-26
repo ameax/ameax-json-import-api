@@ -281,7 +281,7 @@ class Organization extends BaseModel
      */
     public function createIdentifiers(string|int|null $customerNumber, $externalId = null): self
     {
-        $identifiers = new Identifiers();
+        $identifiers = new Identifiers;
         $identifiers->setCustomerNumber($customerNumber);
 
         if ($externalId !== null) {
@@ -354,7 +354,7 @@ class Organization extends BaseModel
      */
     public function createAddress(string $postalCode, string $locality, string $country): self
     {
-        $address = new Address();
+        $address = new Address;
         $address->setPostalCode($postalCode)
             ->setLocality($locality)
             ->setCountry($country);
@@ -481,7 +481,7 @@ class Organization extends BaseModel
      */
     public function createSocialMedia(?string $web = null): self
     {
-        $socialMedia = new SocialMedia();
+        $socialMedia = new SocialMedia;
 
         if ($web !== null) {
             $socialMedia->setWeb($web);
@@ -543,7 +543,7 @@ class Organization extends BaseModel
         ?string $mobilePhone = null,
         ?string $fax = null
     ): self {
-        $communications = new Communications();
+        $communications = new Communications;
 
         if ($email !== null) {
             $communications->setEmail($email);
@@ -708,7 +708,7 @@ class Organization extends BaseModel
      */
     public function createBusinessInformation(?string $vatId = null, ?string $iban = null): self
     {
-        $businessInfo = new BusinessInformation();
+        $businessInfo = new BusinessInformation;
 
         if ($vatId !== null) {
             $businessInfo->setVatId($vatId);
@@ -786,7 +786,7 @@ class Organization extends BaseModel
      */
     public function createAgent($externalId = null): self
     {
-        $agent = new Agent();
+        $agent = new Agent;
 
         if ($externalId !== null) {
             $agent->setExternalId($externalId);
@@ -841,7 +841,7 @@ class Organization extends BaseModel
      */
     public function addContact(string $firstName, string $lastName, array $additionalData = []): self
     {
-        $contact = new Contact();
+        $contact = new Contact;
         $contact->setFirstName($firstName)
             ->setLastName($lastName);
 

@@ -51,7 +51,7 @@ class PrivatePerson extends BaseModel
      */
     public function __construct()
     {
-        $this->meta = new Meta();
+        $this->meta = new Meta;
         $this->meta->setDocumentType(self::DOCUMENT_TYPE);
         $this->meta->setSchemaVersion(self::SCHEMA_VERSION);
 
@@ -374,7 +374,7 @@ class PrivatePerson extends BaseModel
      */
     public function createIdentifiers(?string $customerNumber = null): self
     {
-        $identifiers = new Identifiers();
+        $identifiers = new Identifiers;
 
         if ($customerNumber !== null) {
             $identifiers->setCustomerNumber($customerNumber);
@@ -471,7 +471,7 @@ class PrivatePerson extends BaseModel
      */
     public function createAddress(string $postalCode, string $locality, string $country): self
     {
-        $address = new Address();
+        $address = new Address;
         $address->setPostalCode($postalCode)
             ->setLocality($locality)
             ->setCountry($country);
@@ -607,7 +607,7 @@ class PrivatePerson extends BaseModel
         ?string $mobilePhone = null,
         ?string $fax = null
     ): self {
-        $communications = new Communications();
+        $communications = new Communications;
 
         if ($email !== null) {
             $communications->setEmail($email);
@@ -760,7 +760,7 @@ class PrivatePerson extends BaseModel
      */
     public function createAgent($externalId = null): self
     {
-        $agent = new Agent();
+        $agent = new Agent;
 
         if ($externalId !== null) {
             $agent->setExternalId($externalId);

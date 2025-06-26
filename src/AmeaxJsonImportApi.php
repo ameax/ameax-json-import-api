@@ -47,7 +47,7 @@ class AmeaxJsonImportApi
      */
     public function createOrganization(): Organization
     {
-        $organization = new Organization();
+        $organization = new Organization;
 
         return $organization->setApiClient($this);
     }
@@ -72,7 +72,7 @@ class AmeaxJsonImportApi
      */
     public function createAddress(): Address
     {
-        return new Address();
+        return new Address;
     }
 
     /**
@@ -82,7 +82,7 @@ class AmeaxJsonImportApi
      */
     public function createContact(): Contact
     {
-        return new Contact();
+        return new Contact;
     }
 
     /**
@@ -92,7 +92,7 @@ class AmeaxJsonImportApi
      */
     public function createPrivatePerson(): PrivatePerson
     {
-        $privatePerson = new PrivatePerson();
+        $privatePerson = new PrivatePerson;
 
         return $privatePerson->setApiClient($this);
     }
@@ -189,7 +189,7 @@ class AmeaxJsonImportApi
      */
     public function createReceipt(): Receipt
     {
-        $receipt = new Receipt();
+        $receipt = new Receipt;
 
         return $receipt->setApiClient($this);
     }
@@ -237,7 +237,7 @@ class AmeaxJsonImportApi
      */
     public function createSale(): Sale
     {
-        $sale = new Sale();
+        $sale = new Sale;
 
         return $sale->setApiClient($this);
     }

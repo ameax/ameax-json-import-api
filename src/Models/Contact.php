@@ -265,7 +265,7 @@ class Contact extends BaseModel
      */
     public function createIdentifiers($externalId = null): self
     {
-        $identifiers = new Identifiers();
+        $identifiers = new Identifiers;
 
         if ($externalId !== null) {
             $identifiers->setExternalId($externalId);
@@ -317,7 +317,7 @@ class Contact extends BaseModel
      */
     public function createEmployment(?string $jobTitle = null, ?string $department = null): self
     {
-        $employment = new Employment();
+        $employment = new Employment;
 
         if ($jobTitle !== null) {
             $employment->setJobTitle($jobTitle);
@@ -396,7 +396,7 @@ class Contact extends BaseModel
         ?string $mobilePhone = null,
         ?string $fax = null
     ): self {
-        $communications = new Communications();
+        $communications = new Communications;
 
         if ($email !== null) {
             $communications->setEmail($email);
