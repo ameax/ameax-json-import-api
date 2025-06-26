@@ -142,7 +142,7 @@ class PrivatePerson extends BaseModel
         if (isset($data['communications']) && is_array($data['communications'])) {
             $this->communications = Communications::fromArray($data['communications']);
             $this->data['communications'] = $this->communications->toArray();
-        } elseif (isset($data['email']) || isset($data['phone']) || isset($data['mobile']) || isset($data['fax'])) {
+        } elseif (isset($data['email']) || isset($data['phone']) || isset($data['phone_number2']) || isset($data['mobile']) || isset($data['fax'])) {
             // For backward compatibility
             $communicationsData = [];
             if (isset($data['email'])) {
@@ -150,6 +150,9 @@ class PrivatePerson extends BaseModel
             }
             if (isset($data['phone'])) {
                 $communicationsData['phone_number'] = $data['phone'];
+            }
+            if (isset($data['phone_number2'])) {
+                $communicationsData['phone_number2'] = $data['phone_number2'];
             }
             if (isset($data['mobile'])) {
                 $communicationsData['mobile_phone'] = $data['mobile'];
@@ -592,6 +595,7 @@ class PrivatePerson extends BaseModel
      *
      * @param  string|null  $email  The email address
      * @param  string|null  $phoneNumber  The phone number
+     * @param  string|null  $phoneNumberTwo  The second phone number
      * @param  string|null  $mobilePhone  The mobile phone number
      * @param  string|null  $fax  The fax number
      * @return $this
@@ -599,6 +603,7 @@ class PrivatePerson extends BaseModel
     public function createCommunications(
         ?string $email = null,
         ?string $phoneNumber = null,
+        ?string $phoneNumberTwo = null,
         ?string $mobilePhone = null,
         ?string $fax = null
     ): self {
@@ -610,6 +615,10 @@ class PrivatePerson extends BaseModel
 
         if ($phoneNumber !== null) {
             $communications->setPhoneNumber($phoneNumber);
+        }
+
+        if ($phoneNumberTwo !== null) {
+            $communications->setPhoneNumberTwo($phoneNumberTwo);
         }
 
         if ($mobilePhone !== null) {
@@ -676,6 +685,27 @@ class PrivatePerson extends BaseModel
         }
 
         $this->communications->setPhoneNumber($phoneNumber);
+
+        return $this->set('communications', $this->communications->toArray());
+    }
+
+    /**
+     * Set the second phone number (creates communications if needed)
+     *
+     * @param  string|null  $phoneNumberTwo  The second phone number or null to remove
+     * @return $this
+     */
+    public function setPhoneTwo(?string $phoneNumberTwo): self
+    {
+        if ($this->communications === null) {
+            if ($phoneNumberTwo === null) {
+                return $this;
+            }
+
+            return $this->createCommunications(null, null, $phoneNumberTwo);
+        }
+
+        $this->communications->setPhoneNumberTwo($phoneNumberTwo);
 
         return $this->set('communications', $this->communications->toArray());
     }
@@ -963,6 +993,22 @@ class PrivatePerson extends BaseModel
     public function getPhone(): ?string
     {
         return $this->communications ? $this->communications->getPhoneNumber() : null;
+    }
+
+    /**
+     * Get the second phone number
+     */
+    public function getPhoneNumberTwo(): ?string
+    {
+        return $this->communications ? $this->communications->getPhoneNumberTwo() : null;
+    }
+
+    /**
+     * Get the second phone number (alias for getPhoneNumberTwo)
+     */
+    public function getPhoneTwo(): ?string
+    {
+        return $this->getPhoneNumberTwo();
     }
 
     /**

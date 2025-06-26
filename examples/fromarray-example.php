@@ -36,6 +36,7 @@ try {
         'communications' => [
             'email' => 'info@xyz-ltd.com',
             'phone_number' => '+49 89 123456789',
+            'phone_number2' => '+49 89 123456790',  // Second phone number
             'mobile_phone' => '+49 151 123456789',
             'fax' => '+49 89 987654321',
         ],
@@ -65,6 +66,7 @@ try {
                 'communications' => [
                     'email' => 'jane.smith@xyz-ltd.com',
                     'phone_number' => '+49 89 123456780',
+                    'phone_number2' => '+49 89 123456781',  // Second phone for contact
                     'mobile_phone' => '+49 151 987654321',
                 ],
                 'custom_data' => [
@@ -146,6 +148,7 @@ try {
     $organization->addContact('Max', 'Mustermann', [
         'email' => 'max.mustermann@abc-gmbh.de',
         'phone' => '+49 30 123456780',
+        'phone_number2' => '+49 30 123456782',  // Second phone for added contact
     ]);
 
     echo "Organization updated with additional data\n";
