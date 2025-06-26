@@ -59,11 +59,11 @@ class Sale extends BaseModel
      */
     public function __construct()
     {
-        $this->meta = new Meta;
+        $this->meta = new Meta();
         $this->meta->setDocumentType(self::DOCUMENT_TYPE);
         $this->meta->setSchemaVersion(self::SCHEMA_VERSION);
 
-        $this->identifiers = new Identifiers;
+        $this->identifiers = new Identifiers();
 
         $this->data = [
             'meta' => $this->meta->toArray(),
@@ -399,7 +399,7 @@ class Sale extends BaseModel
      */
     public function createRating(): Rating
     {
-        $this->rating = new Rating;
+        $this->rating = new Rating();
         $this->data['rating'] = $this->rating->toArray();
 
         return $this->rating;

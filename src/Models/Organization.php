@@ -148,7 +148,7 @@ class Organization extends BaseModel
         if (isset($data['communications']) && is_array($data['communications'])) {
             $this->communications = Communications::fromArray($data['communications']);
             $this->data['communications'] = $this->communications->toArray();
-        } elseif (isset($data['email']) || isset($data['phone']) || isset($data['mobile']) || isset($data['fax'])) {
+        } elseif (isset($data['email']) || isset($data['phone']) || isset($data['phone_number2']) || isset($data['mobile']) || isset($data['fax'])) {
             // For backward compatibility
             $communicationsData = [];
             if (isset($data['email'])) {
@@ -156,6 +156,9 @@ class Organization extends BaseModel
             }
             if (isset($data['phone'])) {
                 $communicationsData['phone_number'] = $data['phone'];
+            }
+            if (isset($data['phone_number2'])) {
+                $communicationsData['phone_number2'] = $data['phone_number2'];
             }
             if (isset($data['mobile'])) {
                 $communicationsData['mobile_phone'] = $data['mobile'];
@@ -278,7 +281,7 @@ class Organization extends BaseModel
      */
     public function createIdentifiers(string|int|null $customerNumber, $externalId = null): self
     {
-        $identifiers = new Identifiers;
+        $identifiers = new Identifiers();
         $identifiers->setCustomerNumber($customerNumber);
 
         if ($externalId !== null) {
@@ -351,7 +354,7 @@ class Organization extends BaseModel
      */
     public function createAddress(string $postalCode, string $locality, string $country): self
     {
-        $address = new Address;
+        $address = new Address();
         $address->setPostalCode($postalCode)
             ->setLocality($locality)
             ->setCountry($country);
@@ -478,7 +481,7 @@ class Organization extends BaseModel
      */
     public function createSocialMedia(?string $web = null): self
     {
-        $socialMedia = new SocialMedia;
+        $socialMedia = new SocialMedia();
 
         if ($web !== null) {
             $socialMedia->setWeb($web);
@@ -528,6 +531,7 @@ class Organization extends BaseModel
      *
      * @param  string|null  $email  The email address
      * @param  string|null  $phoneNumber  The phone number
+     * @param  string|null  $phoneNumberTwo  The second phone number
      * @param  string|null  $mobilePhone  The mobile phone number
      * @param  string|null  $fax  The fax number
      * @return $this
@@ -535,10 +539,11 @@ class Organization extends BaseModel
     public function createCommunications(
         ?string $email = null,
         ?string $phoneNumber = null,
+        ?string $phoneNumberTwo = null,
         ?string $mobilePhone = null,
         ?string $fax = null
     ): self {
-        $communications = new Communications;
+        $communications = new Communications();
 
         if ($email !== null) {
             $communications->setEmail($email);
@@ -546,6 +551,10 @@ class Organization extends BaseModel
 
         if ($phoneNumber !== null) {
             $communications->setPhoneNumber($phoneNumber);
+        }
+
+        if ($phoneNumberTwo !== null) {
+            $communications->setPhoneNumberTwo($phoneNumberTwo);
         }
 
         if ($mobilePhone !== null) {
@@ -617,6 +626,27 @@ class Organization extends BaseModel
     }
 
     /**
+     * Set the second phone number (creates communications if needed)
+     *
+     * @param  string|null  $phoneNumberTwo  The second phone number or null to remove
+     * @return $this
+     */
+    public function setPhoneTwo(?string $phoneNumberTwo): self
+    {
+        if ($this->communications === null) {
+            if ($phoneNumberTwo === null) {
+                return $this;
+            }
+
+            return $this->createCommunications(null, null, $phoneNumberTwo);
+        }
+
+        $this->communications->setPhoneNumberTwo($phoneNumberTwo);
+
+        return $this->set('communications', $this->communications->toArray());
+    }
+
+    /**
      * Set the mobile phone number (creates communications if needed)
      *
      * @param  string|null  $mobilePhone  The mobile phone number or null to remove
@@ -678,7 +708,7 @@ class Organization extends BaseModel
      */
     public function createBusinessInformation(?string $vatId = null, ?string $iban = null): self
     {
-        $businessInfo = new BusinessInformation;
+        $businessInfo = new BusinessInformation();
 
         if ($vatId !== null) {
             $businessInfo->setVatId($vatId);
@@ -756,7 +786,7 @@ class Organization extends BaseModel
      */
     public function createAgent($externalId = null): self
     {
-        $agent = new Agent;
+        $agent = new Agent();
 
         if ($externalId !== null) {
             $agent->setExternalId($externalId);
@@ -811,7 +841,7 @@ class Organization extends BaseModel
      */
     public function addContact(string $firstName, string $lastName, array $additionalData = []): self
     {
-        $contact = new Contact;
+        $contact = new Contact();
         $contact->setFirstName($firstName)
             ->setLastName($lastName);
 
@@ -1021,6 +1051,22 @@ class Organization extends BaseModel
     public function getPhone(): ?string
     {
         return $this->communications ? $this->communications->getPhoneNumber() : null;
+    }
+
+    /**
+     * Get the second phone number
+     */
+    public function getPhoneNumberTwo(): ?string
+    {
+        return $this->communications ? $this->communications->getPhoneNumberTwo() : null;
+    }
+
+    /**
+     * Get the second phone number (alias for getPhoneNumberTwo)
+     */
+    public function getPhoneTwo(): ?string
+    {
+        return $this->getPhoneNumberTwo();
     }
 
     /**
