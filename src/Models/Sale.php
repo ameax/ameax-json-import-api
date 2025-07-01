@@ -18,6 +18,9 @@ class Sale extends BaseModel
     public const STATUS_COMPLETED = 'completed';
 
     public const STATUS_CANCELLED = 'cancelled';
+    public const STATUS_TERMINATED = 'terminated';
+    public const STATUS_LOST  = 'lost';
+    public const STATUS_WON = 'won';
 
     public const SELLING_STATUS_IDENTIFICATION = 'identification';
 
@@ -83,7 +86,7 @@ class Sale extends BaseModel
         // Handle meta data
         if (isset($data['meta']) && is_array($data['meta'])) {
             $metaData = $data['meta'];
-            // Ensure correct document_type
+            // Ensure document_type is valid
             $metaData['document_type'] = self::DOCUMENT_TYPE;
 
             $this->meta = Meta::fromArray($metaData);
@@ -270,6 +273,9 @@ class Sale extends BaseModel
             self::STATUS_INACTIVE,
             self::STATUS_COMPLETED,
             self::STATUS_CANCELLED,
+            self::STATUS_TERMINATED,
+            self::STATUS_LOST,
+            self::STATUS_WON,
         ];
 
         if (! in_array($status, $validStatuses)) {
