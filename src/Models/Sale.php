@@ -18,8 +18,11 @@ class Sale extends BaseModel
     public const STATUS_COMPLETED = 'completed';
 
     public const STATUS_CANCELLED = 'cancelled';
+
     public const STATUS_TERMINATED = 'terminated';
-    public const STATUS_LOST  = 'lost';
+
+    public const STATUS_LOST = 'lost';
+
     public const STATUS_WON = 'won';
 
     public const SELLING_STATUS_IDENTIFICATION = 'identification';
