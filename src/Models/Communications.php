@@ -23,6 +23,11 @@ class Communications extends BaseModel
             $this->setPhoneNumber($data['phone_number']);
         }
 
+        // Should maybe be called "second_phone_number" instead of "phone_number2"
+        if (isset($data['phone_number2'])) {
+            $this->setPhoneNumberTwo($data['phone_number2']);
+        }
+
         if (isset($data['mobile_phone'])) {
             $this->setMobilePhone($data['mobile_phone']);
         }
@@ -37,7 +42,7 @@ class Communications extends BaseModel
 
         // Handle any other fields
         foreach ($data as $key => $value) {
-            if (! in_array($key, ['phone_number', 'mobile_phone', 'email', 'fax'])) {
+            if (! in_array($key, ['phone_number', 'phone_number2', 'mobile_phone', 'email', 'fax'])) {
                 $this->set($key, $value);
             }
         }
@@ -58,6 +63,22 @@ class Communications extends BaseModel
         }
 
         return $this->set('phone_number', $phoneNumber);
+    }
+
+    /**
+     * Set the second phone number
+     *
+     * @param  string|null  $phoneNumberTwo  The second phone number or null to remove
+     * @return $this
+     */
+    public function setPhoneNumberTwo(?string $phoneNumberTwo): self
+    {
+        // Should maybe be called "second_phone_number" instead of "phone_number2"
+        if ($phoneNumberTwo === null) {
+            return $this->set('phone_number2', null);
+        }
+
+        return $this->set('phone_number2', $phoneNumberTwo);
     }
 
     /**
@@ -117,6 +138,15 @@ class Communications extends BaseModel
     public function getPhoneNumber(): ?string
     {
         return $this->get('phone_number');
+    }
+
+    /**
+     * Get the second phone number
+     */
+    public function getPhoneNumberTwo(): ?string
+    {
+        // Should maybe be called "second_phone_number" instead of "phone_number2"
+        return $this->get('phone_number2');
     }
 
     /**

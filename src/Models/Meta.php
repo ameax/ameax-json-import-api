@@ -119,7 +119,7 @@ class Meta extends BaseModel
 
         $validDocumentTypes = [self::DOCUMENT_TYPE_ORGANIZATION, self::DOCUMENT_TYPE_PRIVATE_PERSON, self::DOCUMENT_TYPE_RECEIPT, self::DOCUMENT_TYPE_SALE];
         if (! in_array($type, $validDocumentTypes)) {
-            throw new InvalidArgumentException('Document type must be one of: '.implode(', ', $validDocumentTypes));
+            throw new InvalidArgumentException('Document type must be one of: '.implode(', ', $validDocumentTypes).', got: '.$type);
         }
 
         return $this->set('document_type', $type);

@@ -89,7 +89,7 @@ class Sale extends BaseModel
         // Handle meta data
         if (isset($data['meta']) && is_array($data['meta'])) {
             $metaData = $data['meta'];
-            // Ensure correct document_type
+            // Ensure document_type is valid
             $metaData['document_type'] = self::DOCUMENT_TYPE;
 
             $this->meta = Meta::fromArray($metaData);

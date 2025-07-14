@@ -22,6 +22,7 @@ try {
         ->setHouseNumber('123')
         ->setEmail('john.doe@example.com')
         ->setPhone('+49 123 4567890')
+        ->setPhoneTwo('+49 123 4567891')  // Second phone number
         ->setCustomerNumber('CUST12345');
 
     // You would typically call sendToAmeax() to send the data to Ameax
@@ -55,6 +56,7 @@ try {
         'communications' => [
             'email' => 'jane.doe@example.com',
             'phone_number' => '+49 987 6543210',
+            'phone_number2' => '+49 987 6543211',  // Second phone number in array data
             'mobile_phone' => '+49 123 9876543',
         ],
         'identifiers' => [

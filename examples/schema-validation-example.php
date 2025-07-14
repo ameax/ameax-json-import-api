@@ -17,14 +17,15 @@ $organization->setName('ACME Corporation')
     ->setHouseNumber('42')
     ->setEmail('info@example.com')
     ->setPhone('+49 30 1234567')
+    ->setPhoneTwo('+49 30 1234568')  // Second phone number
     ->setWebsite('https://www.example.com')
-    ->setVatId('DE123456789')
-    ->setTaxId('12345/67890');
+    ->setVatId('DE123456789');
 
 // Add a contact to the organization
 $organization->addContact('John', 'Doe', [
     'email' => 'john.doe@example.com',
     'phone' => '+49 30 1234567',
+    'phone_number2' => '+49 30 1234569',  // Second phone for contact
     'job_title' => 'CEO',
     'department' => 'Management',
 ]);

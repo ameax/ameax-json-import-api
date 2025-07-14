@@ -28,6 +28,7 @@ try {
         ->setHouseNumber('123')
         ->setEmail('info@acme-corp.com')
         ->setPhone('+49 30 123456789')
+        ->setPhoneTwo('+49 30 123456790')  // Second phone number
         ->setWebsite('https://www.acme-corp.com')
         ->setVatId('DE123456789')
         ->setTaxId('1234567890');
@@ -39,6 +40,7 @@ try {
         [
             'email' => 'john.doe@acme-corp.com',
             'phone' => '+49 30 123456789',
+            'phone_number2' => '+49 30 123456791',  // Second phone number for contact
             'job_title' => 'CEO',
             'department' => 'Management',
         ]
@@ -50,6 +52,8 @@ try {
         ->setFirstName('Jane')
         ->setLastName('Smith')
         ->setEmail('jane.smith@acme-corp.com')
+        ->setPhone('+49 30 123456792')
+        ->setPhoneTwo('+49 30 123456793')  // Demonstrate second phone number setter
         ->setJobTitle('CTO');
 
     $organization->addContactObject($contact);
