@@ -10,6 +10,8 @@ class Meta extends BaseModel
 
     public const DOCUMENT_TYPE_PRIVATE_PERSON = 'ameax_private_person_account';
 
+    public const DOCUMENT_TYPE_RECEIPT = 'ameax_receipt';
+
     public const DOCUMENT_TYPE_SALE = 'ameax_sale';
 
     public const SCHEMA_VERSION = '1.0';
@@ -33,7 +35,7 @@ class Meta extends BaseModel
     protected function populate(array $data): self
     {
         // Always ensure document type is valid, but keep the input value if it's valid
-        $validDocumentTypes = [self::DOCUMENT_TYPE_ORGANIZATION, self::DOCUMENT_TYPE_PRIVATE_PERSON, self::DOCUMENT_TYPE_SALE];
+        $validDocumentTypes = [self::DOCUMENT_TYPE_ORGANIZATION, self::DOCUMENT_TYPE_PRIVATE_PERSON, self::DOCUMENT_TYPE_RECEIPT, self::DOCUMENT_TYPE_SALE];
         if (isset($data['document_type']) && in_array($data['document_type'], $validDocumentTypes)) {
             $this->data['document_type'] = $data['document_type'];
         }
@@ -115,7 +117,7 @@ class Meta extends BaseModel
     public function setDocumentType(string $type): self
     {
 
-        $validDocumentTypes = [self::DOCUMENT_TYPE_ORGANIZATION, self::DOCUMENT_TYPE_PRIVATE_PERSON, self::DOCUMENT_TYPE_SALE];
+        $validDocumentTypes = [self::DOCUMENT_TYPE_ORGANIZATION, self::DOCUMENT_TYPE_PRIVATE_PERSON, self::DOCUMENT_TYPE_RECEIPT, self::DOCUMENT_TYPE_SALE];
         if (! in_array($type, $validDocumentTypes)) {
             throw new InvalidArgumentException('Document type must be one of: '.implode(', ', $validDocumentTypes).', got: '.$type);
         }

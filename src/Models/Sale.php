@@ -159,6 +159,11 @@ class Sale extends BaseModel
             $this->data['custom_data'] = $this->customData;
         }
 
+        // Handle create_actions
+        if (isset($data['create_actions']) && is_array($data['create_actions'])) {
+            $this->setCreateActions($data['create_actions']);
+        }
+
         return $this;
     }
 
@@ -472,6 +477,65 @@ class Sale extends BaseModel
     }
 
     /**
+     * Set create actions
+     *
+     * @param  array<int, array{type: string, remind_date?: string, subject?: string}>  $actions  The create actions
+     * @return $this
+     */
+    public function setCreateActions(array $actions): self
+    {
+        // Validate each action
+        foreach ($actions as $action) {
+            if (! isset($action['type'])) {
+                throw new InvalidArgumentException('Each action must have a type');
+            }
+
+            if ($action['type'] === 'remind') {
+                if (! isset($action['remind_date']) || ! isset($action['subject'])) {
+                    throw new InvalidArgumentException('Remind actions must have remind_date and subject');
+                }
+            }
+        }
+
+        return $this->set('create_actions', $actions);
+    }
+
+    /**
+     * Add a create action
+     *
+     * @param  array{type: string, remind_date?: string, subject?: string}  $action  The action to add
+     * @return $this
+     */
+    public function addCreateAction(array $action): self
+    {
+        $actions = $this->get('create_actions') ?? [];
+        $actions[] = $action;
+
+        return $this->setCreateActions($actions);
+    }
+
+    /**
+     * Add a remind action
+     *
+     * @param  string|\DateTime  $remindDate  The remind date
+     * @param  string  $subject  The subject
+     * @return $this
+     */
+    public function addRemindAction($remindDate, string $subject): self
+    {
+        // Convert DateTime to string if needed
+        if ($remindDate instanceof \DateTime) {
+            $remindDate = $remindDate->format('Y-m-d\TH:i:s');
+        }
+
+        return $this->addCreateAction([
+            'type' => 'remind',
+            'remind_date' => $remindDate,
+            'subject' => $subject,
+        ]);
+    }
+
+    /**
      * Get the external ID
      */
     public function getExternalId(): ?string
@@ -585,6 +649,16 @@ class Sale extends BaseModel
     public function getCustomData(): array
     {
         return $this->customData;
+    }
+
+    /**
+     * Get create actions
+     *
+     * @return array<int, array{type: string, remind_date?: string, subject?: string}>|null
+     */
+    public function getCreateActions(): ?array
+    {
+        return $this->get('create_actions');
     }
 
     /**

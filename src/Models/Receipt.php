@@ -594,6 +594,14 @@ class Receipt extends BaseModel
     }
 
     /**
+     * Get the sale external ID
+     */
+    public function getSaleExternalId(): ?string
+    {
+        return $this->get('sale_external_id');
+    }
+
+    /**
      * Get the customer number
      */
     public function getCustomerNumber(): ?string
