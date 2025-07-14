@@ -19,6 +19,12 @@ class Sale extends BaseModel
 
     public const STATUS_CANCELLED = 'cancelled';
 
+    public const STATUS_TERMINATED = 'terminated';
+
+    public const STATUS_LOST = 'lost';
+
+    public const STATUS_WON = 'won';
+
     public const SELLING_STATUS_IDENTIFICATION = 'identification';
 
     public const SELLING_STATUS_ACQUISITION = 'acquisition';
@@ -59,11 +65,11 @@ class Sale extends BaseModel
      */
     public function __construct()
     {
-        $this->meta = new Meta;
+        $this->meta = new Meta();
         $this->meta->setDocumentType(self::DOCUMENT_TYPE);
         $this->meta->setSchemaVersion(self::SCHEMA_VERSION);
 
-        $this->identifiers = new Identifiers;
+        $this->identifiers = new Identifiers();
 
         $this->data = [
             'meta' => $this->meta->toArray(),
@@ -151,6 +157,11 @@ class Sale extends BaseModel
         if (isset($data['custom_data']) && is_array($data['custom_data'])) {
             $this->customData = $data['custom_data'];
             $this->data['custom_data'] = $this->customData;
+        }
+
+        // Handle create_actions
+        if (isset($data['create_actions']) && is_array($data['create_actions'])) {
+            $this->setCreateActions($data['create_actions']);
         }
 
         return $this;
@@ -270,6 +281,9 @@ class Sale extends BaseModel
             self::STATUS_INACTIVE,
             self::STATUS_COMPLETED,
             self::STATUS_CANCELLED,
+            self::STATUS_TERMINATED,
+            self::STATUS_LOST,
+            self::STATUS_WON,
         ];
 
         if (! in_array($status, $validStatuses)) {
@@ -399,7 +413,7 @@ class Sale extends BaseModel
      */
     public function createRating(): Rating
     {
-        $this->rating = new Rating;
+        $this->rating = new Rating();
         $this->data['rating'] = $this->rating->toArray();
 
         return $this->rating;
@@ -460,6 +474,65 @@ class Sale extends BaseModel
         $this->data['custom_data'] = $data;
 
         return $this;
+    }
+
+    /**
+     * Set create actions
+     *
+     * @param  array<int, array{type: string, remind_date?: string, subject?: string}>  $actions  The create actions
+     * @return $this
+     */
+    public function setCreateActions(array $actions): self
+    {
+        // Validate each action
+        foreach ($actions as $action) {
+            if (! isset($action['type'])) {
+                throw new InvalidArgumentException('Each action must have a type');
+            }
+
+            if ($action['type'] === 'remind') {
+                if (! isset($action['remind_date']) || ! isset($action['subject'])) {
+                    throw new InvalidArgumentException('Remind actions must have remind_date and subject');
+                }
+            }
+        }
+
+        return $this->set('create_actions', $actions);
+    }
+
+    /**
+     * Add a create action
+     *
+     * @param  array{type: string, remind_date?: string, subject?: string}  $action  The action to add
+     * @return $this
+     */
+    public function addCreateAction(array $action): self
+    {
+        $actions = $this->get('create_actions') ?? [];
+        $actions[] = $action;
+
+        return $this->setCreateActions($actions);
+    }
+
+    /**
+     * Add a remind action
+     *
+     * @param  string|\DateTime  $remindDate  The remind date
+     * @param  string  $subject  The subject
+     * @return $this
+     */
+    public function addRemindAction($remindDate, string $subject): self
+    {
+        // Convert DateTime to string if needed
+        if ($remindDate instanceof \DateTime) {
+            $remindDate = $remindDate->format('Y-m-d\TH:i:s');
+        }
+
+        return $this->addCreateAction([
+            'type' => 'remind',
+            'remind_date' => $remindDate,
+            'subject' => $subject,
+        ]);
     }
 
     /**
@@ -576,6 +649,16 @@ class Sale extends BaseModel
     public function getCustomData(): array
     {
         return $this->customData;
+    }
+
+    /**
+     * Get create actions
+     *
+     * @return array<int, array{type: string, remind_date?: string, subject?: string}>|null
+     */
+    public function getCreateActions(): ?array
+    {
+        return $this->get('create_actions');
     }
 
     /**
