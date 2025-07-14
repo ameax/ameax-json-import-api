@@ -3,7 +3,7 @@
 use Ameax\AmeaxJsonImportApi\Models\Sale;
 
 it('can set new sale status values', function () {
-    $sale = new Sale();
+    $sale = new Sale;
 
     // Test new status values
     $sale->setSaleStatus(Sale::STATUS_TERMINATED);
@@ -17,7 +17,7 @@ it('can set new sale status values', function () {
 });
 
 it('validates sale status values', function () {
-    $sale = new Sale();
+    $sale = new Sale;
 
     expect(function () use ($sale) {
         $sale->setSaleStatus('invalid_status');
@@ -25,7 +25,7 @@ it('validates sale status values', function () {
 });
 
 it('can add remind actions', function () {
-    $sale = new Sale();
+    $sale = new Sale;
 
     $sale->addRemindAction('2024-12-25T10:00:00', 'Follow up on proposal');
 
@@ -39,7 +39,7 @@ it('can add remind actions', function () {
 });
 
 it('can add remind action with DateTime object', function () {
-    $sale = new Sale();
+    $sale = new Sale;
 
     $date = new DateTime('2024-12-25 10:00:00');
     $sale->addRemindAction($date, 'Follow up on proposal');
@@ -50,7 +50,7 @@ it('can add remind action with DateTime object', function () {
 });
 
 it('can set multiple create actions', function () {
-    $sale = new Sale();
+    $sale = new Sale;
 
     $actions = [
         [
@@ -70,7 +70,7 @@ it('can set multiple create actions', function () {
 });
 
 it('validates remind actions have required fields', function () {
-    $sale = new Sale();
+    $sale = new Sale;
 
     expect(function () use ($sale) {
         $sale->setCreateActions([
@@ -83,7 +83,7 @@ it('validates remind actions have required fields', function () {
 });
 
 it('validates actions have type field', function () {
-    $sale = new Sale();
+    $sale = new Sale;
 
     expect(function () use ($sale) {
         $sale->setCreateActions([
@@ -97,7 +97,7 @@ it('validates actions have type field', function () {
 });
 
 it('close date is optional', function () {
-    $sale = new Sale();
+    $sale = new Sale;
 
     $sale->setExternalId('SALE-001')
         ->setCustomerNumber('CUST-123')

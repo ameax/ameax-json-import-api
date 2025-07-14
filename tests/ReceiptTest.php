@@ -1,17 +1,17 @@
 <?php
 
-use Ameax\AmeaxJsonImportApi\Models\Receipt;
 use Ameax\AmeaxJsonImportApi\Models\LineItem;
+use Ameax\AmeaxJsonImportApi\Models\Receipt;
 
 it('can set sale external id', function () {
-    $receipt = new Receipt();
+    $receipt = new Receipt;
 
     $receipt->setSaleExternalId('SALE-001');
     expect($receipt->getSaleExternalId())->toBe('SALE-001');
 });
 
 it('can remove sale external id', function () {
-    $receipt = new Receipt();
+    $receipt = new Receipt;
 
     $receipt->setSaleExternalId('SALE-001');
     expect($receipt->getSaleExternalId())->toBe('SALE-001');
@@ -49,7 +49,7 @@ it('can create receipt from array with sale external id', function () {
 });
 
 it('sale external id is optional', function () {
-    $receipt = new Receipt();
+    $receipt = new Receipt;
 
     $receipt->setType(Receipt::TYPE_INVOICE)
         ->setReceiptNumber('INV-2024-001')
@@ -59,7 +59,7 @@ it('sale external id is optional', function () {
         ->setTaxMode(Receipt::TAX_MODE_NET)
         ->setTaxType(Receipt::TAX_TYPE_REGULAR)
         ->addLineItem(
-            (new LineItem())
+            (new LineItem)
                 ->setDescription('Product A')
                 ->setQuantity(1)
                 ->setPrice(100.00)
