@@ -1,7 +1,7 @@
 {
     "$schema": "http://json-schema.org/draft-07/schema#",
     "type": "object",
-    "required": ["meta", "identifiers", "customer", "subject", "sale_status", "selling_status", "user_external_id", "date", "amount", "probability", "close_date"],
+    "required": ["meta", "identifiers", "customer", "subject", "sale_status", "selling_status", "user_external_id", "date", "amount", "probability"],
     "properties": {
       "meta": {
         "type": "object",
