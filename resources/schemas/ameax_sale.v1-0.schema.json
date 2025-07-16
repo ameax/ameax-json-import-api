@@ -14,6 +14,12 @@
           "schema_version": {
             "type": "string",
             "pattern": "^\\d+\\.\\d+$"
+          },
+          "import_mode": {
+            "type": ["string", "null"],
+            "enum": ["create_or_update", "create_only", "update_only", null],
+            "default": "create_or_update",
+            "description": "Controls how records are processed during import. Defaults to create_or_update if not specified."
           }
         }
       },
