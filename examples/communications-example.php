@@ -6,7 +6,7 @@ use Ameax\AmeaxJsonImportApi\Models\Organization;
 use Ameax\AmeaxJsonImportApi\Models\PrivatePerson;
 
 // Example 1: Organization with all communication fields
-$organization = new Organization();
+$organization = new Organization;
 $organization->setName('Tech Corp International')
     ->setCustomerNumber('TECH-001')
     ->createAddress('10001', 'New York', 'US');
@@ -22,7 +22,7 @@ echo "Organization with all communication fields:\n";
 echo json_encode($organization->toArray(), JSON_PRETTY_PRINT)."\n\n";
 
 // Example 2: Private Person with all communication fields
-$privatePerson = new PrivatePerson();
+$privatePerson = new PrivatePerson;
 $privatePerson->setSalutation('Ms.')
     ->setFirstname('Jane')
     ->setLastname('Smith')
@@ -43,19 +43,19 @@ $dataWithAllFields = [
     'meta' => [
         'document_type' => 'ameax_organization_account',
         'schema_version' => '1.0',
-        'import_mode' => 'create_or_update'
+        'import_mode' => 'create_or_update',
     ],
     'name' => 'Complete Communications Example',
     'identifiers' => [
-        'customer_number' => 'COMM-003'
+        'customer_number' => 'COMM-003',
     ],
     'communications' => [
         'phone_number' => '+1 415-555-0100',
         'phone_number2' => '+1 415-555-0101',     // Secondary phone
         'mobile_phone' => '+1 650-555-0200',      // Mobile (new)
         'email' => 'info@complete-comm.com',
-        'fax' => '+1 415-555-0199'                // Fax (new)
-    ]
+        'fax' => '+1 415-555-0199',                // Fax (new)
+    ],
 ];
 
 $organizationFromArray = Organization::fromArray($dataWithAllFields);

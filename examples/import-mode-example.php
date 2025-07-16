@@ -7,7 +7,7 @@ use Ameax\AmeaxJsonImportApi\Models\Organization;
 use Ameax\AmeaxJsonImportApi\Models\Sale;
 
 // Example 1: Create-only mode - will only create new records
-$organizationCreateOnly = new Organization();
+$organizationCreateOnly = new Organization;
 $organizationCreateOnly->setName('New Company Inc.')
     ->setCustomerNumber('CUST-12345')
     ->createAddress('10001', 'New York', 'US');
@@ -19,7 +19,7 @@ echo "Organization with create_only mode:\n";
 echo json_encode($organizationCreateOnly->toArray(), JSON_PRETTY_PRINT)."\n\n";
 
 // Example 2: Update-only mode - will only update existing records
-$organizationUpdateOnly = new Organization();
+$organizationUpdateOnly = new Organization;
 $organizationUpdateOnly->setName('Updated Company Inc.')
     ->setCustomerNumber('CUST-67890');
 
@@ -30,7 +30,7 @@ echo "Organization with update_only mode:\n";
 echo json_encode($organizationUpdateOnly->toArray(), JSON_PRETTY_PRINT)."\n\n";
 
 // Example 3: Default mode (create_or_update) - will create or update as needed
-$organizationDefault = new Organization();
+$organizationDefault = new Organization;
 $organizationDefault->setName('Flexible Company Inc.')
     ->setCustomerNumber('CUST-11111');
 
@@ -41,7 +41,7 @@ echo "Organization with create_or_update mode (default):\n";
 echo json_encode($organizationDefault->toArray(), JSON_PRETTY_PRINT)."\n\n";
 
 // Example 4: Sale with import mode
-$sale = new Sale();
+$sale = new Sale;
 $sale->setSubject('New Deal')
     ->setSaleStatus('active')
     ->setSellingStatus('qualification')
