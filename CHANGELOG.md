@@ -2,13 +2,24 @@
 
 All notable changes to `ameax-json-import-api` will be documented in this file.
 
+## v1.0.2 - 2025-07-16
+
+### What's Changed
+
+- Add import mode support and update communication fields (#5)
+- Update justinrainbow/json-schema dependency to ^6.4
+
+Full Changelog: https://github.com/ameax/ameax-json-import-api/compare/v1.0.1...v1.0.2
+
 ## 1.1.1 - 2025-06-01
 
 ### Added
+
 - Complete documentation for Receipt and Sale models
 - Examples for all new document types in README
 
 ### Fixed
+
 - PHPStan level 6 compliance with proper array type annotations
 - Added missing sendReceipt and sendSale methods to API client
 - Improved type safety with array shape specifications
@@ -16,6 +27,7 @@ All notable changes to `ameax-json-import-api` will be documented in this file.
 ## 1.1.0 - 2025-06-01
 
 ### Added
+
 - Support for new JSON schema v1.0 with `ameax_internal_id` field
 - New Receipt model for handling invoices, orders, offers, credit notes, and cancellations
 - New LineItem model with tax calculation support for receipts
@@ -25,6 +37,7 @@ All notable changes to `ameax-json-import-api` will be documented in this file.
 - Documentation for Laravel API backend requirements (`docs/todo_lara_api.md`)
 
 ### Changed
+
 - Organization schema renamed to include v1-0 version suffix
 - Private person now supports identifiers object structure
 - All document types now include `ameax_internal_id` in identifiers
