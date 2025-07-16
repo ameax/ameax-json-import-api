@@ -7,6 +7,12 @@
       "properties": {
         "document_type": { "type": "string", "enum": ["ameax_organization_account"] },
         "schema_version": { "type": "string" },
+        "import_mode": {
+          "type": ["string", "null"],
+          "enum": ["create_or_update", "create_only", "update_only", null],
+          "default": "create_or_update",
+          "description": "Controls how records are processed during import. Defaults to create_or_update if not specified."
+        },
         "import_status": {
           "type": "object",
           "additionalProperties": true

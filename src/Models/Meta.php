@@ -16,6 +16,12 @@ class Meta extends BaseModel
 
     public const SCHEMA_VERSION = '1.0';
 
+    public const IMPORT_MODE_CREATE_OR_UPDATE = 'create_or_update';
+
+    public const IMPORT_MODE_CREATE_ONLY = 'create_only';
+
+    public const IMPORT_MODE_UPDATE_ONLY = 'update_only';
+
     /**
      * Constructor initializes a new meta with document type and schema version
      */
@@ -46,6 +52,11 @@ class Meta extends BaseModel
             $this->data['schema_version'] = self::SCHEMA_VERSION;
         }
 
+        // Handle import_mode if present
+        if (isset($data['import_mode'])) {
+            $this->setImportMode($data['import_mode']);
+        }
+
         // Handle import_status if present
         if (isset($data['import_status']) && is_array($data['import_status'])) {
             $this->setImportStatus($data['import_status']);
@@ -53,7 +64,7 @@ class Meta extends BaseModel
 
         // Handle any other fields
         foreach ($data as $key => $value) {
-            if (! in_array($key, ['document_type', 'schema_version', 'import_status'])) {
+            if (! in_array($key, ['document_type', 'schema_version', 'import_mode', 'import_status'])) {
                 $this->set($key, $value);
             }
         }
@@ -71,6 +82,24 @@ class Meta extends BaseModel
     {
 
         return $this->set('schema_version', $version);
+    }
+
+    /**
+     * Set the import mode
+     *
+     * @param  string|null  $mode  The import mode
+     * @return $this
+     */
+    public function setImportMode(?string $mode): self
+    {
+        if ($mode !== null) {
+            $validModes = [self::IMPORT_MODE_CREATE_OR_UPDATE, self::IMPORT_MODE_CREATE_ONLY, self::IMPORT_MODE_UPDATE_ONLY];
+            if (! in_array($mode, $validModes)) {
+                throw new InvalidArgumentException('Import mode must be one of: '.implode(', ', $validModes).', got: '.$mode);
+            }
+        }
+
+        return $this->set('import_mode', $mode);
     }
 
     /**
@@ -98,6 +127,14 @@ class Meta extends BaseModel
     public function getSchemaVersion(): string
     {
         return $this->get('schema_version');
+    }
+
+    /**
+     * Get the import mode
+     */
+    public function getImportMode(): ?string
+    {
+        return $this->get('import_mode');
     }
 
     /**
