@@ -79,6 +79,7 @@
           "category": { "type": ["string", "null"] },
           "description": { "type": "string" },
           "quantity": { "type": "number" },
+          "uom": { "type": ["string", "null"] },
           "price": { "type": "number" },
           "discount": { "type": ["number", "null"] },
           "discount_type": { "type": ["string", "null"], "enum": ["percent", "amount", null] },
@@ -87,6 +88,44 @@
         },
         "required": ["description", "quantity", "price", "tax_rate", "tax_type"]
       }
+    },
+    "document_pdf": {
+      "type": ["object", "null"],
+      "properties": {
+        "type": { 
+          "type": "string", 
+          "enum": ["base64", "url"],
+          "description": "Method of providing the PDF document"
+        },
+        "content": { 
+          "type": "string",
+          "description": "Base64 encoded PDF content (when type is 'base64')"
+        },
+        "url": { 
+          "type": "string",
+          "format": "uri",
+          "description": "HTTPS URL to download the PDF (when type is 'url')"
+        }
+      },
+      "required": ["type"],
+      "allOf": [
+        {
+          "if": {
+            "properties": { "type": { "const": "base64" } }
+          },
+          "then": {
+            "required": ["content"]
+          }
+        },
+        {
+          "if": {
+            "properties": { "type": { "const": "url" } }
+          },
+          "then": {
+            "required": ["url"]
+          }
+        }
+      ]
     },
     "custom_data": {
       "type": ["object", "null"],
