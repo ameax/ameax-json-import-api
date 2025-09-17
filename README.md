@@ -99,6 +99,7 @@ try {
 use Ameax\AmeaxJsonImportApi\AmeaxJsonImportApi;
 use Ameax\AmeaxJsonImportApi\Models\Receipt;
 use Ameax\AmeaxJsonImportApi\Models\LineItem;
+use Ameax\AmeaxJsonImportApi\Models\DocumentPdf;
 
 // Initialize the client
 $client = new AmeaxJsonImportApi(
@@ -128,6 +129,17 @@ $lineItem
     ->setTaxType(LineItem::TAX_TYPE_REGULAR);
 
 $receipt->addLineItem($lineItem);
+
+// Add PDF document attachment (optional)
+// Option 1: From base64 encoded content
+$receipt->setDocumentPdfFromBase64($base64PdfContent);
+
+// Option 2: From URL
+$receipt->setDocumentPdfFromUrl('https://example.com/invoice.pdf');
+
+// Option 3: Using DocumentPdf object
+$pdf = DocumentPdf::fromBase64($base64PdfContent);
+$receipt->setDocumentPdf($pdf);
 
 // Send to Ameax API
 try {
@@ -346,6 +358,13 @@ Receipts represent invoices, orders, offers, credit notes, and cancellation docu
             'tax_rate' => 19,
             'tax_type' => 'regular'
         ]
+    ],
+    'document_pdf' => [
+        'type' => 'base64',
+        'content' => 'JVBERi0xLjQK...' // base64 encoded PDF content
+        // OR use URL mode:
+        // 'type' => 'url',
+        // 'url' => 'https://example.com/invoice.pdf'
     ],
     'custom_data' => [
         'payment_terms' => '30 days net'
