@@ -367,7 +367,10 @@ class Sale extends BaseModel
             throw new InvalidArgumentException('Amount must be greater than or equal to 0.');
         }
 
-        return $this->set('amount', (float) $amount);
+        // Round to 2 decimal places for monetary consistency
+        $amount = round((float) $amount, 2);
+
+        return $this->set('amount', $amount);
     }
 
     /**
