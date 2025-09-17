@@ -64,6 +64,11 @@ class Receipt extends BaseModel
     protected array $lineItems = [];
 
     /**
+     * @var DocumentPdf|null The PDF document attachment
+     */
+    protected ?DocumentPdf $documentPdf = null;
+
+    /**
      * @var array<string, mixed> Custom data fields
      */
     protected array $customData = [];
@@ -176,6 +181,11 @@ class Receipt extends BaseModel
             foreach ($data['line_items'] as $lineItemData) {
                 $this->addLineItem(LineItem::fromArray($lineItemData));
             }
+        }
+
+        // Handle document PDF
+        if (isset($data['document_pdf']) && is_array($data['document_pdf'])) {
+            $this->setDocumentPdf(DocumentPdf::fromArray($data['document_pdf']));
         }
 
         // Handle custom data
@@ -554,6 +564,45 @@ class Receipt extends BaseModel
     }
 
     /**
+     * Set the PDF document attachment
+     *
+     * @param  DocumentPdf|null  $documentPdf  The PDF document or null to remove
+     * @return $this
+     */
+    public function setDocumentPdf(?DocumentPdf $documentPdf): self
+    {
+        if ($documentPdf === null) {
+            $this->documentPdf = null;
+            return $this->remove('document_pdf');
+        }
+
+        $this->documentPdf = $documentPdf;
+        return $this->set('document_pdf', $documentPdf->toArray());
+    }
+
+    /**
+     * Set PDF document from base64 content
+     *
+     * @param  string  $base64Content  The base64 encoded PDF content
+     * @return $this
+     */
+    public function setDocumentPdfFromBase64(string $base64Content): self
+    {
+        return $this->setDocumentPdf(DocumentPdf::fromBase64($base64Content));
+    }
+
+    /**
+     * Set PDF document from URL
+     *
+     * @param  string  $url  The HTTPS URL to the PDF document
+     * @return $this
+     */
+    public function setDocumentPdfFromUrl(string $url): self
+    {
+        return $this->setDocumentPdf(DocumentPdf::fromUrl($url));
+    }
+
+    /**
      * Get the type
      */
     public function getType(): ?string
@@ -635,6 +684,14 @@ class Receipt extends BaseModel
     public function getCustomData(): array
     {
         return $this->customData;
+    }
+
+    /**
+     * Get the PDF document attachment
+     */
+    public function getDocumentPdf(): ?DocumentPdf
+    {
+        return $this->documentPdf;
     }
 
     /**

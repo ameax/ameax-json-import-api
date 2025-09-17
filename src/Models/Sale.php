@@ -363,10 +363,11 @@ class Sale extends BaseModel
             throw new InvalidArgumentException('Amount must be numeric.');
         }
 
-        // Round to 2 decimal places
-        $amount = round((float) $amount, 2);
+        if ($amount < 0) {
+            throw new InvalidArgumentException('Amount must be greater than or equal to 0.');
+        }
 
-        return $this->set('amount', $amount);
+        return $this->set('amount', (float) $amount);
     }
 
     /**
