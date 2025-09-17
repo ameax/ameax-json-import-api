@@ -79,6 +79,7 @@
           "category": { "type": ["string", "null"] },
           "description": { "type": "string" },
           "quantity": { "type": "number" },
+          "uom": { "type": ["string", "null"] },
           "price": { "type": "number" },
           "discount": { "type": ["number", "null"] },
           "discount_type": { "type": ["string", "null"], "enum": ["percent", "amount", null] },
