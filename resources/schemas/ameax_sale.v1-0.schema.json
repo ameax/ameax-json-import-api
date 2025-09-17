@@ -77,9 +77,7 @@
       },
       "amount": {
         "type": "number",
-        "minimum": 0,
-        "multipleOf": 0.01,
-        "pattern": "^\\d+\\.\\d{2}$"
+        "minimum": 0
       },
       "probability": {
         "type": "integer",
