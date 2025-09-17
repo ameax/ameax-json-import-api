@@ -126,7 +126,8 @@ $lineItem
     ->setQuantity(2)
     ->setPrice(100.00)
     ->setTaxRate(19)
-    ->setTaxType(LineItem::TAX_TYPE_REGULAR);
+    ->setTaxType(LineItem::TAX_TYPE_REGULAR)
+    ->setUom('pcs'); // Unit of measurement (optional)
 
 $receipt->addLineItem($lineItem);
 
@@ -356,7 +357,8 @@ Receipts represent invoices, orders, offers, credit notes, and cancellation docu
             'quantity' => 10,
             'price' => 150.00,
             'tax_rate' => 19,
-            'tax_type' => 'regular'
+            'tax_type' => 'regular',
+            'uom' => 'hours'  // Unit of measurement (optional)
         ]
     ],
     'document_pdf' => [

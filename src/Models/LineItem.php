@@ -68,6 +68,10 @@ class LineItem extends BaseModel
             $this->setTaxType($data['tax_type']);
         }
 
+        if (isset($data['uom'])) {
+            $this->setUom($data['uom']);
+        }
+
         return $this;
     }
 
@@ -219,6 +223,21 @@ class LineItem extends BaseModel
     }
 
     /**
+     * Set the unit of measurement
+     *
+     * @param  string|null  $uom  The unit of measurement or null to remove
+     * @return $this
+     */
+    public function setUom(?string $uom): self
+    {
+        if ($uom === null) {
+            return $this->remove('uom');
+        }
+
+        return $this->set('uom', $uom);
+    }
+
+    /**
      * Get the article number
      */
     public function getArticleNumber(): ?string
@@ -288,6 +307,14 @@ class LineItem extends BaseModel
     public function getTaxType(): ?string
     {
         return $this->get('tax_type');
+    }
+
+    /**
+     * Get the unit of measurement
+     */
+    public function getUom(): ?string
+    {
+        return $this->get('uom');
     }
 
     /**
