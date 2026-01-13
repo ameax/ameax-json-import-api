@@ -35,7 +35,7 @@
     "sale_external_id": { "type": ["string", "null"] },
     "date": { "type": "string", "format": "date" },
     "customer_number": { "type": "string" },
-    "status": { "type": "string", "enum": ["draft", "pending", "completed", "cancelled"] },
+    "status": { "type": "string", "enum": ["draft", "on_hold", "read_for_dispatch", "in_progress", "outstanding_payment", "completed", "cancellation", "outstanding", "obsolet", "refused", "accepted", "cancelled", "paused"] },
     "tax_mode": { "type": "string", "enum": ["net", "gross"] },
     "tax_type": { "type": "string", "enum": ["regular", "reduced", "exempt_eu", "exempt_third", "exempt_other"] },
     "subject": { "type": ["string", "null"] },
