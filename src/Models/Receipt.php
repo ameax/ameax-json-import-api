@@ -437,6 +437,7 @@ class Receipt extends BaseModel
             self::STATUS_READY_FOR_DISPATCH,
             self::STATUS_ON_HOLD,
             self::STATUS_OUTSTANDING,
+            self::STATUS_OUTSTANDING_PAYMENT,
             self::STATUS_COMPLETED,
         ],
         self::TYPE_CREDIT_NOTE => [
@@ -444,6 +445,7 @@ class Receipt extends BaseModel
             self::STATUS_READY_FOR_DISPATCH,
             self::STATUS_ON_HOLD,
             self::STATUS_OUTSTANDING,
+            self::STATUS_OUTSTANDING_PAYMENT,
             self::STATUS_COMPLETED,
         ],
         self::TYPE_CANCELLATION => [
@@ -451,6 +453,7 @@ class Receipt extends BaseModel
             self::STATUS_READY_FOR_DISPATCH,
             self::STATUS_ON_HOLD,
             self::STATUS_OUTSTANDING,
+            self::STATUS_OUTSTANDING_PAYMENT,
             self::STATUS_COMPLETED,
         ],
     ];

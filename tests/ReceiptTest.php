@@ -193,6 +193,7 @@ it('provides valid statuses per receipt type', function () {
     expect($invoiceStatuses)->toContain(Receipt::STATUS_READY_FOR_DISPATCH);
     expect($invoiceStatuses)->toContain(Receipt::STATUS_ON_HOLD);
     expect($invoiceStatuses)->toContain(Receipt::STATUS_OUTSTANDING);
+    expect($invoiceStatuses)->toContain(Receipt::STATUS_OUTSTANDING_PAYMENT);
     expect($invoiceStatuses)->toContain(Receipt::STATUS_COMPLETED);
     expect($invoiceStatuses)->not->toContain(Receipt::STATUS_CANCELLED);
 });
