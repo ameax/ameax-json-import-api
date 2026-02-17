@@ -23,11 +23,32 @@ class Receipt extends BaseModel
 
     public const STATUS_DRAFT = 'draft';
 
-    public const STATUS_PENDING = 'pending';
+    public const STATUS_ON_HOLD = 'on_hold';
+
+    public const STATUS_READY_FOR_DISPATCH = 'read_for_dispatch';
+
+    public const STATUS_IN_PROGRESS = 'in_progress';
+
+    public const STATUS_OUTSTANDING_PAYMENT = 'outstanding_payment';
 
     public const STATUS_COMPLETED = 'completed';
 
+    public const STATUS_CANCELLATION = 'cancellation';
+
+    public const STATUS_OUTSTANDING = 'outstanding';
+
+    public const STATUS_OBSOLET = 'obsolet';
+
+    public const STATUS_REFUSED = 'refused';
+
+    public const STATUS_ACCEPTED = 'accepted';
+
     public const STATUS_CANCELLED = 'cancelled';
+
+    public const STATUS_PAUSED = 'paused';
+
+    /** @deprecated Use type-specific status values instead. Server does not accept 'pending'. */
+    public const STATUS_PENDING = 'pending';
 
     public const TAX_MODE_NET = 'net';
 
@@ -78,11 +99,11 @@ class Receipt extends BaseModel
      */
     public function __construct()
     {
-        $this->meta = new Meta;
+        $this->meta = new Meta();
         $this->meta->setDocumentType(self::DOCUMENT_TYPE);
         $this->meta->setSchemaVersion(self::SCHEMA_VERSION);
 
-        $this->identifiers = new Identifiers;
+        $this->identifiers = new Identifiers();
 
         $this->data = [
             'meta' => $this->meta->toArray(),
@@ -141,6 +162,10 @@ class Receipt extends BaseModel
 
         if (isset($data['customer_number'])) {
             $this->setCustomerNumber($data['customer_number']);
+        }
+
+        if (isset($data['customer_external_id'])) {
+            $this->setCustomerExternalId($data['customer_external_id']);
         }
 
         if (isset($data['status'])) {
@@ -352,6 +377,85 @@ class Receipt extends BaseModel
     }
 
     /**
+     * Set the customer external ID
+     *
+     * @param  string|null  $customerExternalId  The customer external ID or null to remove
+     * @return $this
+     */
+    public function setCustomerExternalId(?string $customerExternalId): self
+    {
+        if ($customerExternalId === null) {
+            return $this->remove('customer_external_id');
+        }
+
+        return $this->set('customer_external_id', $customerExternalId);
+    }
+
+    /**
+     * All valid status values (including deprecated 'pending' for backwards compatibility)
+     *
+     * @var list<string>
+     */
+    public const VALID_STATUSES = [
+        self::STATUS_DRAFT,
+        self::STATUS_ON_HOLD,
+        self::STATUS_READY_FOR_DISPATCH,
+        self::STATUS_IN_PROGRESS,
+        self::STATUS_OUTSTANDING_PAYMENT,
+        self::STATUS_COMPLETED,
+        self::STATUS_CANCELLATION,
+        self::STATUS_OUTSTANDING,
+        self::STATUS_OBSOLET,
+        self::STATUS_REFUSED,
+        self::STATUS_ACCEPTED,
+        self::STATUS_CANCELLED,
+        self::STATUS_PAUSED,
+        self::STATUS_PENDING, // @phpstan-ignore classConstant.deprecated
+    ];
+
+    /**
+     * Valid statuses per receipt type (as enforced by the ameax server)
+     *
+     * @var array<string, list<string>>
+     */
+    public const STATUSES_BY_TYPE = [
+        self::TYPE_OFFER => [
+            self::STATUS_DRAFT,
+            self::STATUS_OUTSTANDING,
+            self::STATUS_ACCEPTED,
+            self::STATUS_OBSOLET,
+            self::STATUS_REFUSED,
+        ],
+        self::TYPE_ORDER => [
+            self::STATUS_DRAFT,
+            self::STATUS_IN_PROGRESS,
+            self::STATUS_COMPLETED,
+            self::STATUS_CANCELLED,
+        ],
+        self::TYPE_INVOICE => [
+            self::STATUS_DRAFT,
+            self::STATUS_READY_FOR_DISPATCH,
+            self::STATUS_ON_HOLD,
+            self::STATUS_OUTSTANDING,
+            self::STATUS_COMPLETED,
+        ],
+        self::TYPE_CREDIT_NOTE => [
+            self::STATUS_DRAFT,
+            self::STATUS_READY_FOR_DISPATCH,
+            self::STATUS_ON_HOLD,
+            self::STATUS_OUTSTANDING,
+            self::STATUS_COMPLETED,
+        ],
+        self::TYPE_CANCELLATION => [
+            self::STATUS_DRAFT,
+            self::STATUS_READY_FOR_DISPATCH,
+            self::STATUS_ON_HOLD,
+            self::STATUS_OUTSTANDING,
+            self::STATUS_COMPLETED,
+        ],
+    ];
+
+    /**
      * Set the status
      *
      * @param  string  $status  The status
@@ -359,18 +463,22 @@ class Receipt extends BaseModel
      */
     public function setStatus(string $status): self
     {
-        $validStatuses = [
-            self::STATUS_DRAFT,
-            self::STATUS_PENDING,
-            self::STATUS_COMPLETED,
-            self::STATUS_CANCELLED,
-        ];
-
-        if (! in_array($status, $validStatuses)) {
-            throw new InvalidArgumentException('Invalid status. Valid statuses are: '.implode(', ', $validStatuses));
+        if (! in_array($status, self::VALID_STATUSES)) {
+            throw new InvalidArgumentException('Invalid status. Valid statuses are: '.implode(', ', self::VALID_STATUSES));
         }
 
         return $this->set('status', $status);
+    }
+
+    /**
+     * Get the valid statuses for a given receipt type
+     *
+     * @param  string  $type  The receipt type
+     * @return list<string>
+     */
+    public static function validStatusesForType(string $type): array
+    {
+        return self::STATUSES_BY_TYPE[$type] ?? [];
     }
 
     /**
@@ -656,6 +764,14 @@ class Receipt extends BaseModel
     public function getCustomerNumber(): ?string
     {
         return $this->get('customer_number');
+    }
+
+    /**
+     * Get the customer external ID
+     */
+    public function getCustomerExternalId(): ?string
+    {
+        return $this->get('customer_external_id');
     }
 
     /**
