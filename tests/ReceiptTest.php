@@ -5,14 +5,14 @@ use Ameax\AmeaxJsonImportApi\Models\LineItem;
 use Ameax\AmeaxJsonImportApi\Models\Receipt;
 
 it('can set sale external id', function () {
-    $receipt = new Receipt();
+    $receipt = new Receipt;
 
     $receipt->setSaleExternalId('SALE-001');
     expect($receipt->getSaleExternalId())->toBe('SALE-001');
 });
 
 it('can remove sale external id', function () {
-    $receipt = new Receipt();
+    $receipt = new Receipt;
 
     $receipt->setSaleExternalId('SALE-001');
     expect($receipt->getSaleExternalId())->toBe('SALE-001');
@@ -50,7 +50,7 @@ it('can create receipt from array with sale external id', function () {
 });
 
 it('sale external id is optional', function () {
-    $receipt = new Receipt();
+    $receipt = new Receipt;
 
     $receipt->setType(Receipt::TYPE_INVOICE)
         ->setReceiptNumber('INV-2024-001')
@@ -60,7 +60,7 @@ it('sale external id is optional', function () {
         ->setTaxMode(Receipt::TAX_MODE_NET)
         ->setTaxType(Receipt::TAX_TYPE_REGULAR)
         ->addLineItem(
-            (new LineItem())
+            (new LineItem)
                 ->setDescription('Product A')
                 ->setQuantity(1)
                 ->setPrice(100.00)
@@ -75,7 +75,7 @@ it('sale external id is optional', function () {
 });
 
 it('can set document pdf from base64', function () {
-    $receipt = new Receipt();
+    $receipt = new Receipt;
     $base64Content = 'JVBERi0xLjQK'; // Sample PDF base64 content
 
     $receipt->setDocumentPdfFromBase64($base64Content);
@@ -92,7 +92,7 @@ it('can set document pdf from base64', function () {
 });
 
 it('can set document pdf from url', function () {
-    $receipt = new Receipt();
+    $receipt = new Receipt;
     $url = 'https://example.com/invoice.pdf';
 
     $receipt->setDocumentPdfFromUrl($url);
@@ -109,7 +109,7 @@ it('can set document pdf from url', function () {
 });
 
 it('can set document pdf with DocumentPdf object', function () {
-    $receipt = new Receipt();
+    $receipt = new Receipt;
     $pdf = DocumentPdf::fromBase64('JVBERi0xLjQK');
 
     $receipt->setDocumentPdf($pdf);
@@ -122,7 +122,7 @@ it('can set document pdf with DocumentPdf object', function () {
 });
 
 it('can remove document pdf', function () {
-    $receipt = new Receipt();
+    $receipt = new Receipt;
 
     $receipt->setDocumentPdfFromBase64('JVBERi0xLjQK');
     expect($receipt->getDocumentPdf())->not->toBeNull();
@@ -135,7 +135,7 @@ it('can remove document pdf', function () {
 });
 
 it('accepts all server-defined status values', function () {
-    $receipt = new Receipt();
+    $receipt = new Receipt;
 
     $serverStatuses = [
         Receipt::STATUS_DRAFT,
@@ -160,14 +160,14 @@ it('accepts all server-defined status values', function () {
 });
 
 it('accepts deprecated pending status for backwards compatibility', function () {
-    $receipt = new Receipt();
+    $receipt = new Receipt;
 
     $receipt->setStatus(Receipt::STATUS_PENDING);
     expect($receipt->getStatus())->toBe('pending');
 });
 
 it('rejects invalid status values', function () {
-    $receipt = new Receipt();
+    $receipt = new Receipt;
 
     $receipt->setStatus('nonexistent_status');
 })->throws(InvalidArgumentException::class);

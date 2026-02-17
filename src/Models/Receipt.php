@@ -99,11 +99,11 @@ class Receipt extends BaseModel
      */
     public function __construct()
     {
-        $this->meta = new Meta();
+        $this->meta = new Meta;
         $this->meta->setDocumentType(self::DOCUMENT_TYPE);
         $this->meta->setSchemaVersion(self::SCHEMA_VERSION);
 
-        $this->identifiers = new Identifiers();
+        $this->identifiers = new Identifiers;
 
         $this->data = [
             'meta' => $this->meta->toArray(),
@@ -681,10 +681,12 @@ class Receipt extends BaseModel
     {
         if ($documentPdf === null) {
             $this->documentPdf = null;
+
             return $this->remove('document_pdf');
         }
 
         $this->documentPdf = $documentPdf;
+
         return $this->set('document_pdf', $documentPdf->toArray());
     }
 
