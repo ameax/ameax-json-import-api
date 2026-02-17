@@ -47,17 +47,17 @@ it('can create document pdf from array with url', function () {
 it('validates pdf type', function () {
     $pdf = new DocumentPdf;
 
-    expect(fn() => $pdf->setType('invalid'))
+    expect(fn () => $pdf->setType('invalid'))
         ->toThrow(InvalidArgumentException::class, 'Invalid PDF type. Valid types are: base64, url');
 });
 
 it('validates url format', function () {
     $pdf = new DocumentPdf;
 
-    expect(fn() => $pdf->setUrl('invalid-url'))
+    expect(fn () => $pdf->setUrl('invalid-url'))
         ->toThrow(InvalidArgumentException::class, 'URL must be a valid HTTPS URL');
 
-    expect(fn() => $pdf->setUrl('http://example.com/file.pdf'))
+    expect(fn () => $pdf->setUrl('http://example.com/file.pdf'))
         ->toThrow(InvalidArgumentException::class, 'URL must be a valid HTTPS URL');
 });
 
