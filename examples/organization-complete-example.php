@@ -83,7 +83,7 @@ try {
     // echo "Organization sent successfully!\n";
     // echo json_encode($response, JSON_PRETTY_PRINT) . "\n";
 
-} catch (\Exception $e) {
+} catch (Exception $e) {
     // Handle errors
     echo 'Error: '.$e->getMessage()."\n";
 }

@@ -41,6 +41,6 @@ try {
     // $response = $organization->sendToAmeax();
     // echo "Organization sent successfully!\n";
     // echo json_encode($response, JSON_PRETTY_PRINT) . "\n";
-} catch (\Exception $e) {
+} catch (Exception $e) {
     echo 'Error: '.$e->getMessage()."\n";
 }

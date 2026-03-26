@@ -91,8 +91,8 @@ try {
     echo "Organization successfully sent to Ameax!\n";
     echo 'Response: '.json_encode($response, JSON_PRETTY_PRINT)."\n";
 
-} catch (\InvalidArgumentException $e) {
+} catch (InvalidArgumentException $e) {
     echo 'Invalid argument: '.$e->getMessage()."\n";
-} catch (\Exception $e) {
+} catch (Exception $e) {
     echo 'Error: '.$e->getMessage()."\n";
 }
