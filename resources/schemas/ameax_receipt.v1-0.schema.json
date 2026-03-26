@@ -34,7 +34,8 @@
     "user_external_id": { "type": ["string", "null"] },
     "sale_external_id": { "type": ["string", "null"] },
     "date": { "type": "string", "format": "date" },
-    "customer_number": { "type": "string" },
+    "customer_number": { "type": ["string", "null"] },
+    "customer_external_id": { "type": ["string", "null"] },
     "status": { "type": "string", "enum": ["draft", "on_hold", "read_for_dispatch", "in_progress", "outstanding_payment", "completed", "cancellation", "outstanding", "obsolet", "refused", "accepted", "cancelled", "paused"] },
     "tax_mode": { "type": "string", "enum": ["net", "gross"] },
     "tax_type": { "type": "string", "enum": ["regular", "reduced", "exempt_eu", "exempt_third", "exempt_other"] },
@@ -132,5 +133,9 @@
       "additionalProperties": true
     }
   },
-  "required": ["meta", "type", "identifiers", "date", "customer_number", "status", "tax_mode", "tax_type", "line_items"]
+  "required": ["meta", "type", "identifiers", "date", "status", "tax_mode", "tax_type", "line_items"],
+  "anyOf": [
+    { "required": ["customer_number"] },
+    { "required": ["customer_external_id"] }
+  ]
 }

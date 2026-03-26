@@ -134,6 +134,75 @@ it('can remove document pdf', function () {
     expect($data)->not->toHaveKey('document_pdf');
 });
 
+it('accepts all server-defined status values', function () {
+    $receipt = new Receipt;
+
+    $serverStatuses = [
+        Receipt::STATUS_DRAFT,
+        Receipt::STATUS_ON_HOLD,
+        Receipt::STATUS_READY_FOR_DISPATCH,
+        Receipt::STATUS_IN_PROGRESS,
+        Receipt::STATUS_OUTSTANDING_PAYMENT,
+        Receipt::STATUS_COMPLETED,
+        Receipt::STATUS_CANCELLATION,
+        Receipt::STATUS_OUTSTANDING,
+        Receipt::STATUS_OBSOLET,
+        Receipt::STATUS_REFUSED,
+        Receipt::STATUS_ACCEPTED,
+        Receipt::STATUS_CANCELLED,
+        Receipt::STATUS_PAUSED,
+    ];
+
+    foreach ($serverStatuses as $status) {
+        $receipt->setStatus($status);
+        expect($receipt->getStatus())->toBe($status);
+    }
+});
+
+it('accepts deprecated pending status for backwards compatibility', function () {
+    $receipt = new Receipt;
+
+    $receipt->setStatus(Receipt::STATUS_PENDING);
+    expect($receipt->getStatus())->toBe('pending');
+});
+
+it('rejects invalid status values', function () {
+    $receipt = new Receipt;
+
+    $receipt->setStatus('nonexistent_status');
+})->throws(InvalidArgumentException::class);
+
+it('provides valid statuses per receipt type', function () {
+    $offerStatuses = Receipt::validStatusesForType(Receipt::TYPE_OFFER);
+    expect($offerStatuses)->toContain(Receipt::STATUS_DRAFT);
+    expect($offerStatuses)->toContain(Receipt::STATUS_OUTSTANDING);
+    expect($offerStatuses)->toContain(Receipt::STATUS_ACCEPTED);
+    expect($offerStatuses)->toContain(Receipt::STATUS_OBSOLET);
+    expect($offerStatuses)->toContain(Receipt::STATUS_REFUSED);
+    expect($offerStatuses)->not->toContain(Receipt::STATUS_COMPLETED);
+
+    $orderStatuses = Receipt::validStatusesForType(Receipt::TYPE_ORDER);
+    expect($orderStatuses)->toContain(Receipt::STATUS_DRAFT);
+    expect($orderStatuses)->toContain(Receipt::STATUS_IN_PROGRESS);
+    expect($orderStatuses)->toContain(Receipt::STATUS_COMPLETED);
+    expect($orderStatuses)->toContain(Receipt::STATUS_CANCELLED);
+    expect($orderStatuses)->not->toContain(Receipt::STATUS_ACCEPTED);
+
+    $invoiceStatuses = Receipt::validStatusesForType(Receipt::TYPE_INVOICE);
+    expect($invoiceStatuses)->toContain(Receipt::STATUS_DRAFT);
+    expect($invoiceStatuses)->toContain(Receipt::STATUS_READY_FOR_DISPATCH);
+    expect($invoiceStatuses)->toContain(Receipt::STATUS_ON_HOLD);
+    expect($invoiceStatuses)->toContain(Receipt::STATUS_OUTSTANDING);
+    expect($invoiceStatuses)->toContain(Receipt::STATUS_OUTSTANDING_PAYMENT);
+    expect($invoiceStatuses)->toContain(Receipt::STATUS_COMPLETED);
+    expect($invoiceStatuses)->not->toContain(Receipt::STATUS_CANCELLED);
+});
+
+it('returns empty array for unknown receipt type', function () {
+    $statuses = Receipt::validStatusesForType('unknown_type');
+    expect($statuses)->toBe([]);
+});
+
 it('can create receipt from array with document pdf', function () {
     $data = [
         'type' => Receipt::TYPE_INVOICE,
